@@ -1,0 +1,81 @@
+{% extends "base.html" %}
+{% block titel %}Interaction Part 2{% endblock %}
+{% block content %}
+<section class="py-3 text-center container">
+<div class="row py-lg-3">
+    <h1 class="fw-light">Diskussionsrunde 2: Klima-Aktivismus</h1>
+    <div class="col-lg-9 col-md-9 mx-auto">
+    <p class="lead text-body-secondary">Willkommen zur zweiten Gesprächsrunde.<br><b>Gesprächsthema: Klima-Aktivismus, Klima-Kleber und die "Letzte Generation"</b></p>
+        <!--<p class="lead text-body-secondary">Hier sind einige <b>Beispielfragen</b>, die sie ihrem Gesprächspartner stellen können:</p>
+        <p class="lead text-body-secondary">Wie reagieren sie wenn sie von Protestaktionen wie den Klima-Klebern hören?<br>Unterstützen sie die Protestaktionen der Aktivisten?</p>
+        -->
+
+    </div>
+</div>
+</section>
+<div class="album py-5 bg-body-tertiary">
+    <div class="row align-items-center justify-content-center">
+        <div class="col-lg-6 col-md-10 col-sm-12">
+            <div>
+                <div id="jitsi-container"></div>
+                <div id="flash-message" class="flash-message" style="display: none;">
+                    Sie haben noch 1 Minute übrig.
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-4 col-md-8 col-sm-12">
+            <div class="d-grid gap-2 text-center">
+                <h2 class="fw-light">Diskussionsthemen</h2>
+                <ul class="list-group d-grid gap-2">
+                    <li class="list-group-item lead text-body-secondary"><b>1. Wie denken Sie über Klima-Aktivismus? </b><br>(z. B. Fridays for Future)</li>
+                    <li class="list-group-item lead text-body-secondary"><b>2. Wie denken Sie über die Protestaktionen der "Letzte Generation"? </b><br>(z. B. Klima-Kleber, Kunstvandalismus & Privatjetsabotage)</li>
+                    <li class="list-group-item lead text-body-secondary"><b>3. Welche Emotionen lösen solche Protestaktionen bei ihnen aus?</b></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="https://meet.jit.si/external_api.js"></script>
+<script>
+    //This function creates a jitsi meeting with the meeting ID that is similiar for interaction partners
+    var meetingid = "{{ user['meeting_id'] }}";
+    var room_name = 'Teil Zwei ' + meetingid;
+    const domain = 'meet.jit.si';
+    const options = {
+        roomName: room_name,
+        width: '100%',
+        height: 500,
+        parentNode: document.querySelector('#jitsi-container'),
+        interfaceConfigOverwrite: {
+            filmStripOnly: false
+        }
+    };
+
+    const api = new JitsiMeetExternalAPI(domain, options);
+
+    //Funtion ends meeting and redirects participants to the next meeting
+    function timerCallback() {
+        api.dispose();
+        window.location.href = "future";
+    }
+
+    //Function notifies people that the interaction will end in one minute
+    function showFlashMessage() {
+        const flashMessageElement = document.getElementById('flash-message');
+        flashMessageElement.style.display = 'block';
+    }
+
+    //This function starts two separate timers, one to end the meeting after 5 minuntes
+    //and the other to notify people that the meeting will end in one minute
+    function endMeeting(){
+        const timer = setTimeout(timerCallback, 300000);
+        const flashTimer = setTimeout(showFlashMessage, 240000);
+    }
+
+    //This function is called when the second interaction partner joins the Jitsi meeting
+    api.addListener('participantJoined', () => {
+        endMeeting();
+    });
+
+</script>
+{% endblock %}

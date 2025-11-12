@@ -1,0 +1,110 @@
+{% extends "base.html" %}
+{% block titel %}Second Questionnaire Interaction and constructs{% endblock %}
+{% block content %}
+<section class="py-3 text-center container">
+    <div class="row py-lg-5">
+      <div class="col-lg-7 col-md-8 mx-auto">
+        <h1 class="fw-light">Bewertung des Politischen Dialogs</h1>
+        <p class="lead text-body-secondary">Bitte geben Sie an, inwieweit Sie den folgenden Aussagen zustimmen.</p>
+      </div>
+    </div>
+</section>
+<div class="album py-5 bg-body-tertiary">
+<div  class="col-6 py-3 mx-auto">
+    <label for="customRange1" class="form-label">Mein Gesprächspartner war höflich und respektvoll.</label>
+    <input type="range" class="form-range custom-track-color" min=1 max=7 id="eval11" name="eval11" form="eval">
+    <div class="custom-labels">
+        <span class="fw-light">Stimme gar nicht zu</span>
+        <span class="fw-light">neutral</span>
+        <span class="fw-light">Stimme komplett zu</span>
+    </div>
+    <label for="customRange1" class="form-label">Mein Gesprächspartner hat mich ausreden lassen.</label>
+    <input type="range" class="form-range custom-track-color" min=1 max=7 id="eval12" name="eval12" form="eval">
+    <div class="custom-labels">
+        <span class="fw-light">Stimme gar nicht zu</span>
+        <span class="fw-light">neutral</span>
+        <span class="fw-light">Stimme komplett zu</span>
+    </div>
+    <label for="customRange1" class="form-label">Mein Gesprächspartner hat meine Ansichten akzeptiert und auf eine Verurteilung verzichtet. </label>
+    <input type="range" class="form-range custom-track-color" min=1 max=7 id="eval13" name="eval13" form="eval">
+    <div class="custom-labels">
+        <span class="fw-light">Stimme gar nicht zu</span>
+        <span class="fw-light">neutral</span>
+        <span class="fw-light">Stimme komplett zu</span>
+    </div>
+    <label for="customRange1" class="form-label">Die Interaktion mit meinem Gesprächspartner war insgesamt eine positive Erfahrung.</label>
+    <input type="range" class="form-range custom-track-color" min=1 max=7 id="eval14" name="eval14" form="eval">
+    <div class="custom-labels">
+        <span class="fw-light">Stimme gar nicht zu</span>
+        <span class="fw-light">neutral</span>
+        <span class="fw-light">Stimme komplett zu</span>
+    </div>
+    <label for="customRange1" class="form-label">Ich respektiere die Überzeugungen und Meinungen anderer Menschen.</label>
+    <input type="range" class="form-range custom-track-color" min=1 max=7 id="construct12" name="construct12" form="eval">
+    <div class="custom-labels">
+        <span class="fw-light">Stimme gar nicht zu</span>
+        <span class="fw-light">neutral</span>
+        <span class="fw-light">Stimme komplett zu</span>
+    </div>
+    <label for="customRange1" class="form-label">Ich respektiere die Meinungen Anderer, auch wenn ich diese nicht teile.</label>
+    <input type="range" class="form-range custom-track-color" min=1 max=7 id="construct22" name="construct22" form="eval">
+    <div class="custom-labels">
+        <span class="fw-light">Stimme gar nicht zu</span>
+        <span class="fw-light">neutral</span>
+        <span class="fw-light">Stimme komplett zu</span>
+    </div>
+    <label for="customRange1" class="form-label">Ich mag Menschen, die mich herausfordern, über die Welt auf eine andere Art und Weise nachzudenken.</label>
+    <input type="range" class="form-range custom-track-color" min=1 max=7 id="construct32" name="construct32" form="eval">
+    <div class="custom-labels">
+        <span class="fw-light">Stimme gar nicht zu</span>
+        <span class="fw-light">neutral</span>
+        <span class="fw-light">Stimme komplett zu</span>
+    </div>
+    <label for="customRange1" class="form-label">Ich verbringe gerne Zeit mit Menschen, die sich von mir unterscheiden.</label>
+    <input type="range" class="form-range custom-track-color" min=1 max=7 id="construct42" name="construct42" form="eval">
+    <div class="custom-labels">
+        <span class="fw-light">Stimme gar nicht zu</span>
+        <span class="fw-light">neutral</span>
+        <span class="fw-light">Stimme komplett zu</span>
+    </div>
+    <label for="customRange1" class="form-label">Die Gesellschaft profitiert von Vielfalt an Traditionen und Lebensstilen.</label>
+    <input type="range" class="form-range custom-track-color" min=1 max=7 id="construct52" name="construct52" form="eval">
+    <div class="custom-labels">
+        <span class="fw-light">Stimme gar nicht zu</span>
+        <span class="fw-light">neutral</span>
+        <span class="fw-light">Stimme komplett zu</span>
+    </div>
+    <label for="customRange1" class="form-label">Der Zusammenhalt in der Gesellschaft ist sehr gut.</label>
+    <input type="range" class="form-range custom-track-color" min=1 max=7 id="construct62" name="construct62" form="eval">
+    <div class="custom-labels">
+        <span class="fw-light">Stimme gar nicht zu</span>
+        <span class="fw-light">neutral</span>
+        <span class="fw-light">Stimme komplett zu</span>
+    </div>
+    <label for="customRange1" class="form-label">Der Zusammenhalt der Gesellschaft ist gefährdet.</label>
+    <input type="range" class="form-range custom-track-color" min=1 max=7 id="construct72" name="construct72" form="eval">
+    <div class="custom-labels">
+        <span class="fw-light">Stimme gar nicht zu</span>
+        <span class="fw-light">neutral</span>
+        <span class="fw-light">Stimme komplett zu</span>
+    </div>
+    <label for="customRange1" class="form-label">Ich bin davon überzeugt, dass die meisten Menschen gute Absichten haben.</label>
+    <input type="range" class="form-range custom-track-color" min=1 max=7 id="construct82" name="construct82" form="eval">
+    <div class="custom-labels">
+        <span class="fw-light">Stimme gar nicht zu</span>
+        <span class="fw-light">neutral</span>
+        <span class="fw-light">Stimme komplett zu</span>
+    </div>
+    <div class="col-8 mx-auto">
+        <hr class="my-4">
+        <form action="#" method="post" id="eval">
+            <div class="d-grid gap-2 col-10 mx-auto">
+                <button class="btn btn-primary" type="submit">Weiter</button>
+            </div>
+        </form>
+        </div>
+</div>
+</div>
+
+
+{% endblock %}

@@ -1,0 +1,82 @@
+{% extends "base.html" %}
+{% block titel %}Second Questionnaire perspective{% endblock %}
+{% block content %}
+<section class="py-3 text-center container">
+    <div class="row py-lg-4">
+        <div class="col-lg-8 col-md-8 mx-auto">
+            <h1 class="fw-light">Aus der Anderen Perspektive</h1>
+            <p class="lead text-body-secondary">Versuchen Sie sich in die Rolle Ihres vorherigen Gesprächspartners zu versetzen. <br>Denken Sie über die Meinungen und Ansichten Ihres Gegenübers nach. <br><b>Bearbeiten Sie anschließend die folgende Umfrage aus der Perspektive Ihres Gesprächspartners.</b></p>
+        </div>
+    </div>
+</section>
+<div class="album py-3 bg-body-tertiary">
+    <div  class="col-6 py-5 mx-auto">
+        <label for="climate1" class="form-label">Ich habe Angst vor den Folgen des Klimawandels.</label>
+        <input type="range" class="form-range custom-track-color" min=1 max=7 id="climate_p1" name="climate_p1" form="perspective">   
+        <div class="custom-labels">
+            <span class="fw-light">Stimme gar nicht zu</span>
+            <span class="fw-light">neutral</span>
+            <span class="fw-light">Stimme komplett zu</span>
+        </div>
+        <label for="climate2" class="form-label">Ich habe Angst vor den Folgen die zu drastische Klimaschutzmaßnahmen verursachen könnten.</label>
+        <input type="range" class="form-range custom-track-color" min=1 max=7 step="1" id="climate_p2" name="climate_p2" form="perspective">
+        <div class="custom-labels">
+            <span class="fw-light">Stimme gar nicht zu</span>
+            <span class="fw-light">neutral</span>
+            <span class="fw-light">Stimme komplett zu</span>
+        </div>
+        <label for="climate3" class="form-label">Ich habe das Gefühl, meine Sorgen zum Thema Klimaschutz werden von der Politik nicht ernst genommen.</label>
+        <input type="range" class="form-range custom-track-color" min=1 max=7 id="climate_p3" name="climate_p3" form="perspective">
+        <div class="custom-labels">
+            <span class="fw-light">Stimme gar nicht zu</span>
+            <span class="fw-light">neutral</span>
+            <span class="fw-light">Stimme komplett zu</span>
+        </div>
+        <label for="classify1" class="form-label">Ich finde politischer Aktivismus im Namen des Klimaschutzes, wie das Blockieren von Straßen durch "Klima-Kleber" oder das Bewerfen von Kunstwerken mit Lebensmitteln, ist insgesamt betrachtet sinnvoll und positiv.</label>
+        <input type="range" class="form-range custom-track-color" min=1 max=7 id="classify_p1" name="classify_p1" form="perspective">
+        <div class="custom-labels">
+            <span class="fw-light">Stimme gar nicht zu</span>
+            <span class="fw-light">neutral</span>
+            <span class="fw-light">Stimme komplett zu</span>
+        </div>
+        <p class="form-label">Politischer Aktivismus, wie das Blockieren von Straßen durch sogenannte Klima-Kleber oder die Verunreinigung von Kunstwerken,...</p>
+        <label for="emotion1" class="form-label">... machen mich wütend.</label>
+        <input type="range" class="form-range custom-track-color" min=1 max=7 id="emotion_p1" name="emotion_p1" form="perspective">
+        <div class="custom-labels">
+            <span class="fw-light">Stimme gar nicht zu</span>
+            <span class="fw-light">neutral</span>
+            <span class="fw-light">Stimme komplett zu</span>
+        </div>
+        <label for="emotion2" class="form-label">... belustigen mich.</label>
+        <input type="range" class="form-range custom-track-color" min=1 max=7 id="emotion_p2" name="emotion_p2" form="perspective">
+        <div class="custom-labels">
+            <span class="fw-light">Stimme gar nicht zu</span>
+            <span class="fw-light">neutral</span>
+            <span class="fw-light">Stimme komplett zu</span>
+        </div>
+        <label for="emotion3" class="form-label">... machen mich glücklich und geben mir Hoffnung.</label>
+        <input type="range" class="form-range custom-track-color" min=1 max=7 id="emotion_p3" name="emotion_p3" form="perspective">
+        <div class="custom-labels">
+            <span class="fw-light">Stimme gar nicht zu</span>
+            <span class="fw-light">neutral</span>
+            <span class="fw-light">Stimme komplett zu</span>
+        </div>
+        <label for="future" class="form-label">Politische Protestaktionen wie das Blockieren von Straßen durch sogenannte Klima-Kleber oder das Verunreinigen von Kunstwerken sind erfolgreich darin, Politik und Gesellschaft zu einem verstärkten Engagement für den Klimaschutz zu bewegen.</label>
+        <input type="range" class="form-range custom-track-color" min=1 max=7 id="future_p" name="future_p" form="perspective">
+        <div class="custom-labels">
+            <span class="fw-light">Stimme gar nicht zu</span>
+            <span class="fw-light">neutral</span>
+            <span class="fw-light">Stimme komplett zu</span>
+        </div>
+        <div class="col-8 mx-auto">
+            <hr class="my-4">
+            <form action="#" method="post" id="perspective">
+                <div class="d-grid gap-2 col-10 mx-auto">
+                    <button class="btn btn-primary" type="submit">Weiter</button>
+                </div>
+            </form>
+          </div>
+    </div> 
+</div>
+{% endblock %}
+

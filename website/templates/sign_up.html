@@ -1,0 +1,84 @@
+{% extends "base.html" %} 
+{% block title %}Sign Up{% endblock %} 
+{% block content %}
+<section class="col-8 py-5 mx-auto">
+  <form method="POST">
+    <h2 align="center" class="fw-light">Registrierung</h2>
+    <p class="lead text-body-secondary text-center">Bitte machen Sie die folgenden Angaben wahrheitsgetreu. Ihre Daten werden nur anonymisiert für Auswertungszwecke verwendet. <strong>Nur Ihr Benutzername</strong> wird anderen Teilnehmern angezeigt.</p>
+    <hr>
+    <p class="lead text-body-secondary text-center">Bitte geben Sie Ihre <strong>gültige E-Mail-Adresse</strong> an. Diese wird benötigt, um Ihnen weitere Informationen zum Ablauf der Teilnahme zuzusenden.</p>
+    <hr>
+    <div class="form-group">
+      <label for="email" class="lead">Email</label>
+      <input
+        type="email"
+        class="form-control"
+        id="email"
+        name="email"
+        placeholder="Email eingeben"
+      />
+    </div>
+    <div class="form-group">
+      <label for="email1" class="lead">Email (Bestätigen)</label>
+      <input
+        type="email"
+        class="form-control"
+        id="email1"
+        name="email1"
+        placeholder="Email eingeben"
+      />
+    </div>
+    <div class="form-group">
+      <label for="user_name" class="lead">Benutzername</label>
+      <input
+        type="text"
+        class="form-control"
+        id="user_name"
+        name="user_name"
+        placeholder="Benutzername eingeben"
+      />
+    </div>
+    <div class="form-group">
+      <label for="password1" class="lead">Passwort</label>
+      <input
+        type="password"
+        class="form-control"
+        id="password1"
+        name="password1"
+        placeholder="Passwort eingeben"
+      />
+    </div>
+    <div class="form-group">
+      <label for="password2" class="lead">Passwort (Bestätigen)</label>
+      <input
+        type="password"
+        class="form-control"
+        id="password2"
+        name="password2"
+        placeholder="Passwort bestätigen"
+      />
+    </div>
+    <div class="text-center">
+      <div class="form-check">
+        <input class="form-check-input bg-secondary" type="checkbox" value="" id="security" name="security">
+        <label class="form-check-label lead text-body-secondary" for="security">
+          Ich habe die <a class="link-primary" href="https://bwsyncandshare.kit.edu/s/zpyey6NWd9fnbGf" target="_blank">Einwilligungserklärung und die Datenschutzerklärung</a> gelesen und bin damit einverstanden.
+        </label>
+      </div>
+    </div>
+    <br />
+    <div class="d-grid gap-2 col-4 mx-auto">
+      <button type="submit" class="btn btn-primary" id="register" disabled>Registrieren</button>
+    </div>
+  </form>
+</section>
+
+<script>
+  const checkbox = document.getElementById('security');
+  const submitButton = document.getElementById('register');
+
+  checkbox.addEventListener('change', function() {
+    submitButton.disabled = !this.checked;
+  });
+</script>
+{% endblock %}

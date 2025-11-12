@@ -1,0 +1,72 @@
+{% extends "base.html" %}
+{% block titel %}Second Questionnaire UEQ{% endblock %}
+{% block content %}
+<section class="py-3 text-center container">
+    <div class="row py-lg-5">
+      <div class="col-lg-7 col-md-8 mx-auto">
+        <h1 class="fw-light">Evaluation der Anwendung</h1>
+        <p class="lead text-body-secondary">Bitte geben Sie an, wie Sie die Anwendung im Bezug auf die folgenden Beschreibungen einschätzen würden.</p>
+      </div>
+    </div>
+</section>
+<div class="album py-5 bg-body-tertiary">
+    <div  class="col-6 py-3 mx-auto">
+        <label for="customRange1" class="form-label">Die Anwendung ist ...</label>
+        <input type="range" class="form-range custom-track-color" min=1 max=7 id="ueq1" name="ueq1" form="ueq">
+        <div class="custom-labels">
+            <span class="fw-light">behindernd</span>
+            <span class="fw-light">unterstützend</span>
+        </div>
+        <hr>
+        <input type="range" class="form-range custom-track-color" min=1 max=7 id="ueq2" name="ueq2" form="ueq">
+        <div class="custom-labels">
+            <span class="fw-light">kompliziert</span>
+            <span class="fw-light">einfach</span>
+        </div>
+        <hr>
+        <input type="range" class="form-range custom-track-color" min=1 max=7 id="ueq3" name="ueq3" form="ueq">
+        <div class="custom-labels">
+            <span class="fw-light">ineffizient</span>
+            <span class="fw-light">effizient</span>
+        </div>
+        <hr>
+        <input type="range" class="form-range custom-track-color" min=1 max=7 id="ueq4" name="ueq4" form="ueq">
+        <div class="custom-labels">
+            <span class="fw-light">verwirrend</span>
+            <span class="fw-light">übersichtlich</span>
+        </div>
+        <hr>
+        <input type="range" class="form-range custom-track-color" min=1 max=7 id="ueq5" name="ueq5" form="ueq">
+        <div class="custom-labels">
+            <span class="fw-light">langweilig</span>
+            <span class="fw-light">spannend</span>
+        </div>
+        <hr>
+        <input type="range" class="form-range custom-track-color" min=1 max=7 id="ueq6" name="ueq6" form="ueq">
+        <div class="custom-labels">
+            <span class="fw-light">uninteressant</span>
+            <span class="fw-light">interessant</span>
+        </div>
+        <hr>
+        <input type="range" class="form-range custom-track-color" min=1 max=7 id="ueq7" name="ueq7" form="ueq">
+        <div class="custom-labels">
+            <span class="fw-light">konventionell</span>
+            <span class="fw-light">orginell</span>
+        </div>
+        <hr>
+        <input type="range" class="form-range custom-track-color" min=1 max=7 id="ueq8" name="ueq8" form="ueq">
+        <div class="custom-labels">
+            <span class="fw-light">herkömmlich</span>
+            <span class="fw-light">neuartig</span>
+        </div>
+        <div class="col-8 mx-auto">
+            <hr class="my-4">
+            <form action="#" method="post" id="ueq">
+                <div class="d-grid gap-2 col-10 mx-auto">
+                    <button class="btn btn-primary" type="submit">Weiter</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

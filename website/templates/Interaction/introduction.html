@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+{% block titel %}Interaction Introduction{% endblock %}
+{% block content %}
+<section class="py-3 text-center container">
+    <div class="row py-lg-3">
+        <div class="col-lg-8 col-md-8 mx-auto">
+        <h1 class="fw-light">Erklärung des Interaktionsablaufs</h1>
+        <p class="lead text-body-secondary">Der Dialog ist in 3 Teile unterteilt. Jeder Teil ist einer bestimmten Fragestellung gewidmet und dauert <strong>5 Minuten.</strong></p> 
+        <p class="lead text-body-secondary"><strong>In diesen 5 Minuten ist es Ihre Aufgabe, die Ansichten Ihres Gesprächspartners bezüglich der Fragestellung so gut wie möglich zu verstehen. Ihr Gesprächspartner hat dieselbe Aufgabe. Nach dem Gespräch wird Ihr Verständnis der Ansichten Ihres Gesprächspartners abgefragt.</strong> </p> 
+        <p class="lead text-body-secondary">Wenn Sie sich während der Interaktion an die folgenden Regeln halten, erhalten Sie nach dem Durchlauf der Anwendung die <strong>volle Belohnung.</strong> Bitte starten Sie die Interaktion möglichst pünktlich zur vereinbarten Uhrzeit.</p>
+      </div>
+</section>
+<div class="album py-3 bg-body-tertiary">
+  <div class="py-3 container">
+    <div class="py-3 col-lg-9 col-md-9 shadow-sm rounded mx-auto bg-white">
+        <div class="text-center">
+          <h1 class="fw-light">Regeln für den Dialog</h1>
+        </div>
+        <div class="col-lg-11 mx-auto">
+          <p class="lead text-body-secondary"><b>1. Behandeln Sie Ihren Gesprächpartner mit Respekt</b></p>
+          <p class="lead text-body-secondary"><b>2. Seien Sie höflich im Umgang mit Ihrem Gesprächpartner</b></p>
+          <p class="lead text-body-secondary"><b>3. Lassen Sie Ihren Gesprächspartner zu Wort kommen und ausreden</b></p>
+          <p class="lead text-body-secondary"><b>4. Vermeiden Sie es, über die Ansichten Ihres Gesprächspartners zu urteilen</b></p>
+          <p class="lead text-body-secondary"><b>5. Das Aufzeichnen des Videoanrufs ist verboten.</b></p>
+          <hr>
+          <p class="lead text-body-secondary"><b>Die folgenden Videoanrufe laufen auf einem KIT Server und werden nicht aufgezeichnet.</b></p>
+        </div>
+        <hr>
+        <div class="text-center"><form id="rules" method="post">
+            <div class="mb-3 form-check">
+              <input type="checkbox" class="form-check-input bg-secondary" id="readrules">
+              <label class="form-check-label lead text-body-secondary" for="readrules">Hiermit bestätige ich, dass ich die Regeln gelesen habe und dass ich mich an die Regeln halten werde.</label>
+            </div>
+            <div class="d-grid gap-2 col-6 mx-auto">
+              <button type="submit" class="btn btn-primary" id="submitButton" disabled>Interaktion Starten</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+</div>
+
+<script>
+  //This function forces participants to check the checkbox in order to confirm that they have read the interaction rules
+    const checkbox = document.getElementById('readrules');
+    const submitButton = document.getElementById('submitButton');
+
+    checkbox.addEventListener('change', function() {
+      submitButton.disabled = !this.checked;
+    });
+</script>
+
+{% endblock %}

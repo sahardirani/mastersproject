@@ -1,0 +1,35 @@
+{% extends "base.html" %} 
+{% block title %}Login{% endblock %} 
+{% block content %}
+<section class="col-8 py-5 mx-auto">
+  <form method="POST">
+    <h2 align="center" class="fw-light">Login</h2>
+    <div class="form-group">
+      <label for="email" class="lead">Email</label>
+      <input
+        type="email"
+        class="form-control"
+        id="email"
+        name="email"
+        placeholder="Email eingeben"
+      />
+    </div>
+    <div class="form-group">
+      <label for="password" class="lead">Passwort</label>
+      <input
+        type="password"
+        class="form-control"
+        id="password"
+        name="password"
+        placeholder="Passwort eingeben"
+      />
+    </div>
+    <div class="text-center">
+      <p class="lead text-body-secondary">Sie haben noch keinen Account? Hier kommen Sie zur <a class="icon-link icon-link-hover" style="--bs-link-hover-color-rgb: 25, 135, 84;" href="/sign-up">Registrierung.<svg class="bi" aria-hidden="true"><use xlink:href="#arrow-right"></use></svg></a></p>
+    </div>
+    <div class="d-grid gap-2 col-4 mx-auto">
+      <button type="submit" class="btn btn-primary">Login</button>
+    </div>
+  </form>
+</section>
+{% endblock %}

@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+{% block titel %}Reward Page{% endblock %}
+{% block content %}
+<section class="py-3 text-center container">
+    <div class="row py-lg-5">
+        <div class="col-lg-8 col-md-8 mx-auto">
+            <h1 class="fw-light">Belohnung & Auszahlung</h1>
+            
+            {% if user.behaviour_score %}
+                {% if user.behaviour_score >= 4 %}
+                    <p class="lead text-body-secondary">Vielen Dank für Ihre Teilnahme! Da Sie sich an die Regeln der Interaktion gehalten haben und Ihr Gesprächpartner Ihr Verhalten positiv bewertet hat, erhalten Sie die <b>volle Belohnung von 3.5 Euro</b>.</p>
+                    <hr>
+                    <p class="lead text-body-secondary">Die Auszahlung der Belohnung in der oben genannten Höhe wird in den nächsten 3 Tagen vollzogen. Diesbezüglich erhalten Sie in Kürze eine E-Mail.</p>
+                    <p class="lead text-body-secondary"><b>Vielen Dank für Ihre Teilnahme!</b> <br>Sie können die Anwendung nun schließen. Falls Sie noch fragen zum Thema oder zur Anwendung haben, zögern Sie nicht, uns unter <a class="link" href="#">TolerantTogether@gmail.com</a> zu kontaktieren.</p>
+                {% else %}
+                    <p class="lead text-body-secondary">Vielen Dank für Ihre Teilnahme! Leider ist Ihr Gesprächpartner der Meinung, dass Sie sich nicht an die Regeln der Interaktion gehalten haben. Somit erhalten Sie nur die <b>unvollständige Belohnung von 2 Euro</b>. </p>
+                    <hr>
+                    <p class="lead text-body-secondary">Die Auszahlung der Belohnung in der oben genannten Höhe wird in den nächsten 3 Tagen vollzogen. Diesbezüglich erhalten Sie in Kürze eine E-Mail.</p>
+                    <p class="lead text-body-secondary"><b>Vielen Dank für Ihre Teilnahme!</b> Sie können die Anwendung nun schließen. Falls Sie noch fragen zum Thema oder zur Anwendung haben, zögern Sie nicht, uns unter <a class="link" href="#">TolerantTogether@gmail.com</a> zu kontaktieren.</p>
+                {% endif %}
+            {% else %}
+                <p class="lead text-body-secondary">Bitte haben Sie Geduld, Ihr Gesprächspartner muss die Umfrage noch vollständig abschließen.</p>
+                <form method="get">
+                    <div class="d-grid gap-2 col-4 mx-auto">
+                        <button class="btn btn-primary" type="submit">Aktualisieren</button>
+                    </div>
+                </form>
+            {% endif %}
+            
+        </div>
+    </div>
+</section>
+
+{% endblock %}

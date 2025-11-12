@@ -1,0 +1,69 @@
+{% extends "base.html" %} {% block title %}Home{% endblock %} 
+{% block content%}
+<section class="py-3 text-center container">
+<div class="row py-lg-4">
+  <div class="col-lg-6 col-md-6 mx-auto">
+    <h1 class="fw-light">Klima-Aktivismus & Klimakleber</h1>
+        <p class="lead text-body-secondary">Hier haben Sie die Möglichkeit, am politischen Diskurs zum Thema "Klima-Kleber" teilzunehmen. Unter diesem Begriff versteht man Aktivisten der Gruppe "die Letzte Generation", die durch extreme Protestaktionen auf die Bedrohung durch den Klimawandel aufmerksam machen möchten. </p>
+        <p class="lead text-body-secondary">Ihre bekannteste Protestmethode besteht darin, sich mit Klebstoff auf Straßen zu kleben und dadurch den Verkehr zu blockieren. Die Gruppe setzt des Weiteren auf das Bewerfen von Kunstwerken mit Lebensmitteln oder auf Besprühen von Privatjets mit Graffiti.</p>
+        <p class="lead text-body-secondary">Diese Aktionen lösen sehr unterschiedliche und sehr emotionale Reaktionen bei Bürgern aus. Es ist daher wichtig, sich sachlich zu diesem kontroversen Thema auszutauschen.</p>
+      </div>
+  <div class="col-lg-6 col-md-6 mx-auto">
+    <img src="{{url_for('static', filename='klimakleber-bild1.jpg')}}" class="rounded mx-auto" width="75%"/>
+  </div>
+</div>
+</section>
+  {% if user.demo %}
+    {% if user.haspartner %}
+    <div class="py-2 text-center">
+      <h3 class="fw-light">An Diskussion Teilnehmen</h3>
+    </div>
+    <div class="album py-3  bg-body-tertiary">
+      <div class="py-3 text-center container">
+      <div class="py-3 col-md-8 shadow-sm rounded mx-auto bg-white"> 
+      <p class="lead text-body-secondary">Es wurde ein passender Gesprächspartner für Sie gefunden. Der Benutzername lautet <b>{{ partner.user_name }}</b>. Am festgelegten Termin, den Sie per E-Mail erhalten haben, gelangen Sie hier zum Dialog. Auf der nächsten Seite wird Ihnen der weitere Ablauf erklärt.</p>
+      <hr>
+      {% if button_disabled %}
+      <div class="d-grid gap-2 col-6 mx-auto">
+        <button disabled class="btn btn-primary">Weiter zur Interaktion</button>
+      </div>
+      {% else %}
+      <div class="d-grid gap-2 col-6 mx-auto">
+        <a class="btn btn-primary" id="start" href="/Interaction/introduction" role="button">Weiter zur Interaktion</a>
+      </div>
+      {% endif %}
+    {% else %}
+    <div class="py-2 text-center">
+      <h3 class="fw-light">An Diskussion Teilnehmen</h3>
+    </div>
+    <div class="album py-3  bg-body-tertiary">
+      <div class="py-3 text-center container">
+      <div class="py-3 col-md-8 shadow-sm rounded mx-auto bg-white">
+    <p class="lead text-body-secondary">Vielen Dank für Ihre Anmeldung. Sie haben sich hiermit erfolgreich für den politischen Dialog angemeldet.</p>  
+    <p class="lead text-body-secondary">Bis jetzt konnte Ihnen noch kein passender Gesprächspartner zugewiesen werden. Sie erhalten eine <strong>E-Mail</strong>, sobald ein passender Gesprächspartner für Sie gefunden wurde. In dieser Email wird Ihnen der weitere Ablauf erklärt und der Termin für die Interaktion geplant.</p>
+    <p class="lead text-body-secondary">Sollten Sie bis <strong>keine E-Mail</strong> erhalten haben, konnte für Sie kein Gesprächspartner gefunden werden, und Sie können leider nicht am Dialog teilnehmen.</p>  
+    <form method="get">
+        <div class="d-grid gap-2 col-6 mx-auto">
+          <button class="btn btn-primary" type="submit">Aktualisieren</button>
+        </div>
+      </form>
+    {% endif %}
+  {% else %}
+  <div class="py-2 text-center">
+    <h3 class="fw-light">Zur Diskussion Anmelden</h3>
+  </div>
+  <div class="album py-3  bg-body-tertiary">
+    <div class="py-3 text-center container">
+    <div class="py-3 col-lg-8 col-md-8 shadow-sm rounded mx-auto bg-white">
+  <form method="post">
+    <p class="lead text-body-secondary">Hier können Sie sich für den politischen Dialog zum Thema Klima-Aktivismus und Klimakleber anmelden.</p>
+    <div class="d-grid gap-2 col-6 mx-auto">
+      <button class="btn btn-primary" type="submit">Anmeldung</button>
+    </div>
+  </form>
+  {% endif %}
+  </div>
+  </div>
+</div>
+
+{% endblock %}

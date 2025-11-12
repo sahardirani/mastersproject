@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+{% block titel %}changed base{% endblock %}
+{% block content %}
+<section class="py-3 text-center container">
+    <div class="row py-lg-4">
+        <div class="col-lg-7 col-md-6 mx-auto">
+        <h1 class="fw-light">Austausch mit der Anderen Seite</h1>
+        <p class="lead text-body-secondary">In dieser Anwendung haben Sie die Möglichkeit, sich auf zivile Art und Weise zu einem politischen Thema mit Andersdenkenden auszutauschen. Der Austausch besteht aus drei fünfminütigen Videoanrufen, in denen Sie sich mit einer anderen Person gegenseitig über Ihre Ansichten zur gegebenen Thematik austauschen.</p> 
+        <p class="lead text-body-secondary">Es geht dabei nicht darum die andere Person von der eigenen Meinung zu überzeugen, sondern darum, die Perspektive der anderen Person zu verstehen.</p>
+        <p class="lead text-body-secondary">In der heutigen Zeit, in denen der politische Diskurs von zunehmender Polarisierung und Online-Filterblasen geprägt wird, ist die Auseinandersetzung mit von den eigenen Ansichten abweichenden Meinungen besonders wichtig für den gesellschaftlichen Zusammenhalt. </p>
+        </div>
+        <div class="col-lg-5 col-md-6 mx-auto">
+            <img src="{{url_for('static', filename='Polarisation21.jpg')}}" class="rounded mx-auto" width="100%"/>
+            <img src="{{url_for('static', filename='polarization11.png')}}" class="rounded mx-auto" width="100%"/>
+        </div>
+    </div>
+    <div class="py-3 text-center">
+        <h3 class="fw-light">Verfügbare Diskussionsthemen <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" fill="currentColor" class="bi bi-arrow-down" viewBox="0 0 16 16">
+            <path fill-rule="evenodd" d="M8 1a.5.5 0 0 1 .5.5v11.793l3.146-3.147a.5.5 0 0 1 .708.708l-4 4a.5.5 0 0 1-.708 0l-4-4a.5.5 0 0 1 .708-.708L7.5 13.293V1.5A.5.5 0 0 1 8 1z"/>
+          </svg></h3>
+    </div>
+</section>
+<div class="album py-3 bg-body-tertiary">
+    <div class="container">
+        <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-3">
+            <div class="col mx-auto">
+                <div class="card shadow-sm">
+                    <div class="card-body text-center">
+                        <h2 class="fw-light">Klima-Aktivismus</h2>
+                        <img src="{{url_for('static', filename='klimakleber1.jpg')}}" class="rounded mx-auto" width="100%"/>
+                        <div class="py-2">
+                            <p class="card-text lead text-body-secondary">Tauschen Sie sich mit Andersdenkenden über das Thema Klima-Aktivismus und Klima-Kleber aus. Bei diesem kontroversen Thema scheiden sich die Geister und die Reaktionen werden oft emotional.</p>
+                        </div>
+                        <div class="card-body text-center container">   
+                            <form action="#" method="post">
+                                <div class="d-grid gap-2">
+                                    <button type="submit" class="btn btn-primary">Zur Diskussion</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

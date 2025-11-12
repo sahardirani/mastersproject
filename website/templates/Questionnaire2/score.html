@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+{% block titel %}Perspective Score{% endblock %}
+{% block content %}
+<section class="py-3 text-center container">
+    <div class="row py-lg-5">
+        <div class="col-lg-7 col-md-8 mx-auto">
+            <h1 class="fw-light">Verständnis der Anderen Perspektive</h1>
+            <p class="lead text-body-secondary">Sie haben die Perspektive Ihres Gesprächspartners zu {{ score }}% verstanden!</p>
+            <div class="py-lg-2">
+                <div class="progress" role="progressbar" aria-label="Basic example" aria-valuenow="{{ score }}" aria-valuemin="0" aria-valuemax="100">
+                    <div class="progress-bar" style="width: 50%"> {{ score }}% </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <hr>
+    <form action="#" method="post">
+        <div class="d-grid gap-2 col-4 mx-auto">
+          <button class="btn btn-primary" type="submit">Weiter</button>
+        </div>
+    </form>
+</section>
+<script>
+    //Function to fill the range with the percentage of the calculated perspective score
+    const progressBar = document.querySelector('.progress-bar');
+    const score = {{ score }};
+
+    progressBar.style.width = `${score}%`;
+    progressBar.setAttribute('aria-valuenow', score);
+    progressBar.innerText = `${score}%`;
+</script>
+
+{% endblock %}

@@ -1,0 +1,85 @@
+{% extends "base.html" %}
+{% block titel %}First Questionnaire construct questions{% endblock %}
+{% block content %}
+<section class="py-3 text-center container">
+    <div class="row py-lg-4">
+      <div class="col-lg-8 col-md-8 mx-auto">
+        <h1 class="fw-light">Anmeldung zur Diskussion</h1>
+        <p class="lead text-body-secondary">Um die Anmeldung abzuschließen werden die folgenden Angaben benötigt. <br>Bitte geben Sie an, inwieweit Sie den folgenden Aussagen zustimmen. <br>Antworten Sie bitte wahrheitsgetreu. Auch diese Daten werden nur anonymisiert für Auswertungszwecke verwendet.</p>
+      </div>
+    </div>
+</section>
+<div class="py-3 text-center">
+    <h3 class="fw-light">3. Meinungsumfrage</h3>
+  </div>
+<div class="album py-5 bg-body-tertiary">
+<div  class="col-6 mx-auto">
+    <label for="customRange1" class="form-label">Ich respektiere die Überzeugungen und Meinungen anderer Menschen.</label>
+    <input type="range" class="form-range custom-track-color" min=1 max=7 id="construct1" name="construct1" form="questionsone">
+    <div class="custom-labels">
+        <span class="fw-light">Stimme gar nicht zu</span>
+        <span class="fw-light">neutral</span>
+        <span class="fw-light">Stimme komplett zu</span>
+    </div>
+    <label for="customRange1" class="form-label">Ich respektiere die Meinungen Anderer, auch wenn ich diese nicht teile.</label>
+    <input type="range" class="form-range custom-track-color" min=1 max=7 id="construct2" name="construct2" form="questionsone">
+    <div class="custom-labels">
+        <span class="fw-light">Stimme gar nicht zu</span>
+        <span class="fw-light">neutral</span>
+        <span class="fw-light">Stimme komplett zu</span>
+    </div>
+    <label for="customRange1" class="form-label">Ich mag Menschen, die mich herausfordern, über die Welt auf eine andere Art und Weise nachzudenken.</label>
+    <input type="range" class="form-range custom-track-color" min=1 max=7 id="construct3" name="construct3" form="questionsone">
+    <div class="custom-labels">
+        <span class="fw-light">Stimme gar nicht zu</span>
+        <span class="fw-light">neutral</span>
+        <span class="fw-light">Stimme komplett zu</span>
+    </div>
+    <label for="customRange1" class="form-label">Ich verbringe gerne Zeit mit Menschen, die sich von mir unterscheiden.</label>
+    <input type="range" class="form-range custom-track-color" min=1 max=7 id="construct4" name="construct4" form="questionsone">
+    <div class="custom-labels">
+        <span class="fw-light">Stimme gar nicht zu</span>
+        <span class="fw-light">neutral</span>
+        <span class="fw-light">Stimme komplett zu</span>
+    </div>
+    <label for="customRange1" class="form-label">Die Gesellschaft profitiert von Vielfalt an Traditionen und Lebensstilen.</label>
+    <input type="range" class="form-range custom-track-color" min=1 max=7 id="construct5" name="construct5" form="questionsone">
+    <div class="custom-labels">
+        <span class="fw-light">Stimme gar nicht zu</span>
+        <span class="fw-light">neutral</span>
+        <span class="fw-light">Stimme komplett zu</span>
+    </div>
+    <label for="customRange1" class="form-label">Der Zusammenhalt in der Gesellschaft ist sehr gut.</label>
+    <input type="range" class="form-range custom-track-color" min=1 max=7 id="construct6" name="construct6" form="questionsone">
+    <div class="custom-labels">
+        <span class="fw-light">Stimme gar nicht zu</span>
+        <span class="fw-light">neutral</span>
+        <span class="fw-light">Stimme komplett zu</span>
+    </div>
+    <label for="customRange1" class="form-label">Der Zusammenhalt der Gesellschaft ist gefährdet.</label>
+    <input type="range" class="form-range custom-track-color" min=1 max=7 id="construct7" name="construct7" form="questionsone">
+    <div class="custom-labels">
+        <span class="fw-light">Stimme gar nicht zu</span>
+        <span class="fw-light">neutral</span>
+        <span class="fw-light">Stimme komplett zu</span>
+    </div>
+    <label for="customRange1" class="form-label">Ich bin davon überzeugt, dass die meisten Menschen gute Absichten haben.</label>
+    <input type="range" class="form-range custom-track-color" min=1 max=7 id="construct8" name="construct8" form="questionsone">
+    <div class="custom-labels">
+        <span class="fw-light">Stimme gar nicht zu</span>
+        <span class="fw-light">neutral</span>
+        <span class="fw-light">Stimme komplett zu</span>
+    </div>
+
+</div>
+<div class="col-8 mx-auto">
+    <hr class="my-4">
+    <form action="#" method="post" id="questionsone">
+        <div class="d-grid gap-2 col-6 mx-auto">
+            <button class="btn btn-primary" type="submit" value="submit">Anmeldung abschließen</button>
+        </div>
+    </form>
+</div>
+</div>
+
+{% endblock %}
