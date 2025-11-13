@@ -11,12 +11,12 @@ views = Blueprint('views', __name__)
 
 #function that only allows participants to start the interaction on the day of the interaction
 def is_button_disabled():
-    current_time = datetime.datetime.now()
-    target_time = datetime.datetime(2023, 7, 12, 13, 0, 0)  
+    #current_time = datetime.datetime.now()
+    #target_time = datetime.datetime(2023, 7, 12, 13, 0, 0)  
 
-    if current_time < target_time:
-        return True
-    else:
+    #if current_time < target_time:
+     #   return True
+    #else:
         return False
 
 #Index Page or homepage of the application
@@ -200,7 +200,9 @@ def opinion():
 @login_required
 def future():
     current_user.hasarrived = False
+    db.session.commit()  # add this line
     return render_template('Interaction/future.html', user=current_user)
+
 
 #Questionnaire 2: View of perspective-taking questionnaire
 #Wirting of answers into database

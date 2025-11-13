@@ -6,6 +6,10 @@ import os
 from flask_login import LoginManager
 from flask_migrate import Migrate
 from flask_mail import Mail
+from dotenv import load_dotenv
+
+# Load environment variables from .env (DATABASE_URL)
+load_dotenv()
 
 db = SQLAlchemy()
 mail = Mail()
@@ -15,23 +19,32 @@ def create_app():
     app = Flask(__name__, instance_relative_config=True)
     app.config['SECRET_KEY'] = 'hjshjhdjah kjshkjdhjs'
 
-    # Ensure instance folder exists
+    # Ensure instance folder exists (still ok to have, even if DB is remote)
     try:
         os.makedirs(app.instance_path, exist_ok=True)
     except OSError:
         pass
 
-    # Database Configuration – use SQLite file in /instance/local.db
-    db_path = os.path.join(app.instance_path, 'local.db')
-    app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///' + db_path
+    # 🔴 Database Configuration – use shared PostgreSQL from .env
+    db_url = os.getenv("DATABASE_URL")
+    if not db_url:
+        raise RuntimeError("DATABASE_URL not set in .env")
+
+    # Make sure driver is correct for SQLAlchemy
+    if db_url.startswith("postgresql://") and "+psycopg2" not in db_url:
+        db_url = db_url.replace("postgresql://", "postgresql+psycopg2://", 1)
+
+    app.config['SQLALCHEMY_DATABASE_URI'] = db_url
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+
+    print("📌 USING DATABASE:", app.config['SQLALCHEMY_DATABASE_URI'])
 
     # Email Configuration
     app.config['MAIL_SERVER'] = 'smtp.gmail.com'
     app.config['MAIL_PORT'] = 465
     app.config['MAIL_USE_SSL'] = True
-    app.config['MAIL_USERNAME'] = 'toleranttogether@gmail.com'
-    app.config['MAIL_PASSWORD'] = 'kretqfdywchpgbuo'
+    app.config['MAIL_USERNAME'] = 'togethertolerant@gmail.com'
+    app.config['MAIL_PASSWORD'] = 'asdqweyxc123'
 
     mail.init_app(app)
     db.init_app(app)
@@ -44,11 +57,10 @@ def create_app():
 
     from .models import User
 
-    # Only create tables if the DB file does NOT exist yet
-    if not path.exists(db_path):
-        with app.app_context():
-            db.create_all()
-            db.session.commit()
+    # Optional: create tables if they don't exist (idempotent in PostgreSQL)
+    with app.app_context():
+        db.create_all()
+        db.session.commit()
 
     login_manager = LoginManager()
     login_manager.login_view = 'auth.login'
@@ -83,9 +95,7 @@ def create_app():
 
 
 def create_database(app):
-    # Helper, aligned with instance/local.db usage
-    db_path = path.join(app.instance_path, 'local.db')
-    if not path.exists(db_path):
-        with app.app_context():
-            db.create_all()
-            print('Created Database!')
+    # Generic helper: create all tables on the current DB
+    with app.app_context():
+        db.create_all()
+        print('Created Database!')
