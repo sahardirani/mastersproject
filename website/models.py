@@ -16,10 +16,23 @@ class User(db.Model, UserMixin):
     age = db.Column(db.String(100))
     education = db.Column(db.String(100))
     job = db.Column(db.String(100)) 
+
+    topic = db.Column(db.String(100))  # 'climate', 'ai_employment', 'freedom_speech'
+
     classification = db.Column(db.Integer)
+
     climate1 = db.Column(db.Integer)
     climate2 = db.Column(db.Integer)
     climate3 = db.Column(db.Integer)
+
+    ai_q1 = db.Column(db.Integer)
+    ai_q2 = db.Column(db.Integer)
+    ai_q3 = db.Column(db.Integer)
+
+    speech_q1 = db.Column(db.Integer)
+    speech_q2 = db.Column(db.Integer)
+    speech_q3 = db.Column(db.Integer)
+    
     emotion1 = db.Column(db.Integer)
     emotion2 = db.Column(db.Integer)
     emotion3 = db.Column(db.Integer)
