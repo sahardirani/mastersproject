@@ -6,6 +6,7 @@ from flask_login import login_user, login_required, logout_user, current_user
 
 auth = Blueprint('auth', __name__)
 
+#this code is for logging and signing in only. with its errors
 
 # Login Page logic
 @auth.route('/login', methods=['GET', 'POST'])
@@ -23,7 +24,7 @@ def login():
         try:
             if user:
                 if check_password_hash(user.password, password):
-                    flash('Login erfolgreich!', category='success')
+                    flash('Login successfull!', category='success')
                     login_user(user, remember=True)
                     return redirect(url_for('views.home'))
                 else:

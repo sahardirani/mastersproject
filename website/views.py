@@ -33,6 +33,14 @@ def index():
 @login_required
 def home():
     if request.method == 'POST':
+        # read topic from the form (coming from index.html buttons)
+        selected_topic = request.form.get('topic')
+
+        if selected_topic:
+            current_user.topic = selected_topic
+            db.session.commit()
+
+        # after saving topic, continue to demographics as before
         return redirect(url_for('views.demographics'))
     
     if current_user.demo:
@@ -45,6 +53,7 @@ def home():
         return render_template("home.html", user=current_user, partner=partner, button_disabled=button_disabled)
     
     return render_template("home.html", user=current_user)
+
 
 #Questionnaire 1, Part 1: demographic questions view
 #Writing of submitted answers into database
@@ -81,15 +90,33 @@ def demographics():
 def questions1():
     if request.method == 'POST':
         try:
+            # Classification is common for all topics
             current_user.classification = request.form.get('classify1')
-            current_user.climate1 = request.form.get('climate1')
-            current_user.climate2 = request.form.get('climate2')
-            current_user.climate3 = request.form.get('climate3')
+
+            # Decide which questions to save based on selected topic
+            topic = current_user.topic or 'climate'
+
+            if topic == 'climate':
+                current_user.climate1 = request.form.get('climate1')
+                current_user.climate2 = request.form.get('climate2')
+                current_user.climate3 = request.form.get('climate3')
+
+            elif topic == 'ai_employment':
+                current_user.ai_q1 = request.form.get('ai_q1')
+                current_user.ai_q2 = request.form.get('ai_q2')
+                current_user.ai_q3 = request.form.get('ai_q3')
+
+            elif topic == 'freedom_speech':
+                current_user.speech_q1 = request.form.get('speech_q1')
+                current_user.speech_q2 = request.form.get('speech_q2')
+                current_user.speech_q3 = request.form.get('speech_q3')
+
+            # These are still common across all topics
             current_user.emotion1 = request.form.get('emotion1')
             current_user.emotion2 = request.form.get('emotion2')
             current_user.emotion3 = request.form.get('emotion3')
             current_user.future = request.form.get('future')
-            
+
             db.session.commit()
             return redirect(url_for('views.questions2'))
 
@@ -129,10 +156,23 @@ def questions2():
 @views.route('/Questionnaire1/end', methods=['GET','POST'])
 @login_required
 def endofq1():
+    # If the user already has a partner, just show the page
     if current_user.haspartner:
         return render_template('Questionnaire1/endofq1.html', user=current_user)
-    elif User.query.filter(User.classification != None, func.abs(User.classification - current_user.classification) >= 3, User.haspartner == False).count() >= 1:
-        partner = User.query.filter(User.classification != None, User.haspartner == False, User.id!=current_user.id).first()
+
+    # Try to find a partner
+    partner_query = User.query.filter(
+        User.classification != None,
+        User.haspartner == False,
+        User.id != current_user.id,
+        User.topic == current_user.topic,
+        func.abs(User.classification - current_user.classification) >= 3
+    )
+
+    partner = partner_query.first()
+
+    if partner:
+        # Match them
         partner.haspartner = True
         current_user.haspartner = True
         partner.partner_id = current_user.id
@@ -141,20 +181,21 @@ def endofq1():
         partner.meeting_id = current_user.id
         db.session.commit()
 
+        # Try email
         try:
             zusage1 = Message('Zusage', sender='TolerantTogether@gmail.com')
             zusage2 = Message('Zusage', sender='TolerantTogether@gmail.com')
             zusage1.add_recipient(current_user.email)
             zusage2.add_recipient(partner.email)
             zusage1.html = render_template('Email/zusage.html')
-            zusage2.html = render_template('Emial/zusage.html')
+            zusage2.html = render_template('Email/zusage.html')
             mail.send(zusage1)
             mail.send(zusage2)
         except Exception as e:
-            flash('Es gab einen Fehler beim Versenden der Benachrichtigungs E-Mail in der sie alle weiteren Informationen erhalten. Bitte Kontaktieren Sie TolerantTogether@gmail.com', category='error')
+            flash('Fehler beim Versenden der E-Mail.', category='error')
 
     return render_template('Questionnaire1/endofq1.html', user=current_user)
-    
+ 
 
 #View of the introduction page of the interaction 
 @views.route('/Interaction/introduction', methods=['GET','POST'])

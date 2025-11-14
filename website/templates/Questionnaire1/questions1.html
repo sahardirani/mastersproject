@@ -5,78 +5,219 @@
     <div class="row py-lg-4">
       <div class="col-lg-8 col-md-8 mx-auto">
         <h1 class="fw-light">Anmeldung zur Diskussion</h1>
-        <p class="lead text-body-secondary"><br>Bitte geben Sie an, inwieweit Sie den folgenden Aussagen zustimmen. <br>Antworten Sie bitte wahrheitsgetreu. Auch diese Daten werden nur anonymisiert für Auswertungszwecke verwendet.</p>
+        <p class="lead text-body-secondary">
+            <br>Bitte geben Sie an, inwieweit Sie den folgenden Aussagen zustimmen. 
+            <br>Antworten Sie bitte wahrheitsgetreu. Auch diese Daten werden nur anonymisiert für Auswertungszwecke verwendet.
+        </p>
       </div>
     </div>
 </section>
+
 <div class="py-3 text-center">
     <h3 class="fw-light">2. Meinungsumfrage</h3>
-  </div>
+</div>
+
 <div class="album py-5 bg-body-tertiary">
-<div  class="col-6 mx-auto">
-    
-    <label for="climate1" class="form-label">Ich habe Angst vor den Folgen des Klimawandels.</label>
-    <input type="range" class="form-range custom-track-color" min=1 max=7 id="climate1" name="climate1" form="questionsone">   
-    <div class="custom-labels">
-        <span class="fw-light">Stimme gar nicht zu</span>
+  <div class="col-6 mx-auto">
+
+    {# Fallback: wenn topic nicht gesetzt ist, behandeln wie Klima #}
+    {% set topic = user.topic or 'climate' %}
+
+    {# ---------- TOPIK-SPEZIFISCHE FRAGEN (1–3) ---------- #}
+    {% if topic == 'climate' %}
+        <label for="climate1" class="form-label">
+            Ich habe Angst vor den Folgen des Klimawandels.
+        </label>
+        <input type="range" class="form-range custom-track-color" min="1" max="7"
+               id="climate1" name="climate1" form="questionsone">
+        <div class="custom-labels">
+            <span class="fw-light">Stimme gar nicht zu</span>
             <span class="fw-light">neutral</span>
             <span class="fw-light">Stimme komplett zu</span>
-      </div>
-    <label for="climate2" class="form-label">Ich habe Angst vor den Folgen zu drastischer Klimaschutzmaßnahmen.</label>
-    <input type="range" class="form-range custom-track-color" min=1 max=7 step="1" id="climate2" name="climate2" form="questionsone">
-    <div class="custom-labels">
-        <span class="fw-light">Stimme gar nicht zu</span>
-        <span class="fw-light">neutral</span>
-        <span class="fw-light">Stimme komplett zu</span>
-      </div>
-    <label for="climate3" class="form-label">Ich habe das Gefühl, meine Sorgen bezüglich des Klimaschutzes werden von der Politik nicht ernst genommen.    </label>
-    <input type="range" class="form-range custom-track-color" min=1 max=7 id="climate3" name="climate3" form="questionsone">
-    <div class="custom-labels">
-        <span class="fw-light">Stimme gar nicht zu</span>
-        <span class="fw-light">neutral</span>
-        <span class="fw-light">Stimme komplett zu</span>
-      </div>
-    <label for="classify1" class="form-label">
-        Ich finde, politischer Aktivismus im Namen des Klimaschutzes, wie das Blockieren von Straßen durch "Klima-Kleber" oder das Bewerfen von Kunstwerken mit Lebensmitteln, ist insgesamt betrachtet sinnvoll und positiv.</label>
-    <input type="range" class="form-range custom-track-color" min=1 max=7 id="classify1" name="classify1" form="questionsone">
+        </div>
+
+        <label for="climate2" class="form-label">
+            Ich habe Angst vor den Folgen zu drastischer Klimaschutzmaßnahmen.
+        </label>
+        <input type="range" class="form-range custom-track-color" min="1" max="7" step="1"
+               id="climate2" name="climate2" form="questionsone">
+        <div class="custom-labels">
+            <span class="fw-light">Stimme gar nicht zu</span>
+            <span class="fw-light">neutral</span>
+            <span class="fw-light">Stimme komplett zu</span>
+        </div>
+
+        <label for="climate3" class="form-label">
+            Ich habe das Gefühl, meine Sorgen bezüglich des Klimaschutzes werden von der Politik nicht ernst genommen.
+        </label>
+        <input type="range" class="form-range custom-track-color" min="1" max="7"
+               id="climate3" name="climate3" form="questionsone">
+        <div class="custom-labels">
+            <span class="fw-light">Stimme gar nicht zu</span>
+            <span class="fw-light">neutral</span>
+            <span class="fw-light">Stimme komplett zu</span>
+        </div>
+
+        <label for="classify1" class="form-label">
+            Ich finde, politischer Aktivismus im Namen des Klimaschutzes, wie das Blockieren von Straßen durch "Klima-Kleber" 
+            oder das Bewerfen von Kunstwerken mit Lebensmitteln, ist insgesamt betrachtet sinnvoll und positiv.
+        </label>
+    {% elif topic == 'ai_employment' %}
+        <label for="ai_q1" class="form-label">
+            Ich habe Angst davor, dass Künstliche Intelligenz in Zukunft viele Arbeitsplätze ersetzen wird.
+        </label>
+        <input type="range" class="form-range custom-track-color" min="1" max="7"
+               id="ai_q1" name="ai_q1" form="questionsone">
+        <div class="custom-labels">
+            <span class="fw-light">Stimme gar nicht zu</span>
+            <span class="fw-light">neutral</span>
+            <span class="fw-light">Stimme komplett zu</span>
+        </div>
+
+        <label for="ai_q2" class="form-label">
+            Ich glaube, dass Künstliche Intelligenz eher neue Chancen auf dem Arbeitsmarkt schafft, als bestehende Jobs zu zerstören.
+        </label>
+        <input type="range" class="form-range custom-track-color" min="1" max="7"
+               id="ai_q2" name="ai_q2" form="questionsone">
+        <div class="custom-labels">
+            <span class="fw-light">Stimme gar nicht zu</span>
+            <span class="fw-light">neutral</span>
+            <span class="fw-light">Stimme komplett zu</span>
+        </div>
+
+        <label for="ai_q3" class="form-label">
+            Ich habe das Gefühl, dass Politik und Gesellschaft nicht ausreichend auf die Auswirkungen von KI auf den Arbeitsmarkt vorbereitet sind.
+        </label>
+        <input type="range" class="form-range custom-track-color" min="1" max="7"
+               id="ai_q3" name="ai_q3" form="questionsone">
+        <div class="custom-labels">
+            <span class="fw-light">Stimme gar nicht zu</span>
+            <span class="fw-light">neutral</span>
+            <span class="fw-light">Stimme komplett zu</span>
+        </div>
+
+        <label for="classify1" class="form-label">
+            Insgesamt betrachtet halte ich den zunehmenden Einsatz von Künstlicher Intelligenz auf dem Arbeitsmarkt für sinnvoll und positiv.
+        </label>
+    {% elif topic == 'freedom_speech' %}
+        <label for="speech_q1" class="form-label">
+            Ich finde es wichtig, dass Menschen auf sozialen Medien ihre Meinung frei äußern können, auch wenn diese polarisierend ist.
+        </label>
+        <input type="range" class="form-range custom-track-color" min="1" max="7"
+               id="speech_q1" name="speech_q1" form="questionsone">
+        <div class="custom-labels">
+            <span class="fw-light">Stimme gar nicht zu</span>
+            <span class="fw-light">neutral</span>
+            <span class="fw-light">Stimme komplett zu</span>
+        </div>
+
+        <label for="speech_q2" class="form-label">
+            Ich finde, dass soziale Medien stärker gegen Hassrede und Desinformation vorgehen sollten, auch wenn dies die Meinungsfreiheit einschränkt.
+        </label>
+        <input type="range" class="form-range custom-track-color" min="1" max="7"
+               id="speech_q2" name="speech_q2" form="questionsone">
+        <div class="custom-labels">
+            <span class="fw-light">Stimme gar nicht zu</span>
+            <span class="fw-light">neutral</span>
+            <span class="fw-light">Stimme komplett zu</span>
+        </div>
+
+        <label for="speech_q3" class="form-label">
+            Ich habe das Gefühl, dass die Regeln für Inhalte auf sozialen Medien unfair oder intransparent sind.
+        </label>
+        <input type="range" class="form-range custom-track-color" min="1" max="7"
+               id="speech_q3" name="speech_q3" form="questionsone">
+        <div class="custom-labels">
+            <span class="fw-light">Stimme gar nicht zu</span>
+            <span class="fw-light">neutral</span>
+            <span class="fw-light">Stimme komplett zu</span>
+        </div>
+
+        <label for="classify1" class="form-label">
+            Insgesamt betrachtet halte ich die Art und Weise, wie soziale Medien mit Meinungsfreiheit umgehen, für sinnvoll und positiv.
+        </label>
+    {% endif %}
+
+    {# ---------- CLASSIFICATION SLIDER (gemeinsam, Text oben variiert) ---------- #}
+    <input type="range" class="form-range custom-track-color" min="1" max="7"
+           id="classify1" name="classify1" form="questionsone">
     <div class="custom-labels">
         <span class="fw-light">Stimme gar nicht zu</span>
         <span class="fw-light">neutral</span>
         <span class="fw-light">Stimme komplett zu</span>
     </div>
-    <p class="form-label">Politischer Aktivismus, wie das das Blockieren von Straßen durch sogenannte Klima-Kleber oder die Verunreinigung von Kunstwerken,...</p>
+
+    {# ---------- EMOTION / FUTURE (gemeinsam für alle Themen) ---------- #}
+    {% if topic == 'climate' %}
+        <p class="form-label">
+            Politischer Aktivismus, wie das Blockieren von Straßen durch sogenannte Klima-Kleber oder die Verunreinigung von Kunstwerken,...
+        </p>
+    {% elif topic == 'ai_employment' %}
+        <p class="form-label">
+            Der zunehmende Einsatz von Künstlicher Intelligenz in verschiedensten Bereichen der Arbeitswelt,...
+        </p>
+    {% elif topic == 'freedom_speech' %}
+        <p class="form-label">
+            Die Art und Weise, wie soziale Medien mit Meinungsfreiheit, Moderation und der Sperrung von Inhalten umgehen,...
+        </p>
+    {% endif %}
+
     <label for="emotion1" class="form-label">... machen mich wütend.</label>
-    <input type="range" class="form-range custom-track-color" min=1 max=7 id="emotion1" name="emotion1" form="questionsone">
+    <input type="range" class="form-range custom-track-color" min="1" max="7"
+           id="emotion1" name="emotion1" form="questionsone">
     <div class="custom-labels">
         <span class="fw-light">Stimme gar nicht zu</span>
         <span class="fw-light">neutral</span>
         <span class="fw-light">Stimme komplett zu</span>
     </div>
+
     <label for="emotion2" class="form-label">... belustigen mich.</label>
-    <input type="range" class="form-range custom-track-color" min=1 max=7 id="emotion2" name="emotion2" form="questionsone">
+    <input type="range" class="form-range custom-track-color" min="1" max="7"
+           id="emotion2" name="emotion2" form="questionsone">
     <div class="custom-labels">
         <span class="fw-light">Stimme gar nicht zu</span>
         <span class="fw-light">neutral</span>
         <span class="fw-light">Stimme komplett zu</span>
     </div>
+
     <label for="emotion3" class="form-label">... begeistern mich.</label>
-    <input type="range" class="form-range custom-track-color" min=1 max=7 id="emotion3" name="emotion3" form="questionsone">
+    <input type="range" class="form-range custom-track-color" min="1" max="7"
+           id="emotion3" name="emotion3" form="questionsone">
     <div class="custom-labels">
         <span class="fw-light">Stimme gar nicht zu</span>
         <span class="fw-light">neutral</span>
         <span class="fw-light">Stimme komplett zu</span>
     </div>
-    <label for="future" class="form-label">Politischer Aktivismus, wie das Blockieren von Straßen durch Klima-Kleber oder das Verunreinigen von Kunstwerken sind erfolgreich darin, Politik und Gesellschaft zu einem verstärkten Engagement für den Klimaschutz zu bewegen.</label>
-    <input type="range" class="form-range custom-track-color" min=1 max=7 id="future" name="future" form="questionsone">
+
+    {% if topic == 'climate' %}
+        <label for="future" class="form-label">
+            Politischer Aktivismus, wie das Blockieren von Straßen durch Klima-Kleber oder das Verunreinigen von Kunstwerken, 
+            ist erfolgreich darin, Politik und Gesellschaft zu einem verstärkten Engagement für den Klimaschutz zu bewegen.
+        </label>
+    {% elif topic == 'ai_employment' %}
+        <label for="future" class="form-label">
+            Politische Maßnahmen und gesellschaftliche Debatten zum Thema Künstliche Intelligenz werden in Zukunft 
+            dazu beitragen, dass negative Folgen für den Arbeitsmarkt begrenzt werden.
+        </label>
+    {% elif topic == 'freedom_speech' %}
+        <label for="future" class="form-label">
+            In Zukunft wird ein besserer Ausgleich zwischen Meinungsfreiheit und Schutz vor Hassrede 
+            und Desinformation auf sozialen Medien gefunden werden.
+        </label>
+    {% endif %}
+
+    <input type="range" class="form-range custom-track-color" min="1" max="7"
+           id="future" name="future" form="questionsone">
     <div class="custom-labels">
         <span class="fw-light">Stimme gar nicht zu</span>
         <span class="fw-light">neutral</span>
         <span class="fw-light">Stimme komplett zu</span>
     </div>
-</div>
-<div class="col-8 mx-auto">
+  </div>
+
+  <div class="col-8 mx-auto">
     <hr class="my-4">
-    <form action="#" method="post" id="questionsone">
+    <form action="{{ url_for('views.questions1') }}" method="post" id="questionsone">
         <div class="d-grid gap-2 col-6 mx-auto">
             <button class="btn btn-primary" type="submit" value="submit">Weiter</button>
         </div>
