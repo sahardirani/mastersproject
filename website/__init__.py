@@ -1,7 +1,6 @@
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
-from sqlalchemy import exc
-from os import path
+from sqlalchemy import exc, text
 import os
 from flask_login import LoginManager
 from flask_migrate import Migrate
@@ -57,7 +56,7 @@ def create_app():
 
     from .models import User
 
-    # Optional: create tables if they don't exist (idempotent in PostgreSQL)
+    # Optional: create tables if they don't exist
     with app.app_context():
         db.create_all()
         db.session.commit()
@@ -74,12 +73,11 @@ def create_app():
     def before_request():
         # Check if the database connection is valid
         try:
-            db.session.execute("SELECT 1")
+            db.session.execute(text("SELECT 1"))
         except exc.SQLAlchemyError:
             db.session.rollback()
             db.session.remove()
             db.engine.dispose()
-            # Do NOT recreate tables here, just recover the session
 
     @app.teardown_request
     def teardown_request(exception=None):
