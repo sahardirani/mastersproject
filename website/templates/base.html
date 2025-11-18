@@ -76,16 +76,16 @@
           {% if user.is_authenticated %}
             {% if user.demo %}
               <a class="nav-item mr-4 nav-link h3" id="home" href="/index">Home</a>
-              <a class="nav-item mr-4 nav-link h3 fw-light" id="home" href="/">Zum Diskurs</a>
+              <a class="nav-item mr-4 nav-link h3 fw-light" id="home" href="/">To Discussion</a>
               <a class="nav-item mr-4 nav-link h3 fw-light" id="logout" href="/logout">Logout</a>
             {% else %}
               <a class="nav-item mr-4 nav-link h3" id="home" href="/index">Home</a>
-              <a class="nav-item mr-4 nav-link h3 fw-light" id="home" href="/">Anmeldung</a>
+              <a class="nav-item mr-4 nav-link h3 fw-light" id="home" href="/">Registration</a>
               <a class="nav-item mr-4 nav-link h3 fw-light" id="logout" href="/logout">Logout</a>
             {% endif %}
           {% else %}
           <a class="nav-item mr-4 nav-link h3" id="home" href="/index">Home</a>
-          <a class="nav-item mr-4 nav-link h3 fw-light" id="signUp" href="/sign-up">Registrieren</a>
+          <a class="nav-item mr-4 nav-link h3 fw-light" id="signUp" href="/sign-up">Registration</a>
           <a class="nav-item mr-4 nav-link h3 fw-light" id="login" href="/login">Login</a>
           {% endif %}
         </div>

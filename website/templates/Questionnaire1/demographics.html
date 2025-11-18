@@ -1,87 +1,98 @@
 {% extends "base.html" %}
-{% block titel %}First Questionnaire demographics{% endblock %}
+{% block titel %}First Questionnaire Demographics{% endblock %}
 {% block content %}
 <section class="py-3 text-center container">
   <div class="row py-lg-4">
     <div class="col-lg-8 col-md-8 mx-auto">
-      <h1 class="fw-light">Anmeldung zur Diskussion</h1>
+      <h1 class="fw-light">Registration for the Discussion</h1>
       <p class="lead text-body-secondary">
-        Zur Anmeldung werden die folgenden Daten von Ihnen benötigt. <br>Bitte machen Sie die folgenden Angaben wahrheitsgetreu.<br>Ihre Daten werden nur anonymisiert für Auswertungszwecke verwendet.</p>
+        The following information is required for registration. <br>Please answer truthfully.<br>Your data will be used exclusively in anonymized form for evaluation purposes.
+      </p>
     </div>
   </div>
 </section>
+
 <div class="py-3 text-center">
-  <h3 class="fw-light">1. Demographische Informationen</h3>
+  <h3 class="fw-light">1. Demographic Information</h3>
 </div>
+
 <div class="album py-5 bg-body-tertiary">
   <div class="container">
     <div class="col-8 mx-auto">
       <form action="#" id="demo" method="post">
+
         <div class="col-md-8 mx-auto">
-          <label for="gender" class="form-label">Geschlecht</label>
+          <label for="gender" class="form-label">Gender</label>
           <select class="form-select" name="gender" id="gender" required>
-            <option selected disabled>Wähle...</option>
-            <option>Männlich</option>
-            <option>Weiblich</option>
-            <option>Divers</option>
-            <option>Sonstige</option>
+            <option selected disabled>Select...</option>
+            <option>Male</option>
+            <option>Female</option>
+            <option>Diverse</option>
+            <option>Other</option>
           </select>
           <div class="invalid-feedback">
-            Bitte wählen Sie ein gültiges Geschlecht aus.
+            Please select a valid gender.
           </div>
         </div>
+
         <div class="col-md-8 mx-auto">
-          <label for="age" class="form-label">Alter</label>
+          <label for="age" class="form-label">Age</label>
           <select class="form-select" id="age" name="age" required>
-            <option selected disabled>Wähle...</option>
-            <option>0-18 Jahre</option>
-            <option>18-25 Jahre</option>
-            <option>25-35 Jahre</option>
-            <option>35-45 Jahre</option>
-            <option>45-55 Jahre</option>
-            <option>55-65 Jahre</option>
-            <option>65-75 Jahre</option>
-            <option>75+ Jahre</option>
-            <option>Sonstige</option>
+            <option selected disabled>Select...</option>
+            <option>0–18 years</option>
+            <option>18–25 years</option>
+            <option>25–35 years</option>
+            <option>35–45 years</option>
+            <option>45–55 years</option>
+            <option>55–65 years</option>
+            <option>65–75 years</option>
+            <option>75+ years</option>
+            <option>Other</option>
           </select>
           <div class="invalid-feedback">
-            Bitte wählen Sie eine gültige Altersgruppe aus.
+            Please select a valid age group.
           </div>
         </div>
+
         <div class="col-md-8 mx-auto">
-          <label for="education" class="form-label">Bildungsstand</label>
+          <label for="education" class="form-label">Education Level</label>
           <select class="form-select" name="education" id="education" required>
-            <option selected disabled>Wähle...</option>
-            <option>Mittlere Reife</option>
-            <option>Abitur</option>
-            <option>Bachelor</option>
-            <option>Master</option>
-            <option>Sonstige</option>
+            <option selected disabled>Select...</option>
+            <option>Secondary School Certificate</option>
+            <option>High School Diploma</option>
+            <option>Bachelor’s Degree</option>
+            <option>Master’s Degree</option>
+            <option>Other</option>
           </select>
           <div class="invalid-feedback">
-            Bitte wählen Sie einen gültigen Bildungsstand aus.
+            Please select a valid education level.
           </div>
         </div>
+
         <div class="col-md-8 mx-auto">
-          <label for="job" class="form-label">Beruflicher Status</label>
+          <label for="job" class="form-label">Employment Status</label>
           <select class="form-select" name="job" id="job" required>
-            <option selected disabled>Wähle...</option>
-            <option>Schüler/in</option>
-            <option>Student/in</option>
-            <option>Berufstätig</option>
-            <option>Rentner/in</option>
-            <option>Sonstige</option>
+            <option selected disabled>Select...</option>
+            <option>Pupil</option>
+            <option>Student</option>
+            <option>Employed</option>
+            <option>Retired</option>
+            <option>Other</option>
           </select>
           <div class="invalid-feedback">
-            Bitte wählen Sie einen gültigen beruflichen Status aus.
+            Please select a valid employment status.
           </div>
         </div>
+
         <hr class="my-4">
+
         <div class="d-grid gap-2 col-6 mx-auto">
-          <button class="btn btn-primary" type="submit">Weiter</button>
+          <button class="btn btn-primary" type="submit">Next</button>
         </div>
+
       </form>
     </div>
   </div>
 </div>
+
 {% endblock %}

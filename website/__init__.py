@@ -18,7 +18,7 @@ def create_app():
     app = Flask(__name__, instance_relative_config=True)
     app.config['SECRET_KEY'] = 'hjshjhdjah kjshkjdhjs'
 
-    # Ensure instance folder exists (still ok to have, even if DB is remote)
+    # Ensure instance folder exists
     try:
         os.makedirs(app.instance_path, exist_ok=True)
     except OSError:
@@ -38,12 +38,14 @@ def create_app():
 
     print("📌 USING DATABASE:", app.config['SQLALCHEMY_DATABASE_URI'])
 
-    # Email Configuration
+    # 📧 Email Configuration
     app.config['MAIL_SERVER'] = 'smtp.gmail.com'
-    app.config['MAIL_PORT'] = 465
-    app.config['MAIL_USE_SSL'] = True
+    app.config['MAIL_PORT'] = 587
+    app.config['MAIL_USE_TLS'] = True
+    app.config['MAIL_USE_SSL'] = False
     app.config['MAIL_USERNAME'] = 'togethertolerant@gmail.com'
-    app.config['MAIL_PASSWORD'] = 'asdqweyxc123'
+    app.config['MAIL_PASSWORD'] = 'xnqo fixw edjp zcdj'  # 16-char app password
+    app.config['MAIL_DEFAULT_SENDER'] = ('Tolerant Together', 'togethertolerant@gmail.com')
 
     mail.init_app(app)
     db.init_app(app)
@@ -86,14 +88,28 @@ def create_app():
 
     @app.errorhandler(500)
     def handle_internal_server_error(e):
-        # Log the error or take appropriate action
         return "Internal Server Error", 500
+
+    # ✅ TEST EMAIL ROUTE — for debugging mail
+    @app.route("/test-receive")
+    def test_receive():
+        from flask_mail import Message
+        try:
+            msg = Message(
+                subject="Test to Gmail Inbox",
+                recipients=["togethertolerant@gmail.com"],
+                body="If you see this, receiving works."
+            )
+            mail.send(msg)
+            return "Email sent to Gmail inbox!"
+        except Exception as e:
+            print("MAIL ERROR:", e)
+            return f"Error while sending mail: {e}", 500
 
     return app
 
 
 def create_database(app):
-    # Generic helper: create all tables on the current DB
     with app.app_context():
         db.create_all()
         print('Created Database!')

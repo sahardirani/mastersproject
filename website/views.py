@@ -9,6 +9,7 @@ from sqlalchemy import func
 
 views = Blueprint('views', __name__)
 
+
 #function that only allows participants to start the interaction on the day of the interaction
 def is_button_disabled():
     #current_time = datetime.datetime.now()
@@ -23,6 +24,7 @@ def is_button_disabled():
 @views.route('/index', methods=['GET','POST'])
 def index():
     if request.method == 'POST':
+        topic = request.form.get("topic")
         return redirect(url_for('views.home'))
     else:
         return render_template('index.html', user=current_user)
