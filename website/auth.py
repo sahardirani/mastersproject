@@ -1,12 +1,11 @@
 from flask import Blueprint, render_template, request, flash, redirect, url_for
 from .models import User
 from werkzeug.security import generate_password_hash, check_password_hash
-from . import db
+from . import db, mail
 from flask_login import login_user, login_required, logout_user, current_user
+from flask_mail import Message
 
 auth = Blueprint('auth', __name__)
-
-#this code is for logging and signing in only. with its errors
 
 # Login Page logic
 @auth.route('/login', methods=['GET', 'POST'])
@@ -83,7 +82,7 @@ def sign_up():
             elif len(password1) < 7:
                 flash('Das Passwort muss mindestens 8 Zeichen enthalten.', category='error')
             else:
-                # 🔑 Wichtig: Standard-Hash verwenden (pbkdf2:sha256)
+                # Nutzer anlegen
                 new_user = User(
                     email=email,
                     user_name=user_name,
@@ -91,6 +90,25 @@ def sign_up():
                 )
                 db.session.add(new_user)
                 db.session.commit()
+
+                # 📧 E-MAIL AN DEN NEUEN NUTZER SENDEN
+                try:
+                    msg = Message(
+                        subject="Tolerance Together – Registration Confirmation",
+                        recipients=[email]
+                    )
+                    msg.body = (
+                        f"Hello,\n\n"
+                        f"Your account on Tolerance Together has been successfully created with the email: {email}.\n\n"
+                        f"If this was NOT you, please contact us immediately at: togethertolerant@gmail.com\n\n"
+                        f"Best regards,\n"
+                        f"Tolerance Together Team"
+                    )
+                    mail.send(msg)
+                except Exception as e:
+                    # Nur in der Konsole melden, Registrierung nicht abbrechen
+                    print("Signup email error:", e)
+
                 login_user(new_user, remember=True)
                 flash('Registrierung war erfolgreich! Bitte melden Sie sich zur Diskussion an.', category='success')
                 return redirect(url_for('views.home'))
