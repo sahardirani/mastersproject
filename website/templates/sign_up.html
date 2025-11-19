@@ -1,12 +1,24 @@
 {% extends "base.html" %} 
-{% block title %}Sign Up{% endblock %} 
+{% block title %}Sign Up / Registrierung{% endblock %} 
 {% block content %}
 <section class="col-8 py-5 mx-auto">
   <form method="POST">
-    <h2 align="center" class="fw-light">Sign Up</h2>
-    <p class="lead text-body-secondary text-center">Please provide the following information truthfully. Your data will only be used anonymously for evaluation purposes. <strong>Only your username</strong> will be visible to other participants.</p>
+    <h2 align="center" class="fw-light">Registrierung / Sign Up</h2>
+    <p class="lead text-body-secondary text-center">
+      Bitte machen Sie die folgenden Angaben wahrheitsgetreu. Ihre Daten werden nur anonymisiert für Auswertungszwecke verwendet.
+      <strong>Nur Ihr Benutzername</strong> wird anderen Teilnehmern angezeigt.<br>
+      <small>
+        (Please provide the following information truthfully. Your data will only be used anonymously for evaluation purposes.
+        <strong>Only your username</strong> will be visible to other participants.)
+      </small>
+    </p>
     <hr>
-    <p class="lead text-body-secondary text-center">Please provide a <strong>valid email address</strong>. This is needed to send you further information about your participation.</p>
+    <p class="lead text-body-secondary text-center">
+      Bitte geben Sie Ihre <strong>gültige E-Mail-Adresse</strong> an. Diese wird benötigt, um Ihnen weitere Informationen zum Ablauf der Teilnahme zuzusenden.<br>
+      <small>
+        (Please provide a <strong>valid email address</strong>. This is needed to send you further information about your participation.)
+      </small>
+    </p>
     <hr>
     <div class="form-group">
       <label for="email" class="lead">Email</label>
@@ -15,60 +27,72 @@
         class="form-control"
         id="email"
         name="email"
-        placeholder="Enter your email"
+        placeholder="Email eingeben / Enter your email"
       />
     </div>
     <div class="form-group">
-      <label for="email1" class="lead">Email (Confirm)</label>
+      <label for="email1" class="lead">Email (Bestätigen / Confirm)</label>
       <input
         type="email"
         class="form-control"
         id="email1"
         name="email1"
-        placeholder="Enter your email again"
+        placeholder="Email erneut eingeben / Enter your email again"
       />
     </div>
     <div class="form-group">
-      <label for="user_name" class="lead">Username</label>
+      <label for="user_name" class="lead">Benutzername / Username</label>
       <input
         type="text"
         class="form-control"
         id="user_name"
         name="user_name"
-        placeholder="Enter your username"
+        placeholder="Benutzername eingeben / Enter your username"
       />
     </div>
     <div class="form-group">
-      <label for="password1" class="lead">Password</label>
+      <label for="password1" class="lead">Passwort / Password</label>
       <input
         type="password"
         class="form-control"
         id="password1"
         name="password1"
-        placeholder="Enter your password"
+        placeholder="Passwort eingeben / Enter your password"
       />
     </div>
     <div class="form-group">
-      <label for="password2" class="lead">Password (Confirm)</label>
+      <label for="password2" class="lead">Passwort (Bestätigen / Confirm)</label>
       <input
         type="password"
         class="form-control"
         id="password2"
         name="password2"
-        placeholder="Confirm your password"
+        placeholder="Passwort bestätigen / Confirm your password"
       />
     </div>
     <div class="text-center">
       <div class="form-check">
         <input class="form-check-input bg-secondary" type="checkbox" value="" id="security" name="security">
         <label class="form-check-label lead text-body-secondary" for="security">
-          I have read and agree to the <a class="link-primary" href="https://bwsyncandshare.kit.edu/s/zpyey6NWd9fnbGf" target="_blank">Consent Form and Privacy Policy</a>.
+          Ich habe die 
+          <a class="link-primary" href="https://bwsyncandshare.kit.edu/s/zpyey6NWd9fnbGf" target="_blank">
+            Einwilligungserklärung und die Datenschutzerklärung
+          </a> gelesen und bin damit einverstanden.
+          <br>
+          <small>
+            (I have read and agree to the 
+            <a class="link-primary" href="https://bwsyncandshare.kit.edu/s/zpyey6NWd9fnbGf" target="_blank">
+              Consent Form and Privacy Policy
+            </a>.)
+          </small>
         </label>
       </div>
     </div>
     <br />
     <div class="d-grid gap-2 col-4 mx-auto">
-      <button type="submit" class="btn btn-primary" id="register" disabled>Register</button>
+      <button type="submit" class="btn btn-primary" id="register" disabled>
+        Registrieren / Register
+      </button>
     </div>
   </form>
 </section>

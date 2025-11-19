@@ -6,57 +6,67 @@ import json
 import datetime
 from flask_mail import Mail, Message
 from sqlalchemy import func
-from threading import Thread
+from threading import Thread  # NEW: for background matching
 
 views = Blueprint('views', __name__)
 
-# Function that only allows participants to start the interaction on the day of the interaction
+
+# function that only allows participants to start the interaction on the day of the interaction
 def is_button_disabled():
+    # current_time = datetime.datetime.now()
+    # target_time = datetime.datetime(2023, 7, 12, 13, 0, 0)  
+
+    # if current_time < target_time:
+    #     return True
+    # else:
     return False
+
 
 # Index Page or homepage of the application
 @views.route('/index', methods=['GET','POST'])
 def index():
     if request.method == 'POST':
+        topic = request.form.get("topic")
         return redirect(url_for('views.home'))
     else:
         return render_template('index.html', user=current_user)
 
 
-# ========================================
-# UPDATED - Home route with new matching system
-# ========================================
+# Theme home page view that is dependent upon having completed the first questionnaire
+# and upon being assigned to an interaction partner
 @views.route('/', methods=['GET', 'POST'])
 @login_required
 def home():
     if request.method == 'POST':
-        # Read topic from the form (coming from index.html buttons)
+        # read topic from the form (coming from index.html buttons)
         selected_topic = request.form.get('topic')
 
         if selected_topic:
             current_user.topic = selected_topic
             db.session.commit()
 
-        # Redirect to new questionnaire instead of demographics
+        # NEW: after saving topic, go to new 15-question questionnaire first
         return redirect(url_for('views.new_questionnaire'))
     
     if current_user.demo:
         button_disabled = is_button_disabled()
         partner = None
-        
-        # Check for matches using both old and new matching systems
         if current_user.haspartner:
-            # First check old system (partner_id)
-            if current_user.partner_id:
-                partner = User.query.get(current_user.partner_id)
-            else:
-                # Check new matching system
-                from .matching_service import MatchingService
-                matches = MatchingService.get_user_matches(current_user.id, status='accepted')
-                if matches:
-                    match = matches[0]
-                    partner_id = match.user_b_id if match.user_a_id == current_user.id else match.user_a_id
-                    partner = User.query.get(partner_id)
+            # OLD SYSTEM: use partner_id if present
+            partner = User.query.get(current_user.partner_id)
+
+            # OPTIONAL NEW SYSTEM FALLBACK: if no partner found but user is marked as having a partner,
+            # try to look up matches via MatchingService
+            if not partner:
+                try:
+                    from .matching_service import MatchingService
+                    matches = MatchingService.get_user_matches(current_user.id, status='accepted')
+                    if matches:
+                        match = matches[0]
+                        partner_id = match.user_b_id if match.user_a_id == current_user.id else match.user_a_id
+                        partner = User.query.get(partner_id)
+                except Exception:
+                    pass
         
         db.session.commit()
         return render_template("home.html", user=current_user, partner=partner, button_disabled=button_disabled)
@@ -88,20 +98,20 @@ def new_questionnaire():
             
             if result['is_extremist']:
                 flash(
-                    f'Your openness score: {openness:.1f}/2.0 ({category}). '
-                    'We need participants who are more open to different viewpoints. '
-                    'Thank you for your interest.',
+                    f'Ihr Offenheits-Score: {openness:.1f}/2.0 ({category}). '
+                    'Für diese Studie benötigen wir Teilnehmende, die offener für unterschiedliche Sichtweisen sind. '
+                    'Vielen Dank für Ihr Interesse.',
                     'error'
                 )
                 return redirect(url_for('views.index'))
             else:
                 flash(
-                    f'✓ Your openness score: {openness:.1f}/2.0 ({category}). '
-                    'You are eligible for matching!',
+                    f'✓ Ihr Offenheits-Score: {openness:.1f}/2.0 ({category}). '
+                    'Sie sind für ein Matching geeignet!',
                     'success'
                 )
                 
-                # Mark user as registered
+                # Mark user as registered (kompatibel mit bestehender Logik)
                 current_user.demo = True
                 db.session.commit()
                 
@@ -111,7 +121,7 @@ def new_questionnaire():
                 # Continue to existing questionnaire flow
                 return redirect(url_for('views.demographics'))
         else:
-            flash('Error saving responses. Please try again.', 'error')
+            flash('Fehler beim Speichern der Antworten. Bitte versuchen Sie es erneut.', 'error')
     
     return render_template('new_questionnaire.html', user=current_user)
 
@@ -120,7 +130,7 @@ def new_questionnaire():
 # NEW FUNCTION - Background Matching Task
 # ========================================
 def find_matches_for_user(user_id):
-    """Background task to find matches"""
+    """Background task to find matches using MatchingService"""
     from website import create_app
     from .matching_service import MatchingService
     
@@ -149,8 +159,8 @@ def find_matches_for_user(user_id):
                 
                 # Send email notifications
                 try:
-                    confirmation1 = Message('Match Confirmation', sender='TolerantTogether@gmail.com')
-                    confirmation2 = Message('Match Confirmation', sender='TolerantTogether@gmail.com')
+                    confirmation1 = Message('Zusage', sender='TolerantTogether@gmail.com')
+                    confirmation2 = Message('Zusage', sender='TolerantTogether@gmail.com')
                     confirmation1.add_recipient(user.email)
                     confirmation2.add_recipient(matched_user.email)
                     confirmation1.html = render_template('Email/zusage.html')
@@ -161,11 +171,8 @@ def find_matches_for_user(user_id):
                     print(f"Error sending email: {e}")
 
 
-# ========================================
-# EXISTING ROUTES - All in English
-# ========================================
-
 # Questionnaire 1, Part 1: demographic questions view
+# Writing of submitted answers into database
 @views.route('/demographics', methods=['POST', 'GET'])
 @login_required
 def demographics():
@@ -177,23 +184,25 @@ def demographics():
             job = request.form.get('job')
             
             if not gender or not age or not education or not job:
-                flash('Please select a valid answer for each question.', category='error')
+                flash('Bitte wähle für jede Frage eine gültige Antwort.', category='error')
             else:
                 current_user.gender = gender
                 current_user.age = age
                 current_user.education = education
                 current_user.job = job
                 db.session.commit()
-                flash('Demographic data successfully processed.', category='success')
-                return redirect(url_for('views.questions1'))
+                flash('Demographische Daten wurden erfolgreich verarbeitet.', category='success')
+                return redirect(url_for('views.endofq1'))
+
             
         except Exception as e:
-            flash('There was an error processing the demographic data.', category='error')
+            flash('Es gab einen Fehler bei der Verarbeitung der demographischen Daten.', category='error')
 
     return render_template('Questionnaire1/demographics.html', user=current_user)
 
 
 # Questionnaire 1, Part 2: questions on the topic
+# Writing of submitted answers into database
 @views.route('/q1', methods=['POST', 'GET'])
 @login_required
 def questions1():
@@ -230,13 +239,14 @@ def questions1():
             return redirect(url_for('views.questions2'))
 
         except Exception as e:
-            flash('There was an error processing the data. Please try again.', category='error')
+            flash('Es gab einen Fehler bei der Verarbeitung der Daten. Versuchen Sie es erneut', category='error')
 
     return render_template('Questionnaire1/questions1.html', user=current_user)
 
 
 # Questionnaire 1, Part 3: questions on the two constructs
-@views.route('Questionnaire1/q2', methods=['GET','POST'])
+# Writing of submitted answers into database
+@views.route('/Questionnaire1/q2', methods=['GET','POST'])
 @login_required
 def questions2():
     if request.method == 'POST':
@@ -251,16 +261,18 @@ def questions2():
             current_user.construct8 = request.form.get('construct8')
             current_user.demo = True
             db.session.commit()
-            flash('Registration was successful!', category='success')
+            flash('Anmeldung war erfolgreich!', category='success')
             return redirect(url_for('views.endofq1'))
 
         except Exception as e:
-            flash('There was an error processing the data. Please try again.', category='error')
+            flash('Es gab einen Fehler bei der Verarbeitung der Daten. Versuchen Sie es erneut', category='error')
 
     return render_template('Questionnaire1/questions2.html', user=current_user)
 
 
-# End of Questionnaire 1 page (OLD matching system - kept for backward compatibility)
+# End of Questionnaire 1 page
+# On this page the matching of conversation partners takes place
+# The system goes through the list of participants and searches for a partner with a different opinion and who is not assigned to another user
 @views.route('/Questionnaire1/end', methods=['GET','POST'])
 @login_required
 def endofq1():
@@ -268,7 +280,7 @@ def endofq1():
     if current_user.haspartner:
         return render_template('Questionnaire1/endofq1.html', user=current_user)
 
-    # Try to find a partner using OLD system (for backward compatibility)
+    # Try to find a partner
     partner_query = User.query.filter(
         User.classification != None,
         User.haspartner == False,
@@ -289,18 +301,18 @@ def endofq1():
         partner.meeting_id = current_user.id
         db.session.commit()
 
-        # Send email
+        # Try email
         try:
-            confirmation1 = Message('Confirmation', sender='TolerantTogether@gmail.com')
-            confirmation2 = Message('Confirmation', sender='TolerantTogether@gmail.com')
-            confirmation1.add_recipient(current_user.email)
-            confirmation2.add_recipient(partner.email)
-            confirmation1.html = render_template('Email/zusage.html')
-            confirmation2.html = render_template('Email/zusage.html')
-            mail.send(confirmation1)
-            mail.send(confirmation2)
+            zusage1 = Message('Zusage', sender='TolerantTogether@gmail.com')
+            zusage2 = Message('Zusage', sender='TolerantTogether@gmail.com')
+            zusage1.add_recipient(current_user.email)
+            zusage2.add_recipient(partner.email)
+            zusage1.html = render_template('Email/zusage.html')
+            zusage2.html = render_template('Email/zusage.html')
+            mail.send(zusage1)
+            mail.send(zusage2)
         except Exception as e:
-            flash('Error sending email.', category='error')
+            flash('Fehler beim Versenden der E-Mail.', category='error')
 
     return render_template('Questionnaire1/endofq1.html', user=current_user)
  
@@ -353,11 +365,12 @@ def opinion():
 @login_required
 def future():
     current_user.hasarrived = False
-    db.session.commit()
+    db.session.commit()  # add this line
     return render_template('Interaction/future.html', user=current_user)
 
 
 # Questionnaire 2: View of perspective-taking questionnaire
+# Writing of answers into database
 @views.route('/Questionnaire2/perspective', methods=['POST', 'GET'])
 @login_required
 def perspective():
@@ -376,12 +389,14 @@ def perspective():
             return redirect(url_for('views.score'))
         
         except Exception as e:
-            flash('There was an error processing the answers.', category='error')
-            
+            flash('Es gab einen Fehler bei der Verarbeitung der Antworten.', category='error')
+            # Handle the exception or log the error if needed
+                
     return render_template('Questionnaire2/perspective.html', user=current_user)
     
 
 # Questionnaire 2: Perspective-Taking score view
+# Calculation of perspective score
 @views.route('/Questionnaire2/score', methods=['POST', 'GET'])
 @login_required
 def score():
@@ -402,23 +417,25 @@ def score():
             score = round(((48 - (cla + c1 + c2 + c3 + e1 + e2 + e3 + f)) / 48) * 100, 2)
             
             current_user.perspective_score = score
+
             db.session.commit()
 
             return render_template('Questionnaire2/score.html', user=current_user, score=score)
 
     except Exception as e:
-        flash('There was an error calculating the score.', category='error')
+        flash('Es gab einen Fehler bei der Berechnung des Scores.', category='error')
+        # Handle the exception or log the error if needed
 
 
 # Questionnaire 2: View of the Evaluation of the interaction behaviour and the construct
+# Writing of submitted answers into database
 @views.route('/Questionnaire2/evaluation', methods=['POST', 'GET'])
 @login_required
 def evaluation():
     if request.method == 'POST':
         try:
             attributes = [
-                'eval11', 'eval12', 'eval13', 'eval14', 'construct12', 'construct22', 
-                'construct32', 'construct42', 'construct52', 'construct62', 'construct72', 'construct82'
+                'eval11', 'eval12', 'eval13', 'eval14', 'construct12', 'construct22', 'construct32', 'construct42', 'construct52', 'construct62', 'construct72', 'construct82'
             ]
             
             for attr in attributes:
@@ -434,12 +451,14 @@ def evaluation():
             return redirect(url_for('views.evaluation2'))
         
         except Exception as e:
-            flash('There was an error processing the data.', category='error')
+            flash('Es gab einen Fehler bei der Verarbeitung der Daten.', category='error')
+            # Handle the exception or log the error if needed
 
     return render_template('Questionnaire2/evaluation.html', user=current_user)
 
 
 # Questionnaire 2: View of the evaluation of the application
+# Writing of submitted answers into database
 @views.route('/Questionnaire2/evaluation2', methods=['POST', 'GET'])
 @login_required
 def evaluation2():
@@ -453,15 +472,16 @@ def evaluation2():
                 setattr(current_user, attr, request.form.get(attr))
 
             db.session.commit()
+
             return redirect(url_for('views.evaluation3'))
-            
         except Exception as e:
-            flash('There was an error processing the data.', category='error')
+            flash('Es gab einen Fehler bei der Verarbeitung der Daten.', category='error')
 
     return render_template('Questionnaire2/evaluation2.html', user=current_user)
 
 
 # Questionnaire 2: View of the evaluation of the application
+# Writing of submitted answers into database
 @views.route('/Questionnaire2/evaluation3', methods=['POST', 'GET'])
 @login_required
 def evaluation3():
@@ -475,26 +495,29 @@ def evaluation3():
                 setattr(current_user, attr, request.form.get(attr))
             
             db.session.commit()
+            
             return redirect(url_for('views.reward'))
         
         except Exception as e:
-            flash('There was an error processing the data.', category='error')
+            flash('Es gab einen Fehler bei der Verarbeitung der Daten.', category='error')
+            # Handle the exception or log the error if needed
 
     return render_template('Questionnaire2/evaluation3.html', user=current_user)
 
 
-# View of final page where participant is informed about their reward
+# View of final page where participant is informed about his reward
+# Automated email containing information on paying process
 @views.route('/Reward', methods=['POST', 'GET'])
 @login_required
 def reward():
     partner = User.query.get(current_user.partner_id)
     try:
         if current_user.behaviour_score:
-            payout = Message('Payout Information', sender='TolerantTogether@gmail.com', recipients=[current_user.email])
-            payout.html = render_template('Email/auszahlung.html', user=current_user)
-            mail.send(payout)
+            auszahlung = Message('Auszahlung', sender='TolerantTogether@gmail.com', recipients=[current_user.email])
+            auszahlung.html = render_template('Email/auszahlung.html', user=current_user)
+            mail.send(auszahlung)
 
     except Exception as e:
-        flash('There was an error sending the payout email. Please contact TolerantTogether@gmail.com', category='error')
+        flash('Es gab einen Fehler beim Versenden der E-Mail bezüglich der Auszahlung. Bitte Kontaktieren Sie TolerantTogether@gmail.com', category='error')
         
     return render_template('Questionnaire2/reward.html', user=current_user, partner=partner)

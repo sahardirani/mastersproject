@@ -8,7 +8,7 @@ from flask_mail import Mail
 from dotenv import load_dotenv
 from datetime import datetime
 import time
-from threading import Thread  # ← CRITICAL: Added for scheduler
+from threading import Thread  # for scheduler threads
 
 # Load environment variables from .env (DATABASE_URL)
 load_dotenv()
@@ -21,7 +21,7 @@ def create_app():
     app = Flask(__name__, instance_relative_config=True)
     app.config['SECRET_KEY'] = 'hjshjhdjah kjshkjdhjs'
 
-    # Ensure instance folder exists (still ok to have, even if DB is remote)
+    # Ensure instance folder exists
     try:
         os.makedirs(app.instance_path, exist_ok=True)
     except OSError:
@@ -41,12 +41,14 @@ def create_app():
 
     print("📌 USING DATABASE:", app.config['SQLALCHEMY_DATABASE_URI'])
 
-    # Email Configuration
+    # 📧 Email Configuration (kept from first version)
     app.config['MAIL_SERVER'] = 'smtp.gmail.com'
-    app.config['MAIL_PORT'] = 465
-    app.config['MAIL_USE_SSL'] = True
+    app.config['MAIL_PORT'] = 587
+    app.config['MAIL_USE_TLS'] = True
+    app.config['MAIL_USE_SSL'] = False
     app.config['MAIL_USERNAME'] = 'togethertolerant@gmail.com'
-    app.config['MAIL_PASSWORD'] = 'asdqweyxc123'
+    app.config['MAIL_PASSWORD'] = 'xnqo fixw edjp zcdj'  # 16-char app password
+    app.config['MAIL_DEFAULT_SENDER'] = ('Tolerant Together', 'togethertolerant@gmail.com')
 
     mail.init_app(app)
     db.init_app(app)
@@ -57,9 +59,7 @@ def create_app():
     app.register_blueprint(views, url_prefix='/')
     app.register_blueprint(auth, url_prefix='/')
 
-    # ========================================
-    # ← ADD THIS: Register matching blueprint
-    # ========================================
+    # NEW: matching blueprint
     from .matching_routes import matching_bp
     app.register_blueprint(matching_bp)
 
@@ -69,10 +69,8 @@ def create_app():
     with app.app_context():
         db.create_all()
         db.session.commit()
-        
-        # ========================================
-        # ← ADD THIS: Initialize opinion dimensions
-        # ========================================
+
+        # NEW: initialize opinion dimensions
         initialize_opinion_dimensions()
 
     login_manager = LoginManager()
@@ -100,27 +98,38 @@ def create_app():
 
     @app.errorhandler(500)
     def handle_internal_server_error(e):
-        # Log the error or take appropriate action
         return "Internal Server Error", 500
 
-    # ========================================
-    # ← ADD THIS: Start autonomous scheduler (MOVED INSIDE create_app)
-    # ========================================
-    # Comment this out for debugging if needed:
+    # ✅ TEST EMAIL ROUTE — for debugging mail (kept from first version)
+    @app.route("/test-receive")
+    def test_receive():
+        from flask_mail import Message
+        try:
+            msg = Message(
+                subject="Test to Gmail Inbox",
+                recipients=["togethertolerant@gmail.com"],
+                body="If you see this, receiving works."
+            )
+            mail.send(msg)
+            return "Email sent to Gmail inbox!"
+        except Exception as e:
+            print("MAIL ERROR:", e)
+            return f"Error while sending mail: {e}", 500
+
+    # NEW: start autonomous matching scheduler
     init_scheduler(app)
 
     return app
 
 
 def create_database(app):
-    # Generic helper: create all tables on the current DB
     with app.app_context():
         db.create_all()
         print('Created Database!')
 
 
 # ========================================
-# ← ADD ALL OF THESE NEW FUNCTIONS BELOW
+# Opinion dimensions + questionnaire logic
 # ========================================
 
 def initialize_opinion_dimensions():
@@ -130,7 +139,7 @@ def initialize_opinion_dimensions():
     B. Topic-Specific (10 questions) - For opposition matching
     """
     from .models import OpinionDimension
-    
+
     dimensions = [
         # ============================================================
         # A. GENERAL ATTITUDE TOWARD OPPOSING VIEWS (5 questions)
@@ -175,7 +184,7 @@ def initialize_opinion_dimensions():
             'description': 'I believe it\'s possible to find common ground between opposing views on this issue.',
             'weight': 1.0
         },
-        
+
         # ============================================================
         # B. TOPIC-SPECIFIC ATTITUDE (10 questions)
         # ============================================================
@@ -260,7 +269,7 @@ def initialize_opinion_dimensions():
             'weight': 1.6
         },
     ]
-    
+
     for dim_data in dimensions:
         existing = OpinionDimension.query.filter_by(name=dim_data['name']).first()
         if not existing:
@@ -274,9 +283,9 @@ def initialize_opinion_dimensions():
                 is_active=True
             )
             db.session.add(dimension)
-    
+
     db.session.commit()
-    print(f"✓ Initialized 15 opinion dimensions")
+    print("✓ Initialized 15 opinion dimensions")
 
 
 def save_questionnaire_responses(user_id, form_data):
@@ -285,30 +294,30 @@ def save_questionnaire_responses(user_id, form_data):
     Using -2 to +2 scale (no conversion needed)
     """
     from .models import User, UserOpinion, OpinionDimension
-    
+
     user = User.query.get(user_id)
     if not user:
         return None
-    
+
     attitude_scores = []
-    
+
     # Process attitude questions (1-5)
     for i in range(1, 6):
         field_name = f'attitude{i}'
         if field_name in form_data:
             score = float(form_data[field_name])
-            
+
             dimension = OpinionDimension.query.filter_by(
                 question_type='attitude',
                 question_number=i
             ).first()
-            
+
             if dimension:
                 opinion = UserOpinion.query.filter_by(
                     user_id=user_id,
                     dimension_id=dimension.id
                 ).first()
-                
+
                 if opinion:
                     opinion.score = score
                     opinion.updated_at = datetime.utcnow()
@@ -319,26 +328,26 @@ def save_questionnaire_responses(user_id, form_data):
                         score=score
                     )
                     db.session.add(opinion)
-                
+
                 attitude_scores.append(score)
-    
+
     # Process matching questions (1-10)
     for i in range(1, 11):
         field_name = f'match{i}'
         if field_name in form_data:
             score = float(form_data[field_name])
-            
+
             dimension = OpinionDimension.query.filter_by(
                 question_type='matching',
                 question_number=i
             ).first()
-            
+
             if dimension:
                 opinion = UserOpinion.query.filter_by(
                     user_id=user_id,
                     dimension_id=dimension.id
                 ).first()
-                
+
                 if opinion:
                     opinion.score = score
                     opinion.updated_at = datetime.utcnow()
@@ -349,15 +358,15 @@ def save_questionnaire_responses(user_id, form_data):
                         score=score
                     )
                     db.session.add(opinion)
-    
+
     # Calculate openness score (average of 5 attitude questions)
     if attitude_scores:
         openness_score = sum(attitude_scores) / len(attitude_scores)
         user.openness_score = openness_score
         user.is_extremist = openness_score < 0.0  # Threshold: below neutral
-    
+
     db.session.commit()
-    
+
     return {
         'openness_score': user.openness_score,
         'is_extremist': user.is_extremist,
@@ -380,24 +389,24 @@ def get_openness_category(openness_score):
 
 
 # ========================================
-# Scheduler Class (moved from matching_routes.py)
+# Scheduler Class
 # ========================================
 class MatchingScheduler:
     def __init__(self, app):
         self.app = app
         self.running = False
         self.thread = None
-    
+
     def start(self):
         if not self.running:
             self.running = True
             self.thread = Thread(target=self._run_scheduler, daemon=True)
             self.thread.start()
             print("✓ Autonomous matching scheduler started")
-    
+
     def _run_scheduler(self):
         from .matching_service import MatchingService
-        
+
         while self.running:
             try:
                 with self.app.app_context():
@@ -407,7 +416,7 @@ class MatchingScheduler:
                         print(f"✓ Expired {expired} old matches")
             except Exception as e:
                 print(f"✗ Scheduler error: {e}")
-            
+
             time.sleep(3600)  # Run every hour
 
 
@@ -418,6 +427,7 @@ scheduler = None
 def init_scheduler(app):
     """Initialize and start the scheduler"""
     global scheduler
-    scheduler = MatchingScheduler(app)
-    scheduler.start()
+    if scheduler is None:
+        scheduler = MatchingScheduler(app)
+        scheduler.start()
     return scheduler
