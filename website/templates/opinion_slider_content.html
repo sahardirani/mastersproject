@@ -1,0 +1,25 @@
+{# opinion_slider_content.html #}
+<div class="form-group mb-5">
+    <label for="{{ name_prefix }}{{ question_number }}" class="lead">{{ question_number }}. {{ question_text }}</label>
+    <div class="input-group">
+        <input 
+            type="range" 
+            class="form-range custom-track-color" 
+            min="-2" 
+            max="2" 
+            value="0" 
+            step="1" 
+            id="{{ name_prefix }}{{ question_number }}" 
+            name="{{ name_prefix }}{{ question_number }}"
+            required
+        >
+        <span class="input-group-text bg-light fw-bold" style="width: 50px;" id="current-value-{{ name_prefix }}{{ question_number }}">0</span>
+    </div>
+    <div class="custom-labels">
+        <p class="range-label">Strongly Disagree (-2)</p>
+        <p class="range-label">Disagree (-1)</p>
+        <p class="range-label">Neutral (0)</p>
+        <p class="range-label">Agree (+1)</p>
+        <p class="range-label">Strongly Agree (+2)</p>
+    </div>
+</div>

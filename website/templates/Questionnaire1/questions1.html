@@ -1,228 +1,159 @@
 {% extends "base.html" %}
-{% block titel %}First Questionnaire topic questions{% endblock %}
+{% block title %}Opinion Questionnaire{% endblock %}
 {% block content %}
 <section class="py-3 text-center container">
     <div class="row py-lg-4">
-      <div class="col-lg-8 col-md-8 mx-auto">
-        <h1 class="fw-light">Anmeldung zur Diskussion</h1>
-        <p class="lead text-body-secondary">
-            <br>Bitte geben Sie an, inwieweit Sie den folgenden Aussagen zustimmen. 
-            <br>Antworten Sie bitte wahrheitsgetreu. Auch diese Daten werden nur anonymisiert für Auswertungszwecke verwendet.
-        </p>
-      </div>
+        <div class="col-lg-8 mx-auto">
+            <h1 class="fw-light">Political Dialogue Questionnaire</h1>
+            <p class="lead text-body-secondary">
+                To find a suitable discussion partner with an opposing viewpoint, please rate your agreement with the following 15 statements on a scale from -2 (Strongly Disagree) to +2 (Strongly Agree).
+            </p>
+            <p class="lead text-body-secondary">
+                You selected the topic: <b>{{ user.topic|default('unknown')|capitalize|replace('_', ' ') }}</b>
+            </p>
+        </div>
     </div>
 </section>
 
-<div class="py-3 text-center">
-    <h3 class="fw-light">2. Meinungsumfrage</h3>
+<div class="album py-3 bg-body-tertiary">
+    <div class="container">
+        {# Replace 'questionnaire.submit' with your actual route endpoint #}
+        <form method="POST" action="{{ url_for('questionnaire.submit') }}">
+            {{ csrf_token() }} {# REQUIRED: Add CSRF protection #}
+            
+            {# Display validation errors if any #}
+            {% if form_errors %}
+            <div class="alert alert-danger col-md-10 mx-auto" role="alert">
+                Please correct the following errors:
+                <ul class="mb-0">
+                {% for field, errors in form_errors.items() %}
+                    <li><strong>{{ field }}:</strong> {{ errors|join(', ') }}</li>
+                {% endfor %}
+                </ul>
+            </div>
+            {% endif %}
+
+            <div class="py-3 col-md-10 shadow-sm rounded mx-auto bg-white p-4">
+                
+                <h3 class="fw-bold mb-4">Part A: Openness to Different Views (5 Questions)</h3>
+                <p class="lead text-body-secondary">Your answers here determine if you are eligible to participate.</p>
+
+                {% set name_prefix = 'attitude' %}
+                
+                {# Attitude Question 1 #}
+                {% set question_number = 1 %}
+                {% set question_text = "I am open to hearing opinions on this topic that differ from my own." %}
+                {% include 'opinion_slider_content.html' with context %}
+
+                {# Attitude Question 2 #}
+                {% set question_number = 2 %}
+                {% set question_text = "I can see both positive and negative aspects of this issue." %}
+                {% include 'opinion_slider_content.html' with context %}
+
+                {# Attitude Question 3 #}
+                {% set question_number = 3 %}
+                {% set question_text = "I would be willing to adjust my view if presented with convincing evidence." %}
+                {% include 'opinion_slider_content.html' with context %}
+
+                {# Attitude Question 4 #}
+                {% set question_number = 4 %}
+                {% set question_text = "People who disagree with me on this topic may still have valid concerns." %}
+                {% include 'opinion_slider_content.html' with context %}
+
+                {# Attitude Question 5 #}
+                {% set question_number = 5 %}
+                {% set question_text = "I believe it's possible to find common ground between opposing views on this issue." %}
+                {% include 'opinion_slider_content.html' with context %}
+
+
+                <h3 class="fw-bold mt-5 mb-4">Part B: Topic-Specific Attitude (10 Questions)</h3>
+                <p class="lead text-body-secondary">These answers will be used to match you with a suitable partner with an opposing view.</p>
+
+                {% set name_prefix = 'match' %}
+                
+                {# Matching Question 1 #}
+                {% set question_number = 1 %}
+                {% set question_text = "I generally support the main idea or goal of this topic." %}
+                {% include 'opinion_slider_content.html' with context %}
+
+                {# Matching Question 2 #}
+                {% set question_number = 2 %}
+                {% set question_text = "I believe the benefits of this topic outweigh its risks." %}
+                {% include 'opinion_slider_content.html' with context %}
+
+                {# Matching Question 3 #}
+                {% set question_number = 3 %}
+                {% set question_text = "I would personally take action in support of this issue." %}
+                {% include 'opinion_slider_content.html' with context %}
+                
+                {# Matching Question 4 #}
+                {% set question_number = 4 %}
+                {% set question_text = "I think this issue has an overall positive impact on society." %}
+                {% include 'opinion_slider_content.html' with context %}
+                
+                {# Matching Question 5 #}
+                {% set question_number = 5 %}
+                {% set question_text = "I believe this topic deserves more public attention." %}
+                {% include 'opinion_slider_content.html' with context %}
+                
+                {# Matching Question 6 #}
+                {% set question_number = 6 %}
+                {% set question_text = "I trust the experts or authorities who promote this topic." %}
+                {% include 'opinion_slider_content.html' with context %}
+                
+                {# Matching Question 7 #}
+                {% set question_number = 7 %}
+                {% set question_text = "I feel emotionally connected to this issue." %}
+                {% include 'opinion_slider_content.html' with context %}
+                
+                {# Matching Question 8 #}
+                {% set question_number = 8 %}
+                {% set question_text = "I think opposing views on this topic are often based on misunderstanding." %}
+                {% include 'opinion_slider_content.html' with context %}
+                
+                {# Matching Question 9 #}
+                {% set question_number = 9 %}
+                {% set question_text = "I believe addressing this issue should be a priority." %}
+                {% include 'opinion_slider_content.html' with context %}
+                
+                {# Matching Question 10 #}
+                {% set question_number = 10 %}
+                {% set question_text = "I think this topic aligns with my personal values." %}
+                {% include 'opinion_slider_content.html' with context %}
+
+
+                <div class="d-grid gap-2 col-6 mx-auto mt-5">
+                    <button class="btn btn-primary btn-lg" type="submit">Proceed to Demographics</button>
+                </div>
+            </div>
+        </form>
+    </div>
 </div>
 
-<div class="album py-5 bg-body-tertiary">
-  <div class="col-6 mx-auto">
+{% endblock %}
 
-    {# Fallback: wenn topic nicht gesetzt ist, behandeln wie Klima #}
-    {% set topic = user.topic or 'climate' %}
+{% block javascript %}
+<script type="text/javascript">
+    // Function to update the displayed value next to the slider thumb
+    function updateSliderValue(sliderId) {
+        const slider = document.getElementById(sliderId);
+        const valueDisplay = document.getElementById('current-value-' + sliderId);
+        if (slider && valueDisplay) {
+            valueDisplay.textContent = slider.value;
+        }
+    }
 
-    {# ---------- TOPIK-SPEZIFISCHE FRAGEN (1–3) ---------- #}
-    {% if topic == 'climate' %}
-        <label for="climate1" class="form-label">
-            Ich habe Angst vor den Folgen des Klimawandels.
-        </label>
-        <input type="range" class="form-range custom-track-color" min="1" max="7"
-               id="climate1" name="climate1" form="questionsone">
-        <div class="custom-labels">
-            <span class="fw-light">Stimme gar nicht zu</span>
-            <span class="fw-light">neutral</span>
-            <span class="fw-light">Stimme komplett zu</span>
-        </div>
-
-        <label for="climate2" class="form-label">
-            Ich habe Angst vor den Folgen zu drastischer Klimaschutzmaßnahmen.
-        </label>
-        <input type="range" class="form-range custom-track-color" min="1" max="7" step="1"
-               id="climate2" name="climate2" form="questionsone">
-        <div class="custom-labels">
-            <span class="fw-light">Stimme gar nicht zu</span>
-            <span class="fw-light">neutral</span>
-            <span class="fw-light">Stimme komplett zu</span>
-        </div>
-
-        <label for="climate3" class="form-label">
-            Ich habe das Gefühl, meine Sorgen bezüglich des Klimaschutzes werden von der Politik nicht ernst genommen.
-        </label>
-        <input type="range" class="form-range custom-track-color" min="1" max="7"
-               id="climate3" name="climate3" form="questionsone">
-        <div class="custom-labels">
-            <span class="fw-light">Stimme gar nicht zu</span>
-            <span class="fw-light">neutral</span>
-            <span class="fw-light">Stimme komplett zu</span>
-        </div>
-
-        <label for="classify1" class="form-label">
-            Ich finde, politischer Aktivismus im Namen des Klimaschutzes, wie das Blockieren von Straßen durch "Klima-Kleber" 
-            oder das Bewerfen von Kunstwerken mit Lebensmitteln, ist insgesamt betrachtet sinnvoll und positiv.
-        </label>
-    {% elif topic == 'ai_employment' %}
-        <label for="ai_q1" class="form-label">
-            Ich habe Angst davor, dass Künstliche Intelligenz in Zukunft viele Arbeitsplätze ersetzen wird.
-        </label>
-        <input type="range" class="form-range custom-track-color" min="1" max="7"
-               id="ai_q1" name="ai_q1" form="questionsone">
-        <div class="custom-labels">
-            <span class="fw-light">Stimme gar nicht zu</span>
-            <span class="fw-light">neutral</span>
-            <span class="fw-light">Stimme komplett zu</span>
-        </div>
-
-        <label for="ai_q2" class="form-label">
-            Ich glaube, dass Künstliche Intelligenz eher neue Chancen auf dem Arbeitsmarkt schafft, als bestehende Jobs zu zerstören.
-        </label>
-        <input type="range" class="form-range custom-track-color" min="1" max="7"
-               id="ai_q2" name="ai_q2" form="questionsone">
-        <div class="custom-labels">
-            <span class="fw-light">Stimme gar nicht zu</span>
-            <span class="fw-light">neutral</span>
-            <span class="fw-light">Stimme komplett zu</span>
-        </div>
-
-        <label for="ai_q3" class="form-label">
-            Ich habe das Gefühl, dass Politik und Gesellschaft nicht ausreichend auf die Auswirkungen von KI auf den Arbeitsmarkt vorbereitet sind.
-        </label>
-        <input type="range" class="form-range custom-track-color" min="1" max="7"
-               id="ai_q3" name="ai_q3" form="questionsone">
-        <div class="custom-labels">
-            <span class="fw-light">Stimme gar nicht zu</span>
-            <span class="fw-light">neutral</span>
-            <span class="fw-light">Stimme komplett zu</span>
-        </div>
-
-        <label for="classify1" class="form-label">
-            Insgesamt betrachtet halte ich den zunehmenden Einsatz von Künstlicher Intelligenz auf dem Arbeitsmarkt für sinnvoll und positiv.
-        </label>
-    {% elif topic == 'freedom_speech' %}
-        <label for="speech_q1" class="form-label">
-            Ich finde es wichtig, dass Menschen auf sozialen Medien ihre Meinung frei äußern können, auch wenn diese polarisierend ist.
-        </label>
-        <input type="range" class="form-range custom-track-color" min="1" max="7"
-               id="speech_q1" name="speech_q1" form="questionsone">
-        <div class="custom-labels">
-            <span class="fw-light">Stimme gar nicht zu</span>
-            <span class="fw-light">neutral</span>
-            <span class="fw-light">Stimme komplett zu</span>
-        </div>
-
-        <label for="speech_q2" class="form-label">
-            Ich finde, dass soziale Medien stärker gegen Hassrede und Desinformation vorgehen sollten, auch wenn dies die Meinungsfreiheit einschränkt.
-        </label>
-        <input type="range" class="form-range custom-track-color" min="1" max="7"
-               id="speech_q2" name="speech_q2" form="questionsone">
-        <div class="custom-labels">
-            <span class="fw-light">Stimme gar nicht zu</span>
-            <span class="fw-light">neutral</span>
-            <span class="fw-light">Stimme komplett zu</span>
-        </div>
-
-        <label for="speech_q3" class="form-label">
-            Ich habe das Gefühl, dass die Regeln für Inhalte auf sozialen Medien unfair oder intransparent sind.
-        </label>
-        <input type="range" class="form-range custom-track-color" min="1" max="7"
-               id="speech_q3" name="speech_q3" form="questionsone">
-        <div class="custom-labels">
-            <span class="fw-light">Stimme gar nicht zu</span>
-            <span class="fw-light">neutral</span>
-            <span class="fw-light">Stimme komplett zu</span>
-        </div>
-
-        <label for="classify1" class="form-label">
-            Insgesamt betrachtet halte ich die Art und Weise, wie soziale Medien mit Meinungsfreiheit umgehen, für sinnvoll und positiv.
-        </label>
-    {% endif %}
-
-    {# ---------- CLASSIFICATION SLIDER (gemeinsam, Text oben variiert) ---------- #}
-    <input type="range" class="form-range custom-track-color" min="1" max="7"
-           id="classify1" name="classify1" form="questionsone">
-    <div class="custom-labels">
-        <span class="fw-light">Stimme gar nicht zu</span>
-        <span class="fw-light">neutral</span>
-        <span class="fw-light">Stimme komplett zu</span>
-    </div>
-
-    {# ---------- EMOTION / FUTURE (gemeinsam für alle Themen) ---------- #}
-    {% if topic == 'climate' %}
-        <p class="form-label">
-            Politischer Aktivismus, wie das Blockieren von Straßen durch sogenannte Klima-Kleber oder die Verunreinigung von Kunstwerken,...
-        </p>
-    {% elif topic == 'ai_employment' %}
-        <p class="form-label">
-            Der zunehmende Einsatz von Künstlicher Intelligenz in verschiedensten Bereichen der Arbeitswelt,...
-        </p>
-    {% elif topic == 'freedom_speech' %}
-        <p class="form-label">
-            Die Art und Weise, wie soziale Medien mit Meinungsfreiheit, Moderation und der Sperrung von Inhalten umgehen,...
-        </p>
-    {% endif %}
-
-    <label for="emotion1" class="form-label">... machen mich wütend.</label>
-    <input type="range" class="form-range custom-track-color" min="1" max="7"
-           id="emotion1" name="emotion1" form="questionsone">
-    <div class="custom-labels">
-        <span class="fw-light">Stimme gar nicht zu</span>
-        <span class="fw-light">neutral</span>
-        <span class="fw-light">Stimme komplett zu</span>
-    </div>
-
-    <label for="emotion2" class="form-label">... belustigen mich.</label>
-    <input type="range" class="form-range custom-track-color" min="1" max="7"
-           id="emotion2" name="emotion2" form="questionsone">
-    <div class="custom-labels">
-        <span class="fw-light">Stimme gar nicht zu</span>
-        <span class="fw-light">neutral</span>
-        <span class="fw-light">Stimme komplett zu</span>
-    </div>
-
-    <label for="emotion3" class="form-label">... begeistern mich.</label>
-    <input type="range" class="form-range custom-track-color" min="1" max="7"
-           id="emotion3" name="emotion3" form="questionsone">
-    <div class="custom-labels">
-        <span class="fw-light">Stimme gar nicht zu</span>
-        <span class="fw-light">neutral</span>
-        <span class="fw-light">Stimme komplett zu</span>
-    </div>
-
-    {% if topic == 'climate' %}
-        <label for="future" class="form-label">
-            Politischer Aktivismus, wie das Blockieren von Straßen durch Klima-Kleber oder das Verunreinigen von Kunstwerken, 
-            ist erfolgreich darin, Politik und Gesellschaft zu einem verstärkten Engagement für den Klimaschutz zu bewegen.
-        </label>
-    {% elif topic == 'ai_employment' %}
-        <label for="future" class="form-label">
-            Politische Maßnahmen und gesellschaftliche Debatten zum Thema Künstliche Intelligenz werden in Zukunft 
-            dazu beitragen, dass negative Folgen für den Arbeitsmarkt begrenzt werden.
-        </label>
-    {% elif topic == 'freedom_speech' %}
-        <label for="future" class="form-label">
-            In Zukunft wird ein besserer Ausgleich zwischen Meinungsfreiheit und Schutz vor Hassrede 
-            und Desinformation auf sozialen Medien gefunden werden.
-        </label>
-    {% endif %}
-
-    <input type="range" class="form-range custom-track-color" min="1" max="7"
-           id="future" name="future" form="questionsone">
-    <div class="custom-labels">
-        <span class="fw-light">Stimme gar nicht zu</span>
-        <span class="fw-light">neutral</span>
-        <span class="fw-light">Stimme komplett zu</span>
-    </div>
-  </div>
-
-  <div class="col-8 mx-auto">
-    <hr class="my-4">
-    <form action="{{ url_for('views.questions1') }}" method="post" id="questionsone">
-        <div class="d-grid gap-2 col-6 mx-auto">
-            <button class="btn btn-primary" type="submit" value="submit">Weiter</button>
-        </div>
-    </form>
-  </div>
-</div>
-
+    // Initialize values and attach event listeners dynamically
+    document.addEventListener('DOMContentLoaded', () => {
+        // Auto-discover all slider inputs - no manual ID maintenance needed
+        const sliders = document.querySelectorAll('input[type="range"]');
+        
+        sliders.forEach(slider => {
+            // Initial update
+            updateSliderValue(slider.id);
+            // Attach event listener for real-time update
+            slider.addEventListener('input', () => updateSliderValue(slider.id));
+        });
+    });
+</script>
 {% endblock %}
