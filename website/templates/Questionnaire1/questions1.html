@@ -18,7 +18,8 @@
 <div class="album py-3 bg-body-tertiary">
     <div class="container">
         {# Replace 'questionnaire.submit' with your actual route endpoint #}
-        <form method="POST" action="{{ url_for('questionnaire.submit') }}">
+        <form method="POST" action="{{ url_for('views.questions1') }}">
+
             {{ csrf_token() }} {# REQUIRED: Add CSRF protection #}
             
             {# Display validation errors if any #}
