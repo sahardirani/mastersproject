@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template, request, flash, jsonify, url_for, redirect
+from flask import Blueprint, render_template, request, flash, jsonify, url_for, redirect, session
 from flask_login import login_required, current_user
 from .models import User
 from . import db, mail
@@ -46,7 +46,8 @@ def home():
             db.session.commit()
 
         # NEW: after saving topic, go to new 15-question questionnaire first
-        return redirect(url_for('views.new_questionnaire'))
+        return redirect(url_for('views.new_questionnaire_part1'))
+
     
     if current_user.demo:
         button_disabled = is_button_disabled()
@@ -73,6 +74,19 @@ def home():
     
     return render_template("home.html", user=current_user)
 
+@views.route('/new_questionnaire/part1', methods=['GET', 'POST'])
+@login_required
+def new_questionnaire_part1():
+    if request.method == 'POST':
+        # store attitude1–5 temporarily in the session
+        for i in range(1, 6):
+            key = f'attitude{i}'
+            session[key] = request.form.get(key)
+        # go to part B
+        return redirect(url_for('views.new_questionnaire'))
+
+    # template with only the first 5 questions
+    return render_template('new_questionnaire_part1.html', user=current_user)
 
 # ========================================
 # NEW ROUTE - 15-Question Questionnaire
@@ -80,51 +94,59 @@ def home():
 @views.route('/new_questionnaire', methods=['GET', 'POST'])
 @login_required
 def new_questionnaire():
-    """New 15-question questionnaire with -2 to +2 scale"""
-    # Import the functions from __init__.py where they are defined
     from . import save_questionnaire_responses, get_openness_category
     from .matching_service import MatchingService
-    
+
     if request.method == 'POST':
-        # Save all 15 responses
+        # 1) Collect attitude1–5 from the session (Part A)
+        combined_data = {}
+        for i in range(1, 6):
+            key = f'attitude{i}'
+            if key in session:
+                combined_data[key] = session[key]
+
+        # 2) Add all Part B fields (match1–10) from this form
+        combined_data.update(request.form.to_dict())
+
+        # 3) Save all 15 responses together
         result = save_questionnaire_responses(
             user_id=current_user.id,
-            form_data=request.form
+            form_data=combined_data
         )
-        
+
         if result:
             openness = result['openness_score']
             category = get_openness_category(openness)
-            
+
             if result['is_extremist']:
+                # Kind message, no score shown
                 flash(
-                    f'Ihr Offenheits-Score: {openness:.1f}/2.0 ({category}). '
-                    'Für diese Studie benötigen wir Teilnehmende, die offener für unterschiedliche Sichtweisen sind. '
-                    'Vielen Dank für Ihr Interesse.',
+                    'Thank you very much for taking the time to complete the questionnaire. '
+                    'Unfortunately, based on your answers, you do not meet the eligibility criteria for this study. '
+                    'We are sorry for not inviting you to a dialogue session.',
                     'error'
                 )
                 return redirect(url_for('views.index'))
             else:
+                # Neutral / positive message, no score shown
                 flash(
-                    f'✓ Ihr Offenheits-Score: {openness:.1f}/2.0 ({category}). '
-                    'Sie sind für ein Matching geeignet!',
+                    'Thank you for completing the questionnaire. '
+                    'Your responses have been successfully recorded and you are eligible to continue in the study.',
                     'success'
                 )
-                
-                # Mark user as registered (kompatibel mit bestehender Logik)
+
                 current_user.demo = True
                 db.session.commit()
-                
-                # Trigger background matching
+
                 Thread(target=find_matches_for_user, args=(current_user.id,)).start()
-                
-                # Continue to existing questionnaire flow
+
+                # after both parts → demographics
                 return redirect(url_for('views.demographics'))
         else:
-            flash('Fehler beim Speichern der Antworten. Bitte versuchen Sie es erneut.', 'error')
-    
-    return render_template('new_questionnaire.html', user=current_user)
+            flash('An error occurred while saving your answers. Please try again.', 'error')
 
+    # GET: show only Part B (match1–10)
+    return render_template('new_questionnaire_part2.html', user=current_user)
 
 # ========================================
 # NEW FUNCTION - Background Matching Task
@@ -191,12 +213,12 @@ def demographics():
                 current_user.education = education
                 current_user.job = job
                 db.session.commit()
-                flash('Demographische Daten wurden erfolgreich verarbeitet.', category='success')
+                flash('Demographic Data  Daten was saved successfully.', category='success')
                 return redirect(url_for('views.endofq1'))
 
             
         except Exception as e:
-            flash('Es gab einen Fehler bei der Verarbeitung der demographischen Daten.', category='error')
+            flash('There was an error in the processing of the demographic data.', category='error')
 
     return render_template('Questionnaire1/demographics.html', user=current_user)
 
