@@ -1,43 +1,62 @@
 {% extends "base.html" %}
-{% block titel %}Second Questionnaire feedback{% endblock %}
+{% block titel %}Second Questionnaire – Feedback{% endblock %}
 {% block content %}
 <section class="py-3 text-center container">
     <div class="row py-lg-5">
       <div class="col-lg-7 col-md-8 mx-auto">
-        <h1 class="fw-light">Evaluation der Anwendung</h1>
-        <p class="lead text-body-secondary">Bitte geben Sie an inwieweit Sie der folgenden Aussage zustimmen und beantworten anschließend die darauf folgenden Fragen.</p>
+        <h1 class="fw-light">Evaluation of the Application</h1>
+        <p class="lead text-body-secondary">
+            Please indicate the extent to which you agree with the following statement 
+            and then answer the subsequent questions.
+        </p>
       </div>
     </div>
 </section>
+
 <div class="album py-5 bg-body-tertiary">
-    <div  class="col-6 py-3 mx-auto">
-        <label for="customRange1" class="form-label">Ich würde anderen Personen die Nutzung dieser Anwendung weiterempfehlen.</label>
-        <input type="range" class="form-range custom-track-color" min=1 max=7 id="eval3" name="eval3" form="eval">
+    <div class="col-6 py-3 mx-auto">
+
+        <label class="form-label">I would recommend the use of this application to other people.</label>
+        <input type="range" class="form-range custom-track-color" min="1" max="7" id="eval3" name="eval3" form="eval">
         <div class="custom-labels">
-            <span class="fw-light">Stimme gar nicht zu</span>
-            <span class="fw-light">neutral</span>
-            <span class="fw-light">Stimme komplett zu</span>
-        </div>             
+            <span class="fw-light">Strongly disagree</span>
+            <span class="fw-light">Neutral</span>
+            <span class="fw-light">Strongly agree</span>
+        </div>   
+
         <div class="mb-3">
-            <label for="exampleFormControlTextarea1" class="form-label">Haben Sie während der Nutzung der Anwendung eine neue Perspektive kennengelernt und wie hat sich Ihr Verständnis für diese Perspektive verändert?</label>
+            <label class="form-label">
+                Did you learn about a new perspective while using the application, 
+                and how did your understanding of this perspective change?
+            </label>
             <textarea class="form-control" id="perspective" name="perspective" rows="3" form="eval"></textarea>
         </div>
+
         <div class="mb-3">
-            <label for="exampleFormControlTextarea1" class="form-label">Wie hat die Interaktion Ihr Empfinden des gesellschaftlichen Zusammenhalts und der politischen Polarisierung der Gesellschaft verändert?</label>
+            <label class="form-label">
+                How did the interaction change your perception of social cohesion 
+                and political polarization in society?
+            </label>
             <textarea class="form-control" id="construct" name="construct" rows="3" form="eval"></textarea>
         </div>
+
         <div class="mb-3">
-            <label for="exampleFormControlTextarea1" class="form-label">Was für weiteres Feedback, weitere Verbesserungsvorschläge oder Anregungen haben Sie für die Anwendung?</label>
+            <label class="form-label">
+                Do you have any additional feedback, improvement suggestions, or comments for the application?
+            </label>
             <textarea class="form-control" id="feedback" name="feedback" rows="3" form="eval"></textarea>
         </div>
+
         <div class="col-8 mx-auto">
             <hr class="my-4">
             <form action="#" method="post" id="eval">
                 <div class="d-grid gap-2 col-10 mx-auto">
-                    <button class="btn btn-primary" type="submit">Weiter</button>
+                    <button class="btn btn-primary" type="submit">Next</button>
                 </div>
             </form>
         </div>
+
     </div>
 </div>
+
 {% endblock %}

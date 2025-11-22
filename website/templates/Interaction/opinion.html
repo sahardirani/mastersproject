@@ -1,45 +1,103 @@
 {% extends "base.html" %}
 {% block titel %}Interaction Part 2{% endblock %}
 {% block content %}
-<section class="py-3 text-center container">
-<div class="row py-lg-3">
-    <h1 class="fw-light">Diskussionsrunde 2: Klima-Aktivismus</h1>
-    <div class="col-lg-9 col-md-9 mx-auto">
-    <p class="lead text-body-secondary">Willkommen zur zweiten Gesprächsrunde.<br><b>Gesprächsthema: Klima-Aktivismus, Klima-Kleber und die "Letzte Generation"</b></p>
-        <!--<p class="lead text-body-secondary">Hier sind einige <b>Beispielfragen</b>, die sie ihrem Gesprächspartner stellen können:</p>
-        <p class="lead text-body-secondary">Wie reagieren sie wenn sie von Protestaktionen wie den Klima-Klebern hören?<br>Unterstützen sie die Protestaktionen der Aktivisten?</p>
-        -->
 
+{% set topic = user.topic %}
+
+{% if topic == 'climate' %}
+    {% set round_title = "Climate Activism" %}
+    {% set intro_topic = "Climate activism, climate protesters and movements such as the 'Last Generation'" %}
+{% elif topic == 'ai_employment' %}
+    {% set round_title = "AI in the Workplace" %}
+    {% set intro_topic = "Concrete experiences and opinions about AI systems at work or in education" %}
+{% elif topic == 'freedom_speech' %}
+    {% set round_title = "Content Moderation & Regulation" %}
+    {% set intro_topic = "Rules, bans and moderation of content on social media platforms" %}
+{% else %}
+    {% set round_title = topic|capitalize|replace('_', ' ') %}
+    {% set intro_topic = "The selected topic" %}
+{% endif %}
+
+<section class="py-3 text-center container">
+  <div class="row py-lg-3">
+    <h1 class="fw-light">Discussion Round 2: {{ round_title }}</h1>
+    <div class="col-lg-9 col-md-9 mx-auto">
+      <p class="lead text-body-secondary">
+        Welcome to the second discussion round.<br>
+        <b>Discussion focus: {{ intro_topic }}</b>
+      </p>
     </div>
-</div>
+  </div>
 </section>
+
 <div class="album py-5 bg-body-tertiary">
-    <div class="row align-items-center justify-content-center">
-        <div class="col-lg-6 col-md-10 col-sm-12">
-            <div>
-                <div id="jitsi-container"></div>
-                <div id="flash-message" class="flash-message" style="display: none;">
-                    Sie haben noch 1 Minute übrig.
-                </div>
-            </div>
+  <div class="row align-items-center justify-content-center">
+    <div class="col-lg-6 col-md-10 col-sm-12">
+      <div>
+        <div id="jitsi-container"></div>
+        <div id="flash-message" class="flash-message" style="display: none;">
+          You have 1 minute left.
         </div>
-        <div class="col-lg-4 col-md-8 col-sm-12">
-            <div class="d-grid gap-2 text-center">
-                <h2 class="fw-light">Diskussionsthemen</h2>
-                <ul class="list-group d-grid gap-2">
-                    <li class="list-group-item lead text-body-secondary"><b>1. Wie denken Sie über Klima-Aktivismus? </b><br>(z. B. Fridays for Future)</li>
-                    <li class="list-group-item lead text-body-secondary"><b>2. Wie denken Sie über die Protestaktionen der "Letzte Generation"? </b><br>(z. B. Klima-Kleber, Kunstvandalismus & Privatjetsabotage)</li>
-                    <li class="list-group-item lead text-body-secondary"><b>3. Welche Emotionen lösen solche Protestaktionen bei ihnen aus?</b></li>
-                </ul>
-            </div>
-        </div>
+      </div>
     </div>
+
+    <div class="col-lg-4 col-md-8 col-sm-12">
+      <div class="d-grid gap-2 text-center">
+        <h2 class="fw-light">Discussion Prompts</h2>
+        <ul class="list-group d-grid gap-2">
+
+          {% if topic == 'climate' %}
+            <li class="list-group-item lead text-body-secondary">
+              <b>1. What do you think about climate activism in general?</b><br>
+              (e.g. Fridays for Future)
+            </li>
+            <li class="list-group-item lead text-body-secondary">
+              <b>2. What is your opinion on more disruptive protests?</b><br>
+              (e.g. road blockades, disrupting events, actions by the “Last Generation”)
+            </li>
+            <li class="list-group-item lead text-body-secondary">
+              <b>3. What emotions do such protest actions trigger in you?</b>
+            </li>
+
+          {% elif topic == 'ai_employment' %}
+            <li class="list-group-item lead text-body-secondary">
+              <b>1. Have you already used AI tools (e.g. chatbots, automation, decision systems) in your work or studies?</b>
+            </li>
+            <li class="list-group-item lead text-body-secondary">
+              <b>2. In which situations do you think AI should <i>not</i> make decisions about people (e.g. hiring, firing, grading)?</b>
+            </li>
+            <li class="list-group-item lead text-body-secondary">
+              <b>3. How do you feel when important decisions that affect you are made or supported by AI?</b>
+            </li>
+
+          {% elif topic == 'freedom_speech' %}
+            <li class="list-group-item lead text-body-secondary">
+              <b>1. Have you ever seen content on social media that you think should have been removed?</b>
+            </li>
+            <li class="list-group-item lead text-body-secondary">
+              <b>2. Who should decide what is allowed and what is not – platforms, governments, independent bodies, or users?</b>
+            </li>
+            <li class="list-group-item lead text-body-secondary">
+              <b>3. Do you think current moderation practices go too far, or not far enough?</b>
+            </li>
+
+          {% else %}
+            <li class="list-group-item lead text-body-secondary"><b>1. Which specific examples illustrate your opinion on this topic?</b></li>
+            <li class="list-group-item lead text-body-secondary"><b>2. In which situations do you strongly agree or disagree with how this topic is handled today?</b></li>
+            <li class="list-group-item lead text-body-secondary"><b>3. How do you feel emotionally when you think about these situations?</b></li>
+          {% endif %}
+
+        </ul>
+      </div>
+    </div>
+  </div>
 </div>
+
 <script src="https://meet.jit.si/external_api.js"></script>
 <script>
-    //This function creates a jitsi meeting with the meeting ID that is similiar for interaction partners
-    var meetingid = "{{ user['meeting_id'] }}";
-    var room_name = 'Teil Zwei ' + meetingid;
+    // Create a Jitsi meeting with the same shared meeting ID
+    var meetingid = "{{ user.meeting_id }}";
+    var room_name = 'Part Two ' + meetingid;
     const domain = 'meet.jit.si';
     const options = {
         roomName: room_name,
@@ -53,29 +111,41 @@
 
     const api = new JitsiMeetExternalAPI(domain, options);
 
-    //Funtion ends meeting and redirects participants to the next meeting
+    // End meeting and go to Part 3
     function timerCallback() {
         api.dispose();
         window.location.href = "future";
     }
 
-    //Function notifies people that the interaction will end in one minute
+    // Show 1-minute warning
     function showFlashMessage() {
         const flashMessageElement = document.getElementById('flash-message');
         flashMessageElement.style.display = 'block';
     }
 
-    //This function starts two separate timers, one to end the meeting after 5 minuntes
-    //and the other to notify people that the meeting will end in one minute
+    // -------------- TEST TIMERS --------------
+    // 5:00 total, warning at 4:00 → for testing: 10s + 5s
     function endMeeting(){
-        const timer = setTimeout(timerCallback, 300000);
-        const flashTimer = setTimeout(showFlashMessage, 240000);
+        const timer = setTimeout(timerCallback, 10000);      // TEST: 10 seconds (normally 300000 ms)
+        const flashTimer = setTimeout(showFlashMessage, 5000); // TEST: 5 seconds (normally 240000 ms)
     }
 
-    //This function is called when the second interaction partner joins the Jitsi meeting
-    api.addListener('participantJoined', () => {
+    // TEMP TEST: start timers as soon as the page loads
+    document.addEventListener('DOMContentLoaded', () => {
+        console.log("Part 2 loaded, starting test timer");
         endMeeting();
     });
 
+    // Later, when test is done, remove the DOMContentLoaded block above
+    // and use this instead so the timer starts only after you have joined the meeting:
+
+    /*
+    api.addListener('videoConferenceJoined', (event) => {
+        console.log("videoConferenceJoined fired in Part 2", event);
+        endMeeting();
+    });
+    */
 </script>
+
+
 {% endblock %}

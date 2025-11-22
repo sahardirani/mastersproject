@@ -1,110 +1,124 @@
 {% extends "base.html" %}
-{% block titel %}Second Questionnaire Interaction and constructs{% endblock %}
+{% block titel %}Second Questionnaire – Interaction and Constructs{% endblock %}
 {% block content %}
 <section class="py-3 text-center container">
     <div class="row py-lg-5">
       <div class="col-lg-7 col-md-8 mx-auto">
-        <h1 class="fw-light">Bewertung des Politischen Dialogs</h1>
-        <p class="lead text-body-secondary">Bitte geben Sie an, inwieweit Sie den folgenden Aussagen zustimmen.</p>
+        <h1 class="fw-light">Evaluation of the Political Dialogue</h1>
+        <p class="lead text-body-secondary">Please indicate how strongly you agree with the following statements.</p>
       </div>
     </div>
 </section>
+
 <div class="album py-5 bg-body-tertiary">
-<div  class="col-6 py-3 mx-auto">
-    <label for="customRange1" class="form-label">Mein Gesprächspartner war höflich und respektvoll.</label>
-    <input type="range" class="form-range custom-track-color" min=1 max=7 id="eval11" name="eval11" form="eval">
+<div class="col-6 py-3 mx-auto">
+
+    <label class="form-label">My conversation partner was polite and respectful.</label>
+    <input type="range" class="form-range custom-track-color" min="1" max="7" id="eval11" name="eval11" form="eval">
     <div class="custom-labels">
-        <span class="fw-light">Stimme gar nicht zu</span>
-        <span class="fw-light">neutral</span>
-        <span class="fw-light">Stimme komplett zu</span>
+        <span class="fw-light">Strongly disagree</span>
+        <span class="fw-light">Neutral</span>
+        <span class="fw-light">Strongly agree</span>
     </div>
-    <label for="customRange1" class="form-label">Mein Gesprächspartner hat mich ausreden lassen.</label>
-    <input type="range" class="form-range custom-track-color" min=1 max=7 id="eval12" name="eval12" form="eval">
+
+    <label class="form-label">My conversation partner allowed me to finish speaking.</label>
+    <input type="range" class="form-range custom-track-color" min="1" max="7" id="eval12" name="eval12" form="eval">
     <div class="custom-labels">
-        <span class="fw-light">Stimme gar nicht zu</span>
-        <span class="fw-light">neutral</span>
-        <span class="fw-light">Stimme komplett zu</span>
+        <span class="fw-light">Strongly disagree</span>
+        <span class="fw-light">Neutral</span>
+        <span class="fw-light">Strongly agree</span>
     </div>
-    <label for="customRange1" class="form-label">Mein Gesprächspartner hat meine Ansichten akzeptiert und auf eine Verurteilung verzichtet. </label>
-    <input type="range" class="form-range custom-track-color" min=1 max=7 id="eval13" name="eval13" form="eval">
+
+    <label class="form-label">My conversation partner accepted my views and refrained from judging me.</label>
+    <input type="range" class="form-range custom-track-color" min="1" max="7" id="eval13" name="eval13" form="eval">
     <div class="custom-labels">
-        <span class="fw-light">Stimme gar nicht zu</span>
-        <span class="fw-light">neutral</span>
-        <span class="fw-light">Stimme komplett zu</span>
+        <span class="fw-light">Strongly disagree</span>
+        <span class="fw-light">Neutral</span>
+        <span class="fw-light">Strongly agree</span>
     </div>
-    <label for="customRange1" class="form-label">Die Interaktion mit meinem Gesprächspartner war insgesamt eine positive Erfahrung.</label>
-    <input type="range" class="form-range custom-track-color" min=1 max=7 id="eval14" name="eval14" form="eval">
+
+    <label class="form-label">The interaction with my conversation partner was a positive experience overall.</label>
+    <input type="range" class="form-range custom-track-color" min="1" max="7" id="eval14" name="eval14" form="eval">
     <div class="custom-labels">
-        <span class="fw-light">Stimme gar nicht zu</span>
-        <span class="fw-light">neutral</span>
-        <span class="fw-light">Stimme komplett zu</span>
+        <span class="fw-light">Strongly disagree</span>
+        <span class="fw-light">Neutral</span>
+        <span class="fw-light">Strongly agree</span>
     </div>
-    <label for="customRange1" class="form-label">Ich respektiere die Überzeugungen und Meinungen anderer Menschen.</label>
-    <input type="range" class="form-range custom-track-color" min=1 max=7 id="construct12" name="construct12" form="eval">
+
+    <label class="form-label">I respect the beliefs and opinions of other people.</label>
+    <input type="range" class="form-range custom-track-color" min="1" max="7" id="construct12" name="construct12" form="eval">
     <div class="custom-labels">
-        <span class="fw-light">Stimme gar nicht zu</span>
-        <span class="fw-light">neutral</span>
-        <span class="fw-light">Stimme komplett zu</span>
+        <span class="fw-light">Strongly disagree</span>
+        <span class="fw-light">Neutral</span>
+        <span class="fw-light">Strongly agree</span>
     </div>
-    <label for="customRange1" class="form-label">Ich respektiere die Meinungen Anderer, auch wenn ich diese nicht teile.</label>
-    <input type="range" class="form-range custom-track-color" min=1 max=7 id="construct22" name="construct22" form="eval">
+
+    <label class="form-label">I respect the opinions of others even when I do not share them.</label>
+    <input type="range" class="form-range custom-track-color" min="1" max="7" id="construct22" name="construct22" form="eval">
     <div class="custom-labels">
-        <span class="fw-light">Stimme gar nicht zu</span>
-        <span class="fw-light">neutral</span>
-        <span class="fw-light">Stimme komplett zu</span>
+        <span class="fw-light">Strongly disagree</span>
+        <span class="fw-light">Neutral</span>
+        <span class="fw-light">Strongly agree</span>
     </div>
-    <label for="customRange1" class="form-label">Ich mag Menschen, die mich herausfordern, über die Welt auf eine andere Art und Weise nachzudenken.</label>
-    <input type="range" class="form-range custom-track-color" min=1 max=7 id="construct32" name="construct32" form="eval">
+
+    <label class="form-label">I like people who challenge me to think about the world in new ways.</label>
+    <input type="range" class="form-range custom-track-color" min="1" max="7" id="construct32" name="construct32" form="eval">
     <div class="custom-labels">
-        <span class="fw-light">Stimme gar nicht zu</span>
-        <span class="fw-light">neutral</span>
-        <span class="fw-light">Stimme komplett zu</span>
+        <span class="fw-light">Strongly disagree</span>
+        <span class="fw-light">Neutral</span>
+        <span class="fw-light">Strongly agree</span>
     </div>
-    <label for="customRange1" class="form-label">Ich verbringe gerne Zeit mit Menschen, die sich von mir unterscheiden.</label>
-    <input type="range" class="form-range custom-track-color" min=1 max=7 id="construct42" name="construct42" form="eval">
+
+    <label class="form-label">I enjoy spending time with people who are different from me.</label>
+    <input type="range" class="form-range custom-track-color" min="1" max="7" id="construct42" name="construct42" form="eval">
     <div class="custom-labels">
-        <span class="fw-light">Stimme gar nicht zu</span>
-        <span class="fw-light">neutral</span>
-        <span class="fw-light">Stimme komplett zu</span>
+        <span class="fw-light">Strongly disagree</span>
+        <span class="fw-light">Neutral</span>
+        <span class="fw-light">Strongly agree</span>
     </div>
-    <label for="customRange1" class="form-label">Die Gesellschaft profitiert von Vielfalt an Traditionen und Lebensstilen.</label>
-    <input type="range" class="form-range custom-track-color" min=1 max=7 id="construct52" name="construct52" form="eval">
+
+    <label class="form-label">Society benefits from a diversity of traditions and lifestyles.</label>
+    <input type="range" class="form-range custom-track-color" min="1" max="7" id="construct52" name="construct52" form="eval">
     <div class="custom-labels">
-        <span class="fw-light">Stimme gar nicht zu</span>
-        <span class="fw-light">neutral</span>
-        <span class="fw-light">Stimme komplett zu</span>
+        <span class="fw-light">Strongly disagree</span>
+        <span class="fw-light">Neutral</span>
+        <span class="fw-light">Strongly agree</span>
     </div>
-    <label for="customRange1" class="form-label">Der Zusammenhalt in der Gesellschaft ist sehr gut.</label>
-    <input type="range" class="form-range custom-track-color" min=1 max=7 id="construct62" name="construct62" form="eval">
+
+    <label class="form-label">Social cohesion in society is very strong.</label>
+    <input type="range" class="form-range custom-track-color" min="1" max="7" id="construct62" name="construct62" form="eval">
     <div class="custom-labels">
-        <span class="fw-light">Stimme gar nicht zu</span>
-        <span class="fw-light">neutral</span>
-        <span class="fw-light">Stimme komplett zu</span>
+        <span class="fw-light">Strongly disagree</span>
+        <span class="fw-light">Neutral</span>
+        <span class="fw-light">Strongly agree</span>
     </div>
-    <label for="customRange1" class="form-label">Der Zusammenhalt der Gesellschaft ist gefährdet.</label>
-    <input type="range" class="form-range custom-track-color" min=1 max=7 id="construct72" name="construct72" form="eval">
+
+    <label class="form-label">Social cohesion in society is at risk.</label>
+    <input type="range" class="form-range custom-track-color" min="1" max="7" id="construct72" name="construct72" form="eval">
     <div class="custom-labels">
-        <span class="fw-light">Stimme gar nicht zu</span>
-        <span class="fw-light">neutral</span>
-        <span class="fw-light">Stimme komplett zu</span>
+        <span class="fw-light">Strongly disagree</span>
+        <span class="fw-light">Neutral</span>
+        <span class="fw-light">Strongly agree</span>
     </div>
-    <label for="customRange1" class="form-label">Ich bin davon überzeugt, dass die meisten Menschen gute Absichten haben.</label>
-    <input type="range" class="form-range custom-track-color" min=1 max=7 id="construct82" name="construct82" form="eval">
+
+    <label class="form-label">I believe that most people have good intentions.</label>
+    <input type="range" class="form-range custom-track-color" min="1" max="7" id="construct82" name="construct82" form="eval">
     <div class="custom-labels">
-        <span class="fw-light">Stimme gar nicht zu</span>
-        <span class="fw-light">neutral</span>
-        <span class="fw-light">Stimme komplett zu</span>
+        <span class="fw-light">Strongly disagree</span>
+        <span class="fw-light">Neutral</span>
+        <span class="fw-light">Strongly agree</span>
     </div>
+
     <div class="col-8 mx-auto">
         <hr class="my-4">
         <form action="#" method="post" id="eval">
             <div class="d-grid gap-2 col-10 mx-auto">
-                <button class="btn btn-primary" type="submit">Weiter</button>
+                <button class="btn btn-primary" type="submit">Next</button>
             </div>
         </form>
-        </div>
-</div>
-</div>
+    </div>
 
+</div>
+</div>
 
 {% endblock %}
