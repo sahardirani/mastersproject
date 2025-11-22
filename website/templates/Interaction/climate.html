@@ -1,49 +1,100 @@
 {% extends "base.html" %}
 {% block titel %}Interaction Part 1{% endblock %}
 {% block content %}
+
+{% set topic = user.topic %}
+{% if topic == 'climate_change' %}
+    {% set discussion_title = "Climate Change" %}
+    {% set intro_topic = "Concerns about climate change and climate protection" %}
+{% elif topic == 'ai_employment' %}
+    {% set discussion_title = "Artificial Intelligence & Employment" %}
+    {% set intro_topic = "The impact of AI and automation on jobs and the future of work" %}
+{% elif topic == 'freedom_speech' %}
+    {% set discussion_title = "Social Media" %}
+    {% set intro_topic = "The impact of social media on individuals and society" %}
+{% else %}
+    {% set discussion_title = topic|capitalize|replace('_', ' ') %}
+    {% set intro_topic = "The selected topic" %}
+{% endif %}
+
 <section class="py-3 text-center container">
-<div class="row py-lg-3">
-    <h1 class="fw-light">Diskussionsrunde 1: Klimawandel</h1>
+  <div class="row py-lg-3">
+    <h1 class="fw-light">Discussion Round 1: {{ discussion_title }}</h1>
     <div class="col-lg-9 col-md-9 mx-auto">
-        <p class="lead text-body-secondary">Willkommen zur ersten Gesprächsrunde.<br><b>Gesprächsthema: Sorgen bezüglich des Klimawandels und des Klimaschutzes</b></p>
-        <p class="lead text-body-secondary">Die vorgegebenen Gesprächsthemen sollen Ihnen als Orientierung dienen.</p>
-</div>
+      <p class="lead text-body-secondary">
+        Welcome to the first discussion round.<br>
+        <b>Discussion focus: {{ intro_topic }}</b>
+      </p>
+      <p class="lead text-body-secondary">
+        The prompts below are meant to guide your conversation.
+      </p>
+    </div>
+  </div>
 </section>
+
 <div class="album py-5 bg-body-tertiary">
-    <div class="row justify-content-center">
-        <div class="col-lg-10 col-md-10 col-sm-12">
-            <h3>Wichtige Hinweise bevor Sie dem Meeting beitreten:</h3> 
-            <p class="lead text-body-secondary">Verlassen Sie das Meeting nicht mehr, nachdem Sie beigetreten sind. Warten Sie auf Ihren Gesprächspartner. Sie werden automatisch in die nächste Gesprächsrunde weitergeleitet. Falls Sie das Meeting doch ausversehen verlassen, laden Sie die Website neu und treten Sie dem Meeting erneut bei.</p>
-        </div>
+  <div class="row justify-content-center">
+    <div class="col-lg-10 col-md-10 col-sm-12">
+      <h3>Important notes before you join the meeting:</h3>
+      <p class="lead text-body-secondary">
+        Once you have joined the meeting, please do not leave it. Wait for your conversation partner. 
+        You will be automatically forwarded to the next discussion round. If you accidentally leave the meeting, 
+        reload the page and join the meeting again.
+      </p>
     </div>
-    <div class="row justify-content-center">
-        <div class="col-lg-6 col-md-10 col-sm-12">
-            <div class="d-grid gap-2 text-center">
-                <div id="jitsi-container"></div>
-                <div id="flash-message" class="flash-message" style="display: none;">
-                    Sie haben noch 1 Minute übrig.
-                </div>
-            </div>
+  </div>
+
+  <div class="row justify-content-center">
+    <div class="col-lg-6 col-md-10 col-sm-12">
+      <div class="d-grid gap-2 text-center">
+        <div id="jitsi-container"></div>
+        <div id="flash-message" class="flash-message" style="display: none;">
+          You have 1 minute left.
         </div>
-        <div class="col-lg-4 col-md-8 col-sm-12">
-            <div class="d-grid gap-2 text-center">
-                <h2 class="fw-light">Diskussionsthemen</h2>
-                <ul class="list-group d-grid gap-2">
-                    <li class="list-group-item lead text-body-secondary"><b>1. Welche Sorgen haben Sie bezüglich des Klimawandels?</b></li>
-                    <li class="list-group-item lead text-body-secondary"><b>2. Fühlen Sie sich durch den Klimawandel bedroht?</b></li>
-                    <li class="list-group-item lead text-body-secondary"><b>3. Was denken Sie über die verschiendenen Klimaschutzmaßnahmen?</b></li>
-                    <li class="list-group-item lead text-body-secondary"><b>4. Welche Folgen haben diese Klimaschutzmaßnahmen?</b></li>
-                </ul>
-            </div>
-        </div>
+      </div>
     </div>
+
+    <div class="col-lg-4 col-md-8 col-sm-12">
+      <div class="d-grid gap-2 text-center">
+        <h2 class="fw-light">Discussion Prompts</h2>
+        <ul class="list-group d-grid gap-2">
+
+          {% if topic == 'climate_change' %}
+            <li class="list-group-item lead text-body-secondary"><b>1. What concerns do you have about climate change?</b></li>
+            <li class="list-group-item lead text-body-secondary"><b>2. Do you feel personally threatened by climate change? Why or why not?</b></li>
+            <li class="list-group-item lead text-body-secondary"><b>3. What do you think about different climate protection measures?</b></li>
+            <li class="list-group-item lead text-body-secondary"><b>4. What consequences do you see in these climate protection measures for everyday life and society?</b></li>
+
+          {% elif topic == 'ai_employment' %}
+            <li class="list-group-item lead text-body-secondary"><b>1. How do you think AI and automation will affect jobs in the future?</b></li>
+            <li class="list-group-item lead text-body-secondary"><b>2. Are you personally worried about your own job or career because of AI?</b></li>
+            <li class="list-group-item lead text-body-secondary"><b>3. Which changes through AI in the workplace do you see as positive, and which as problematic?</b></li>
+            <li class="list-group-item lead text-body-secondary"><b>4. What role should governments or companies play in dealing with job losses caused by AI?</b></li>
+
+          {% elif topic == 'freedom_speech' %}
+            <li class="list-group-item lead text-body-secondary"><b>1. How does social media influence your everyday life?</b></li>
+            <li class="list-group-item lead text-body-secondary"><b>2. Do you think social media has a rather positive or negative impact on mental health? Why?</b></li>
+            <li class="list-group-item lead text-body-secondary"><b>3. What do you think about the role of social media in politics and public opinion?</b></li>
+            <li class="list-group-item lead text-body-secondary"><b>4. Have you ever changed your behaviour because of something you saw on social media? If yes, how?</b></li>
+
+          {% else %}
+            <li class="list-group-item lead text-body-secondary"><b>1. What is personally most important to you in this topic?</b></li>
+            <li class="list-group-item lead text-body-secondary"><b>2. What worries or hopes do you have regarding this topic?</b></li>
+            <li class="list-group-item lead text-body-secondary"><b>3. Which aspects of this topic do you find most controversial?</b></li>
+            <li class="list-group-item lead text-body-secondary"><b>4. Where do you see possible common ground between different positions?</b></li>
+          {% endif %}
+
+        </ul>
+      </div>
+    </div>
+  </div>
 </div>
 
 <script src="https://meet.jit.si/external_api.js"></script>
 <script>
-    //This function creates a jitsi meeting with the meeting ID that is similiar for interaction partners
-    var meetingid = "{{ user['meeting_id'] }}";
-    var room_name = 'Teil Eins ' + meetingid;
+    // Create a Jitsi meeting with the meeting ID shared by both interaction partners
+    var meetingid = "{{ user.meeting_id }}";
+    var room_name = 'Part One ' + meetingid;
     const domain = 'meet.jit.si';
     const options = {
         roomName: room_name,
@@ -54,39 +105,48 @@
             filmStripOnly: false,
         },
         userInfo: {
-            displayName: "{{ user['user_name'] }}"
+            displayName: "{{ user.user_name }}"
         }
     };
 
     const api = new JitsiMeetExternalAPI(domain, options);
 
-    //Funtion ends meeting and redirects participants to the next
+    // End meeting and redirect participants to the next step
     function timerCallback() {
         api.dispose();
         window.location.href = "opinion";
     }
 
-    //Function notifies people that the interaction will end in one minute
+    // Notify participants that the interaction will end in one minute
     function showFlashMessage() {
         const flashMessageElement = document.getElementById('flash-message');
         flashMessageElement.style.display = 'block';
     }
 
-    //This function starts two separate timers, one to end the meeting after 4 minuntes and 40 seconds
-    //and the other to notify people that the meeting will end in one minute
-    function endMeeting(){
-        const timer = setTimeout(timerCallback, 280000);
-        const flashTimer = setTimeout(showFlashMessage, 220000);
+    // Start two timers: one to end the meeting and one to show the 1-minute warning
+    function endMeeting() {
+        const timer = setTimeout(timerCallback, 10000);   // TEST: 10 seconds (should be 280000 ms = 4 min 40 sec)
+        const flashTimer = setTimeout(showFlashMessage, 5000); // TEST: 5 seconds (should be 220000 ms = 3 min 40 sec)
     }
 
-    //This function is called when the second interaction partner joins the Jitsi meeting
-    api.addListener('participantJoined', () => {
+    // --------------- TEMP TEST MODE ---------------
+    // For testing: start timers as soon as the page loads (ignore Jitsi events)
+    document.addEventListener('DOMContentLoaded', () => {
+        console.log("Page loaded, starting test timer");
         endMeeting();
     });
 
+    // Later, when test works, remove the DOMContentLoaded block above
+    // and use this instead, so the timer only starts after you fully join the Jitsi meeting:
 
-
-
+    /*
+    // Start timers when YOU have fully joined the Jitsi meeting
+    api.addListener('videoConferenceJoined', (event) => {
+        console.log("videoConferenceJoined fired", event);
+        endMeeting();
+    });
+    */
 
 </script>
+
 {% endblock %}

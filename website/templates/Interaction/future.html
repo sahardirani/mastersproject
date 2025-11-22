@@ -1,42 +1,86 @@
 {% extends "base.html" %}
 {% block titel %}Interaction Part 3{% endblock %}
 {% block content %}
+
+{% set topic = user.topic %}
+
+{% if topic == 'climate' %}
+    {% set round_title = "Consequences of Climate Activism" %}
+    {% set intro_topic = "Effects of protest actions on citizens and politics" %}
+{% elif topic == 'ai_employment' %}
+    {% set round_title = "Future of Work with AI" %}
+    {% set intro_topic = "Long-term consequences of AI for society, fairness and opportunities" %}
+{% elif topic == 'freedom_speech' %}
+    {% set round_title = "Future of Free Speech Online" %}
+    {% set intro_topic = "Long-term consequences of social media for democracy and public debate" %}
+{% else %}
+    {% set round_title = topic|capitalize|replace('_', ' ') %}
+    {% set intro_topic = "The selected topic" %}
+{% endif %}
+
 <section class="py-3 text-center container">
-<div class="row py-lg-3">
-    <h1 class="fw-light">Diskussionsrunde 3: Folgen des Klima-Aktivismus</h1>
+  <div class="row py-lg-3">
+    <h1 class="fw-light">Discussion Round 3: {{ round_title }}</h1>
     <div class="col-lg-9 col-md-9 mx-auto">
-    <p class="lead text-body-secondary">Willkommen zur dritten Gesprächsrunde. <br><b>Gesprächsthema: Auswirkungen der Protestaktionen auf Bürger und Politik</b></p>
-</div>
-</div>
-</section>
-<div class="album py-5 bg-body-tertiary">
-    <div class="row align-items-center justify-content-center">
-        <div class="col-lg-6 col-md-10 col-sm-12">
-            <div>
-                <div id="jitsi-container"></div>
-                <div id="flash-message" class="flash-message" style="display: none;">
-                    Sie haben noch 1 Minute übrig.
-                </div>
-            </div>
-        </div>
-        <div class="col-lg-4 col-md-8 col-sm-12">
-            <div class="d-grid gap-2 text-center">
-                <h2 class="fw-light">Diskussionsthemen</h2>
-                <ul class="list-group d-grid gap-2">
-                    <li class="list-group-item lead text-body-secondary"><b>1. Welche Wirkung hat extremer Klima-Aktivismus auf Bürger*Innen?</b></li>
-                    <li class="list-group-item lead text-body-secondary"><b>2. Ist Klima-Aktivismus erfolgreich?</b></li>
-                    <li class="list-group-item lead text-body-secondary"><b>3. Wie kann der Klimawandel erfolgreich bekämpft werden?</b></li>
-                    <li class="list-group-item lead text-body-secondary"><b>4. Was wollen Sie Ihrem Gegenüber noch mitteilen oder fragen?</b></li>
-                </ul>
-            </div>
-        </div>
+      <p class="lead text-body-secondary">
+        Welcome to the third discussion round.<br>
+        <b>Discussion focus: {{ intro_topic }}</b>
+      </p>
     </div>
+  </div>
+</section>
+
+<div class="album py-5 bg-body-tertiary">
+  <div class="row align-items-center justify-content-center">
+    <div class="col-lg-6 col-md-10 col-sm-12">
+      <div>
+        <div id="jitsi-container"></div>
+        <div id="flash-message" class="flash-message" style="display: none;">
+          You have 1 minute left.
+        </div>
+      </div>
+    </div>
+    <div class="col-lg-4 col-md-8 col-sm-12">
+      <div class="d-grid gap-2 text-center">
+        <h2 class="fw-light">Discussion Prompts</h2>
+        <ul class="list-group d-grid gap-2">
+
+          {% if topic == 'climate' %}
+            <li class="list-group-item lead text-body-secondary"><b>1. What impact do you think very disruptive climate activism has on ordinary citizens?</b></li>
+            <li class="list-group-item lead text-body-secondary"><b>2. Do you think climate activism is effective in changing political decisions?</b></li>
+            <li class="list-group-item lead text-body-secondary"><b>3. In your view, what would be the most effective ways to fight climate change?</b></li>
+            <li class="list-group-item lead text-body-secondary"><b>4. Is there anything you would still like to tell or ask your conversation partner?</b></li>
+
+          {% elif topic == 'ai_employment' %}
+            <li class="list-group-item lead text-body-secondary"><b>1. Who do you think will benefit most from AI in the long run, and who might lose out?</b></li>
+            <li class="list-group-item lead text-body-secondary"><b>2. What political or social measures would you like to see to make the AI transition fairer?</b></li>
+            <li class="list-group-item lead text-body-secondary"><b>3. How do you imagine an ideal future in which humans and AI work together?</b></li>
+            <li class="list-group-item lead text-body-secondary"><b>4. Is there anything you would still like to tell or ask your conversation partner?</b></li>
+
+          {% elif topic == 'freedom_speech' %}
+            <li class="list-group-item lead text-body-secondary"><b>1. What impact do you think social media will have on democracy and public debate in the long term?</b></li>
+            <li class="list-group-item lead text-body-secondary"><b>2. What kind of regulation (if any) would you like to see for social media platforms in the future?</b></li>
+            <li class="list-group-item lead text-body-secondary"><b>3. How could we protect freedom of speech while also protecting people from harm online?</b></li>
+            <li class="list-group-item lead text-body-secondary"><b>4. Is there anything you would still like to tell or ask your conversation partner?</b></li>
+
+          {% else %}
+            <li class="list-group-item lead text-body-secondary"><b>1. What long-term consequences do you expect from how this topic is handled today?</b></li>
+            <li class="list-group-item lead text-body-secondary"><b>2. What changes would you personally like to see in the future?</b></li>
+            <li class="list-group-item lead text-body-secondary"><b>3. What could be done to reduce conflict and increase understanding around this topic?</b></li>
+            <li class="list-group-item lead text-body-secondary"><b>4. Is there anything you would still like to tell or ask your conversation partner?</b></li>
+          {% endif %}
+
+        </ul>
+      </div>
+    </div>
+  </div>
 </div>
+
 <script src="https://meet.jit.si/external_api.js"></script>
 <script>
-    //This function creates a jitsi meeting with the meeting ID that is similiar for interaction partners
-    var meetingid = "{{ user['meeting_id'] }}";
-    var room_name = 'Teil Drei ' + meetingid;
+    // Create a Jitsi meeting with the same shared meeting ID
+    var meetingid = "{{ user.meeting_id }}";
+    var room_name = 'Part Three ' + meetingid;
     const domain = 'meet.jit.si';
     const options = {
         roomName: room_name,
@@ -50,30 +94,41 @@
 
     const api = new JitsiMeetExternalAPI(domain, options);
 
-    //Funtion ends meeting and redirects participants to the next
+    // End meeting and go to Questionnaire 2
     function timerCallback() {
         api.dispose();
         window.location.href = "../Questionnaire2/perspective";
     }
 
-    //Function notifies people that the interaction will end in one minute
+    // Show 1-minute warning
     function showFlashMessage() {
         const flashMessageElement = document.getElementById('flash-message');
         flashMessageElement.style.display = 'block';
     }
 
-    //This function starts two separate timers, one to end the meeting after 5 minuntes
-    //and the other to notify people that the meeting will end in one minute
+    // -------------- TEST TIMERS --------------
+    // 5:00 total, warning at 4:00 → for testing: 10s + 5s
     function endMeeting(){
-        const timer = setTimeout(timerCallback, 300000);
-        const flashTimer = setTimeout(showFlashMessage, 240000);
+        const timer = setTimeout(timerCallback, 10000);       // TEST: 10 seconds (normally 300000 ms)
+        const flashTimer = setTimeout(showFlashMessage, 5000); // TEST: 5 seconds (normally 240000 ms)
     }
 
-
-    //This function is called when the second interaction partner joins the Jitsi meeting
-    api.addListener('participantJoined', () => {
+    // TEMP TEST: start timers as soon as the page loads
+    document.addEventListener('DOMContentLoaded', () => {
+        console.log("Part 3 loaded, starting test timer");
         endMeeting();
     });
 
+    // Later, when test is done, remove the DOMContentLoaded block above
+    // and use this instead so the timer starts only after you have joined the meeting:
+
+    /*
+    api.addListener('videoConferenceJoined', (event) => {
+        console.log("videoConferenceJoined fired in Part 3", event);
+        endMeeting();
+    });
+    */
 </script>
+
+
 {% endblock %}
