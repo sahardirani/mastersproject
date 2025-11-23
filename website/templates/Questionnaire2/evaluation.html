@@ -1,124 +1,103 @@
 {% extends "base.html" %}
-{% block titel %}Second Questionnaire – Interaction and Constructs{% endblock %}
+{% block title %}Post-Discussion Questionnaire{% endblock %}
 {% block content %}
 <section class="py-3 text-center container">
-    <div class="row py-lg-5">
-      <div class="col-lg-7 col-md-8 mx-auto">
-        <h1 class="fw-light">Evaluation of the Political Dialogue</h1>
-        <p class="lead text-body-secondary">Please indicate how strongly you agree with the following statements.</p>
-      </div>
+    <div class="row py-lg-4">
+        <div class="col-lg-8 mx-auto">
+            <h1 class="fw-light">Post-Discussion Questionnaire</h1>
+            <p class="lead text-body-secondary">
+                Now that you've had the discussion, please rate your agreement with the following statements again.
+            </p>
+            <p class="lead text-body-secondary">
+                Topic: <b>{{ user.topic|capitalize|replace('_', ' ') }}</b>
+            </p>
+        </div>
     </div>
 </section>
 
-<div class="album py-5 bg-body-tertiary">
-<div class="col-6 py-3 mx-auto">
+<div class="album py-3 bg-body-tertiary">
+    <div class="container">
+        <form action="{{ url_for('views.evaluation') }}" method="POST">
+            <div class="py-3 col-md-10 rounded mx-auto p-4">
+                
+                <h3 class="fw-bold mt-5 mb-4">Topic-Specific Attitude (10 Questions)</h3>
+                <p class="lead text-body-secondary">Please answer based on your current views after the discussion.</p>
 
-    <label class="form-label">My conversation partner was polite and respectful.</label>
-    <input type="range" class="form-range custom-track-color" min="1" max="7" id="eval11" name="eval11" form="eval">
-    <div class="custom-labels">
-        <span class="fw-light">Strongly disagree</span>
-        <span class="fw-light">Neutral</span>
-        <span class="fw-light">Strongly agree</span>
-    </div>
+                {# Same 10 questions as part 2, but with different field names #}
+                {% set question_number = 1 %}
+                {% set question_text = "I generally support the main idea or goal of this topic." %}
+                {% set name_prefix = 'match_post' %}
+                {% include 'opinion_slider_content.html' %}
 
-    <label class="form-label">My conversation partner allowed me to finish speaking.</label>
-    <input type="range" class="form-range custom-track-color" min="1" max="7" id="eval12" name="eval12" form="eval">
-    <div class="custom-labels">
-        <span class="fw-light">Strongly disagree</span>
-        <span class="fw-light">Neutral</span>
-        <span class="fw-light">Strongly agree</span>
-    </div>
+                {% set question_number = 2 %}
+                {% set question_text = "I believe the benefits of this topic outweigh its risks." %}
+                {% include 'opinion_slider_content.html' %}
 
-    <label class="form-label">My conversation partner accepted my views and refrained from judging me.</label>
-    <input type="range" class="form-range custom-track-color" min="1" max="7" id="eval13" name="eval13" form="eval">
-    <div class="custom-labels">
-        <span class="fw-light">Strongly disagree</span>
-        <span class="fw-light">Neutral</span>
-        <span class="fw-light">Strongly agree</span>
-    </div>
+                {% set question_number = 3 %}
+                {% set question_text = "I would personally take action in support of this issue." %}
+                {% include 'opinion_slider_content.html' %}
+                
+                {% set question_number = 4 %}
+                {% set question_text = "I think this issue has an overall positive impact on society." %}
+                {% include 'opinion_slider_content.html' %}
+                
+                {% set question_number = 5 %}
+                {% set question_text = "I believe this topic deserves more public attention." %}
+                {% include 'opinion_slider_content.html' %}
+                
+                {% set question_number = 6 %}
+                {% set question_text = "I trust the experts or authorities who promote this topic." %}
+                {% include 'opinion_slider_content.html' %}
+                
+                {% set question_number = 7 %}
+                {% set question_text = "I feel emotionally connected to this issue." %}
+                {% include 'opinion_slider_content.html' %}
+                
+                {% set question_number = 8 %}
+                {% set question_text = "I think opposing views on this topic are often based on misunderstanding." %}
+                {% include 'opinion_slider_content.html' %}
+                
+                {% set question_number = 9 %}
+                {% set question_text = "I believe addressing this issue should be a priority." %}
+                {% include 'opinion_slider_content.html' %}
+                
+                {% set question_number = 10 %}
+                {% set question_text = "I think this topic aligns with my personal values." %}
+                {% include 'opinion_slider_content.html' %}
 
-    <label class="form-label">The interaction with my conversation partner was a positive experience overall.</label>
-    <input type="range" class="form-range custom-track-color" min="1" max="7" id="eval14" name="eval14" form="eval">
-    <div class="custom-labels">
-        <span class="fw-light">Strongly disagree</span>
-        <span class="fw-light">Neutral</span>
-        <span class="fw-light">Strongly agree</span>
-    </div>
-
-    <label class="form-label">I respect the beliefs and opinions of other people.</label>
-    <input type="range" class="form-range custom-track-color" min="1" max="7" id="construct12" name="construct12" form="eval">
-    <div class="custom-labels">
-        <span class="fw-light">Strongly disagree</span>
-        <span class="fw-light">Neutral</span>
-        <span class="fw-light">Strongly agree</span>
-    </div>
-
-    <label class="form-label">I respect the opinions of others even when I do not share them.</label>
-    <input type="range" class="form-range custom-track-color" min="1" max="7" id="construct22" name="construct22" form="eval">
-    <div class="custom-labels">
-        <span class="fw-light">Strongly disagree</span>
-        <span class="fw-light">Neutral</span>
-        <span class="fw-light">Strongly agree</span>
-    </div>
-
-    <label class="form-label">I like people who challenge me to think about the world in new ways.</label>
-    <input type="range" class="form-range custom-track-color" min="1" max="7" id="construct32" name="construct32" form="eval">
-    <div class="custom-labels">
-        <span class="fw-light">Strongly disagree</span>
-        <span class="fw-light">Neutral</span>
-        <span class="fw-light">Strongly agree</span>
-    </div>
-
-    <label class="form-label">I enjoy spending time with people who are different from me.</label>
-    <input type="range" class="form-range custom-track-color" min="1" max="7" id="construct42" name="construct42" form="eval">
-    <div class="custom-labels">
-        <span class="fw-light">Strongly disagree</span>
-        <span class="fw-light">Neutral</span>
-        <span class="fw-light">Strongly agree</span>
-    </div>
-
-    <label class="form-label">Society benefits from a diversity of traditions and lifestyles.</label>
-    <input type="range" class="form-range custom-track-color" min="1" max="7" id="construct52" name="construct52" form="eval">
-    <div class="custom-labels">
-        <span class="fw-light">Strongly disagree</span>
-        <span class="fw-light">Neutral</span>
-        <span class="fw-light">Strongly agree</span>
-    </div>
-
-    <label class="form-label">Social cohesion in society is very strong.</label>
-    <input type="range" class="form-range custom-track-color" min="1" max="7" id="construct62" name="construct62" form="eval">
-    <div class="custom-labels">
-        <span class="fw-light">Strongly disagree</span>
-        <span class="fw-light">Neutral</span>
-        <span class="fw-light">Strongly agree</span>
-    </div>
-
-    <label class="form-label">Social cohesion in society is at risk.</label>
-    <input type="range" class="form-range custom-track-color" min="1" max="7" id="construct72" name="construct72" form="eval">
-    <div class="custom-labels">
-        <span class="fw-light">Strongly disagree</span>
-        <span class="fw-light">Neutral</span>
-        <span class="fw-light">Strongly agree</span>
-    </div>
-
-    <label class="form-label">I believe that most people have good intentions.</label>
-    <input type="range" class="form-range custom-track-color" min="1" max="7" id="construct82" name="construct82" form="eval">
-    <div class="custom-labels">
-        <span class="fw-light">Strongly disagree</span>
-        <span class="fw-light">Neutral</span>
-        <span class="fw-light">Strongly agree</span>
-    </div>
-
-    <div class="col-8 mx-auto">
-        <hr class="my-4">
-        <form action="#" method="post" id="eval">
-            <div class="d-grid gap-2 col-10 mx-auto">
-                <button class="btn btn-primary" type="submit">Next</button>
+                <div class="d-grid gap-2 col-6 mx-auto mt-5">
+                    <button class="btn btn-primary btn-lg" type="submit">Submit</button>
+                </div>
             </div>
         </form>
     </div>
-
-</div>
 </div>
 
+{% endblock %}
+
+{% block javascript %}
+<script type="text/javascript">
+    function updateSliderValue(sliderId) {
+        const slider = document.getElementById(sliderId);
+        const valueDisplay = document.getElementById('current-value-' + sliderId);
+        if (slider && valueDisplay) {
+            valueDisplay.textContent = slider.value;
+        }
+    }
+
+    const sliderIds = [
+        'match_post1', 'match_post2', 'match_post3', 'match_post4', 'match_post5', 
+        'match_post6', 'match_post7', 'match_post8', 'match_post9', 'match_post10'
+    ];
+
+    document.addEventListener('DOMContentLoaded', () => {
+        sliderIds.forEach(id => {
+            const slider = document.getElementById(id);
+            if (slider) {
+                updateSliderValue(id);
+                slider.addEventListener('input', () => updateSliderValue(id));
+            }
+        });
+    });
+</script>
 {% endblock %}

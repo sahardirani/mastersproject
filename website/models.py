@@ -64,6 +64,18 @@ class User(db.Model, UserMixin):
     emotion_p3 = db.Column(db.Integer)
     future_p = db.Column(db.Integer)
 
+        # Post-discussion experience questionnaire (after the discussion)
+    post_confident = db.Column(db.Integer)              # I felt confident expressing my opinion
+    post_open_listen = db.Column(db.Integer)            # I was open to listening...
+    post_shared_understanding = db.Column(db.Integer)   # I believe it is possible to find shared understanding
+    post_respectful = db.Column(db.Integer)             # The discussion was respectful and constructive
+    post_comfortable = db.Column(db.Integer)            # I felt comfortable sharing my thoughts
+    post_learned = db.Column(db.Integer)                # I learned something new
+    post_listened = db.Column(db.Integer)               # I felt listened to and understood
+    post_deep_think = db.Column(db.Integer)             # The discussion encouraged me to think more deeply
+    post_participate_again = db.Column(db.Integer)      # I would participate in a similar discussion again
+    post_reflection = db.Column(db.Text)                # Additional reflections
+
     construct12 = db.Column(db.Integer)
     construct22 = db.Column(db.Integer)
     construct32 = db.Column(db.Integer)
@@ -87,8 +99,39 @@ class User(db.Model, UserMixin):
     eval13 = db.Column(db.Integer)
     eval14 = db.Column(db.Integer)
 
+    eval11 = db.Column(db.Integer)
+    eval12 = db.Column(db.Integer) 
+    eval13 = db.Column(db.Integer)
+    eval14 = db.Column(db.Integer)
+
+    # PRE-DISCUSSION opinion responses (from new_questionnaire_part2.html)
+    match1 = db.Column(db.Integer)
+    match2 = db.Column(db.Integer)
+    match3 = db.Column(db.Integer)
+    match4 = db.Column(db.Integer)
+    match5 = db.Column(db.Integer)
+    match6 = db.Column(db.Integer)
+    match7 = db.Column(db.Integer)
+    match8 = db.Column(db.Integer)
+    match9 = db.Column(db.Integer)
+    match10 = db.Column(db.Integer)
+
+    # POST-DISCUSSION opinion responses (same questions, after discussion)
+    match_post1 = db.Column(db.Integer)
+    match_post2 = db.Column(db.Integer)
+    match_post3 = db.Column(db.Integer)
+    match_post4 = db.Column(db.Integer)
+    match_post5 = db.Column(db.Integer)
+    match_post6 = db.Column(db.Integer)
+    match_post7 = db.Column(db.Integer)
+    match_post8 = db.Column(db.Integer)
+    match_post9 = db.Column(db.Integer)
+    match_post10 = db.Column(db.Integer)
+
     eval3 = db.Column(db.Integer)
     feedback = db.Column(db.String(500))
+
+    
     construct = db.Column(db.String(500))
     perspective = db.Column(db.String(500))
     

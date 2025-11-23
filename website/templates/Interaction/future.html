@@ -97,7 +97,7 @@
     // End meeting and go to Questionnaire 2
     function timerCallback() {
         api.dispose();
-        window.location.href = "../Questionnaire2/perspective";
+        window.location.href = "{{ url_for('views.perspective_questionnaire') }}";
     }
 
     // Show 1-minute warning

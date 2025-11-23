@@ -206,7 +206,7 @@ def demographics():
             job = request.form.get('job')
             
             if not gender or not age or not education or not job:
-                flash('Bitte wähle für jede Frage eine gültige Antwort.', category='error')
+                flash('Please select a valid answer for each question..', category='error')
             else:
                 current_user.gender = gender
                 current_user.age = age
@@ -261,7 +261,7 @@ def questions1():
             return redirect(url_for('views.questions2'))
 
         except Exception as e:
-            flash('Es gab einen Fehler bei der Verarbeitung der Daten. Versuchen Sie es erneut', category='error')
+            flash('There was an error processing the data. Please try again.', category='error')
 
     return render_template('Questionnaire1/questions1.html', user=current_user)
 
@@ -283,11 +283,11 @@ def questions2():
             current_user.construct8 = request.form.get('construct8')
             current_user.demo = True
             db.session.commit()
-            flash('Anmeldung war erfolgreich!', category='success')
+            flash('Registration was successful!', category='success')
             return redirect(url_for('views.endofq1'))
 
         except Exception as e:
-            flash('Es gab einen Fehler bei der Verarbeitung der Daten. Versuchen Sie es erneut', category='error')
+            flash('There was an error processing the data. Please try again.', category='error')
 
     return render_template('Questionnaire1/questions2.html', user=current_user)
 
@@ -334,7 +334,7 @@ def endofq1():
             mail.send(zusage1)
             mail.send(zusage2)
         except Exception as e:
-            flash('Fehler beim Versenden der E-Mail.', category='error')
+            flash('Error sending the e-mail.', category='error')
 
     return render_template('Questionnaire1/endofq1.html', user=current_user)
  
@@ -356,18 +356,26 @@ def waitpage():
         partner = User.query.get(current_user.partner_id)
         current_user.hasarrived = True
         db.session.commit()
+        
+        # TESTING MODE: Add "?test=1" to URL to bypass waiting
+        is_test_mode = request.args.get('test') == '4'
+        
         if request.method=='POST':
-            if partner.hasarrived:
+            # Simulate partner arrival in test mode
+            if is_test_mode or partner.hasarrived:
                 return 'partner_arrived'
             else:
                 return 'no_partner_arrived'
         else:
-            return render_template('Interaction/waitPage.html', user=current_user)
+            # In test mode, also mark partner as arrived immediately
+            if is_test_mode and partner:
+                partner.hasarrived = True
+                db.session.commit()
+                
+            return render_template('Interaction/waitPage.html', user=current_user, test_mode=is_test_mode)
         
     except Exception as e:
         return render_template('Interaction/waitPage.html', user=current_user)
-
-
 # View of the first interaction part 
 @views.route('/Interaction/climate', methods=['GET','POST'])
 @login_required
@@ -390,63 +398,45 @@ def future():
     db.session.commit()  # add this line
     return render_template('Interaction/future.html', user=current_user)
 
-
-# Questionnaire 2: View of perspective-taking questionnaire
-# Writing of answers into database
-@views.route('/Questionnaire2/perspective', methods=['POST', 'GET'])
+@views.route('/Questionnaire2/perspective', methods=['GET', 'POST'])
 @login_required
-def perspective():
+def perspective_questionnaire():
     if request.method == 'POST':
         try:
-            current_user.classification_p = request.form.get('classify_p1')
-            current_user.climate_p1 = request.form.get('climate_p1')
-            current_user.climate_p2 = request.form.get('climate_p2')
-            current_user.climate_p3 = request.form.get('climate_p3')
-            current_user.emotion_p1 = request.form.get('emotion_p1')
-            current_user.emotion_p2 = request.form.get('emotion_p2')
-            current_user.emotion_p3 = request.form.get('emotion_p3')
-            current_user.future_p = request.form.get('future_p')
-        
+            # Save the new post-discussion experience answers
+            fields = [
+                'post_confident',
+                'post_open_listen',
+                'post_shared_understanding',
+                'post_respectful',
+                'post_comfortable',
+                'post_learned',
+                'post_listened',
+                'post_deep_think',
+                'post_participate_again',
+                'post_reflection',
+            ]
+            for field in fields:
+                setattr(current_user, field, request.form.get(field))
+
             db.session.commit()
-            return redirect(url_for('views.score'))
-        
+
+            # After this questionnaire → go directly to evaluation2 (no score page)
+            return redirect(url_for('views.evaluation2'))
+
         except Exception as e:
-            flash('Es gab einen Fehler bei der Verarbeitung der Antworten.', category='error')
-            # Handle the exception or log the error if needed
-                
+            flash('There was an error saving your answers. Please try again.', category='error')
+
+    # GET → just show the questionnaire
     return render_template('Questionnaire2/perspective.html', user=current_user)
-    
 
 # Questionnaire 2: Perspective-Taking score view
 # Calculation of perspective score
 @views.route('/Questionnaire2/score', methods=['POST', 'GET'])
 @login_required
 def score():
-    try:
-        if request.method == 'POST':
-            return redirect(url_for('views.evaluation'))
-        else:
-            partner = User.query.get(current_user.partner_id)
-
-            cla = abs(current_user.classification_p - partner.classification)
-            c1 = abs(current_user.climate_p1 - partner.climate1)
-            c2 = abs(current_user.climate_p2 - partner.climate2)
-            c3 = abs(current_user.climate_p3 - partner.climate3)
-            e1 = abs(current_user.emotion_p1 - partner.emotion1)
-            e2 = abs(current_user.emotion_p2 - partner.emotion2)
-            e3 = abs(current_user.emotion_p3 - partner.emotion3)
-            f = abs(current_user.future_p - partner.future)
-            score = round(((48 - (cla + c1 + c2 + c3 + e1 + e2 + e3 + f)) / 48) * 100, 2)
-            
-            current_user.perspective_score = score
-
-            db.session.commit()
-
-            return render_template('Questionnaire2/score.html', user=current_user, score=score)
-
-    except Exception as e:
-        flash('Es gab einen Fehler bei der Berechnung des Scores.', category='error')
-        # Handle the exception or log the error if needed
+    # Score page disabled – always forward into the remaining questionnaire
+    return redirect(url_for('views.evaluation2'))
 
 
 # Questionnaire 2: View of the Evaluation of the interaction behaviour and the construct
@@ -456,28 +446,35 @@ def score():
 def evaluation():
     if request.method == 'POST':
         try:
-            attributes = [
-                'eval11', 'eval12', 'eval13', 'eval14', 'construct12', 'construct22', 'construct32', 'construct42', 'construct52', 'construct62', 'construct72', 'construct82'
-            ]
-            
-            for attr in attributes:
-                setattr(current_user, attr, request.form.get(attr))
+            # Store the 10 post-discussion responses
+            for i in range(1, 11):
+                field_name = f'match_post{i}'
+                value = request.form.get(field_name)
+                setattr(current_user, field_name, value)
 
             db.session.commit()
-
-            partner = User.query.get(current_user.partner_id)
-            partner.behaviour_score = round((current_user.eval11 + current_user.eval12 + current_user.eval13)/3, 2)
             
-            db.session.commit()
+            # Optional: Calculate opinion change
+            opinion_change = calculate_opinion_change(current_user)
             
             return redirect(url_for('views.evaluation2'))
         
         except Exception as e:
-            flash('Es gab einen Fehler bei der Verarbeitung der Daten.', category='error')
-            # Handle the exception or log the error if needed
+            flash('There was an error processing the data..', category='error')
 
     return render_template('Questionnaire2/evaluation.html', user=current_user)
 
+
+def calculate_opinion_change(user):
+    """Calculate the change in opinions before and after discussion"""
+    total_change = 0
+    for i in range(1, 11):
+        pre = getattr(user, f'match{i}', 0) or 0
+        post = getattr(user, f'match_post{i}', 0) or 0
+        total_change += abs(post - pre)
+    
+    avg_change = total_change / 10
+    return round(avg_change, 2)
 
 # Questionnaire 2: View of the evaluation of the application
 # Writing of submitted answers into database
@@ -497,7 +494,7 @@ def evaluation2():
 
             return redirect(url_for('views.evaluation3'))
         except Exception as e:
-            flash('Es gab einen Fehler bei der Verarbeitung der Daten.', category='error')
+            flash('There was an error processing the data.', category='error')
 
     return render_template('Questionnaire2/evaluation2.html', user=current_user)
 
@@ -521,7 +518,7 @@ def evaluation3():
             return redirect(url_for('views.reward'))
         
         except Exception as e:
-            flash('Es gab einen Fehler bei der Verarbeitung der Daten.', category='error')
+            flash('There was an error processing the data..', category='error')
             # Handle the exception or log the error if needed
 
     return render_template('Questionnaire2/evaluation3.html', user=current_user)
@@ -532,14 +529,4 @@ def evaluation3():
 @views.route('/Reward', methods=['POST', 'GET'])
 @login_required
 def reward():
-    partner = User.query.get(current_user.partner_id)
-    try:
-        if current_user.behaviour_score:
-            auszahlung = Message('Auszahlung', sender='TolerantTogether@gmail.com', recipients=[current_user.email])
-            auszahlung.html = render_template('Email/auszahlung.html', user=current_user)
-            mail.send(auszahlung)
-
-    except Exception as e:
-        flash('Es gab einen Fehler beim Versenden der E-Mail bezüglich der Auszahlung. Bitte Kontaktieren Sie TolerantTogether@gmail.com', category='error')
-        
-    return render_template('Questionnaire2/reward.html', user=current_user, partner=partner)
+    return render_template('Questionnaire2/reward.html', user=current_user)
