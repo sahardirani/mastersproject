@@ -1,101 +1,203 @@
 {% extends "base.html" %}
-{% block titel %}Second Questionnaire – Perspective{% endblock %}
+{% block titel %}Post-Discussion Questionnaire{% endblock %}
+
 {% block content %}
+
+<style>
+/* --- Questionnaire Container --- */
+.album {
+    background-color: var(--bs-body-bg);
+}
+
+.col-6.mx-auto {
+    max-width: 720px;
+}
+
+/* --- Slider Track + Thumb Styling --- */
+.custom-track-color::-webkit-slider-thumb {
+    background-color: #0d6efd;
+}
+
+.custom-track-color::-webkit-slider-runnable-track {
+    background: #e9ecef;
+    height: 0.45rem;
+    border-radius: 1rem;
+}
+
+.custom-track-color {
+    width: 100%;
+    accent-color: #0d6efd;
+}
+
+/* --- Five Labels Under Slider --- */
+.custom-labels {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    text-align: center;
+    margin-top: 6px;
+    margin-bottom: 25px;
+}
+
+.custom-labels span {
+    font-size: 0.85rem;
+    color: #6c757d;
+}
+
+/* --- Spacing + Typography --- */
+.form-label {
+    margin-top: 28px;
+    font-weight: 500;
+}
+
+textarea.form-control {
+    margin-top: 12px;
+}
+
+.question-text {
+    font-size: 1.45rem !important;
+}
+</style>
+
+
 <section class="py-3 text-center container">
     <div class="row py-lg-4">
         <div class="col-lg-8 col-md-8 mx-auto">
-            <h1 class="fw-light">From the Other Perspective</h1>
+            <h1 class="fw-light">Post-Discussion Questionnaire</h1>
             <p class="lead text-body-secondary">
-                Try to put yourself in the role of your previous conversation partner.<br>
-                Think about your partner’s opinions and viewpoints.<br>
-                <b>Then answer the following survey from your partner’s perspective.</b>
+                Please think about the discussion you just had and rate your agreement with the following statements.
             </p>
         </div>
     </div>
 </section>
 
+
 <div class="album py-3 bg-body-tertiary">
-    <div class="col-6 py-5 mx-auto">
+    <div class="col-6 py-4 mx-auto">
 
-        <label class="form-label">I am afraid of the consequences of climate change.</label>
-        <input type="range" class="form-range custom-track-color" min="1" max="7" id="climate_p1" name="climate_p1" form="perspective">
+        <!-- Q1 -->
+        <label class="form-label">I felt confident expressing my opinion on this topic.</label>
+        <input type="range" class="form-range custom-track-color" min="1" max="5"
+               id="post_confident" name="post_confident" form="perspective">
         <div class="custom-labels">
-            <span class="fw-light">Strongly disagree</span>
-            <span class="fw-light">Neutral</span>
-            <span class="fw-light">Strongly agree</span>
+            <span>Strongly disagree</span>
+            <span>Disagree</span>
+            <span>Neutral</span>
+            <span>Agree</span>
+            <span>Strongly agree</span>
         </div>
 
-        <label class="form-label">I am afraid of the consequences that drastic climate protection measures could cause.</label>
-        <input type="range" class="form-range custom-track-color" min="1" max="7" step="1" id="climate_p2" name="climate_p2" form="perspective">
+        <!-- Q2 -->
+        <label class="form-label">I was open to listening to my discussion partner’s perspective.</label>
+        <input type="range" class="form-range custom-track-color" min="1" max="5"
+               id="post_open_listen" name="post_open_listen" form="perspective">
         <div class="custom-labels">
-            <span class="fw-light">Strongly disagree</span>
-            <span class="fw-light">Neutral</span>
-            <span class="fw-light">Strongly agree</span>
+            <span>Strongly disagree</span>
+            <span>Disagree</span>
+            <span>Neutral</span>
+            <span>Agree</span>
+            <span>Strongly agree</span>
         </div>
 
-        <label class="form-label">I feel that my concerns about climate protection are not taken seriously by politicians.</label>
-        <input type="range" class="form-range custom-track-color" min="1" max="7" id="climate_p3" name="climate_p3" form="perspective">
+        <!-- Q3 -->
+        <label class="form-label">I believe it is possible to find shared understanding on this issue.</label>
+        <input type="range" class="form-range custom-track-color" min="1" max="5"
+               id="post_shared_understanding" name="post_shared_understanding" form="perspective">
         <div class="custom-labels">
-            <span class="fw-light">Strongly disagree</span>
-            <span class="fw-light">Neutral</span>
-            <span class="fw-light">Strongly agree</span>
+            <span>Strongly disagree</span>
+            <span>Disagree</span>
+            <span>Neutral</span>
+            <span>Agree</span>
+            <span>Strongly agree</span>
         </div>
 
-        <label class="form-label">I think political activism in the name of climate protection — such as blocking roads (“climate stickers”) or throwing food at artworks — is overall sensible and positive.</label>
-        <input type="range" class="form-range custom-track-color" min="1" max="7" id="classify_p1" name="classify_p1" form="perspective">
+        <!-- Q4 -->
+        <label class="form-label">The discussion was respectful and constructive.</label>
+        <input type="range" class="form-range custom-track-color" min="1" max="5"
+               id="post_respectful" name="post_respectful" form="perspective">
         <div class="custom-labels">
-            <span class="fw-light">Strongly disagree</span>
-            <span class="fw-light">Neutral</span>
-            <span class="fw-light">Strongly agree</span>
+            <span>Strongly disagree</span>
+            <span>Disagree</span>
+            <span>Neutral</span>
+            <span>Agree</span>
+            <span>Strongly agree</span>
         </div>
 
-        <p class="form-label">
-            Political activism, such as blocking roads by so-called “climate stickers” or vandalizing artworks...
-        </p>
-
-        <label class="form-label">... makes me angry.</label>
-        <input type="range" class="form-range custom-track-color" min="1" max="7" id="emotion_p1" name="emotion_p1" form="perspective">
+        <!-- Q5 -->
+        <label class="form-label">I felt comfortable sharing my honest thoughts and opinions.</label>
+        <input type="range" class="form-range custom-track-color" min="1" max="5"
+               id="post_comfortable" name="post_comfortable" form="perspective">
         <div class="custom-labels">
-            <span class="fw-light">Strongly disagree</span>
-            <span class="fw-light">Neutral</span>
-            <span class="fw-light">Strongly agree</span>
+            <span>Strongly disagree</span>
+            <span>Disagree</span>
+            <span>Neutral</span>
+            <span>Agree</span>
+            <span>Strongly agree</span>
         </div>
 
-        <label class="form-label">... amuses me.</label>
-        <input type="range" class="form-range custom-track-color" min="1" max="7" id="emotion_p2" name="emotion_p2" form="perspective">
+        <!-- Q6 -->
+        <label class="form-label">I learned something new from the discussion.</label>
+        <input type="range" class="form-range custom-track-color" min="1" max="5"
+               id="post_learned" name="post_learned" form="perspective">
         <div class="custom-labels">
-            <span class="fw-light">Strongly disagree</span>
-            <span class="fw-light">Neutral</span>
-            <span class="fw-light">Strongly agree</span>
+            <span>Strongly disagree</span>
+            <span>Disagree</span>
+            <span>Neutral</span>
+            <span>Agree</span>
+            <span>Strongly agree</span>
         </div>
 
-        <label class="form-label">... makes me happy and gives me hope.</label>
-        <input type="range" class="form-range custom-track-color" min="1" max="7" id="emotion_p3" name="emotion_p3" form="perspective">
+        <!-- Q7 -->
+        <label class="form-label">I felt listened to and understood by my conversation partner.</label>
+        <input type="range" class="form-range custom-track-color" min="1" max="5"
+               id="post_listened" name="post_listened" form="perspective">
         <div class="custom-labels">
-            <span class="fw-light">Strongly disagree</span>
-            <span class="fw-light">Neutral</span>
-            <span class="fw-light">Strongly agree</span>
+            <span>Strongly disagree</span>
+            <span>Disagree</span>
+            <span>Neutral</span>
+            <span>Agree</span>
+            <span>Strongly agree</span>
         </div>
 
-        <label class="form-label">
-            Political protest actions such as blocking roads or vandalizing artworks are successful in motivating politics and society to engage more strongly in climate protection.
-        </label>
-        <input type="range" class="form-range custom-track-color" min="1" max="7" id="future_p" name="future_p" form="perspective">
+        <!-- Q8 -->
+        <label class="form-label">The discussion encouraged me to think more deeply about the topic.</label>
+        <input type="range" class="form-range custom-track-color" min="1" max="5"
+               id="post_deep_think" name="post_deep_think" form="perspective">
         <div class="custom-labels">
-            <span class="fw-light">Strongly disagree</span>
-            <span class="fw-light">Neutral</span>
-            <span class="fw-light">Strongly agree</span>
+            <span>Strongly disagree</span>
+            <span>Disagree</span>
+            <span>Neutral</span>
+            <span>Agree</span>
+            <span>Strongly agree</span>
         </div>
 
+        <!-- Q9 -->
+        <label class="form-label">I would participate in a similar discussion again.</label>
+        <input type="range" class="form-range custom-track-color" min="1" max="5"
+               id="post_participate_again" name="post_participate_again" form="perspective">
+        <div class="custom-labels">
+            <span>Strongly disagree</span>
+            <span>Disagree</span>
+            <span>Neutral</span>
+            <span>Agree</span>
+            <span>Strongly agree</span>
+        </div>
+
+        <!-- Q10 (Text) -->
+        <label class="form-label mt-4">Additional reflections:</label>
+        <textarea class="form-control" id="post_reflection" name="post_reflection" form="perspective"
+                  rows="4" placeholder="Write anything you want to add..."></textarea>
+
+        <!-- Submit -->
         <div class="col-8 mx-auto">
             <hr class="my-4">
             <form action="#" method="post" id="perspective">
                 <div class="d-grid gap-2 col-10 mx-auto">
-                    <button class="btn btn-primary" type="submit">Next</button>
+                    <button class="btn btn-primary btn-lg" type="submit">Next</button>
                 </div>
             </form>
         </div>
 
     </div>
 </div>
+
 {% endblock %}

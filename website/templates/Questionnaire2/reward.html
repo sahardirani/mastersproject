@@ -4,57 +4,17 @@
 <section class="py-3 text-center container">
     <div class="row py-lg-5">
         <div class="col-lg-8 col-md-8 mx-auto">
-            <h1 class="fw-light">Reward & Payment</h1>
-            
-            {% if user.behaviour_score %}
-                {% if user.behaviour_score >= 4 %}
-                    <p class="lead text-body-secondary">
-                        Thank you for your participation!  
-                        Since you followed the interaction rules and your conversation partner evaluated your behavior positively,  
-                        you will receive the <b>full reward of 3.5 Euros</b>.
-                    </p>
-                    <hr>
-                    <p class="lead text-body-secondary">
-                        The payment of the above amount will be processed within the next 3 days.  
-                        You will receive an email shortly regarding the payout.
-                    </p>
-                    <p class="lead text-body-secondary">
-                        <b>Thank you very much for your participation!</b><br>
-                        You may now close the application.  
-                        If you have any questions about the topic or the platform, feel free to contact us at  
-                        <a class="link" href="#">TolerantTogether@gmail.com</a>.
-                    </p>
-                {% else %}
-                    <p class="lead text-body-secondary">
-                        Thank you for your participation!  
-                        Unfortunately, your conversation partner believes that you did not fully follow the interaction rules.  
-                        Therefore, you will receive only the <b>partial reward of 2 Euros</b>.
-                    </p>
-                    <hr>
-                    <p class="lead text-body-secondary">
-                        The payment of the above amount will be processed within the next 3 days.  
-                        You will receive an email shortly regarding the payout.
-                    </p>
-                    <p class="lead text-body-secondary">
-                        <b>Thank you very much for your participation!</b>  
-                        You may now close the application.  
-                        If you have any questions about the topic or the platform, feel free to contact us at  
-                        <a class="link" href="#">TolerantTogether@gmail.com</a>.
-                    </p>
-                {% endif %}
-            {% else %}
-                <p class="lead text-body-secondary">
-                    Please be patient — your conversation partner still needs to finish the questionnaire.
-                </p>
-                <form method="get">
-                    <div class="d-grid gap-2 col-4 mx-auto">
-                        <button class="btn btn-primary" type="submit">Refresh</button>
-                    </div>
-                </form>
-            {% endif %}
-            
+            <h1 class="fw-light">Thank you for your participation!</h1>
+
+            <p class="lead text-body-secondary">
+                Thank you very much for taking part in our study and for sharing your feedback.  
+                You have now completed all parts of the experiment and may close the application.
+            </p>
+            <p class="lead text-body-secondary">
+                If you have any questions about the topic or the platform, feel free to contact us at  
+                <a class="link" href="mailto:TolerantTogether@gmail.com">TolerantTogether@gmail.com</a>.
+            </p>
         </div>
     </div>
 </section>
-
 {% endblock %}
