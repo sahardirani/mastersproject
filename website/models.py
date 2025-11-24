@@ -147,6 +147,11 @@ class User(db.Model, UserMixin):
     matches_initiated = db.relationship('Match', foreign_keys='Match.user_a_id', back_populates='user_a', cascade='all, delete-orphan')
     matches_received = db.relationship('Match', foreign_keys='Match.user_b_id', back_populates='user_b', cascade='all, delete-orphan')
 
+    # Availability for up to three time slots
+    time_slot_1 = db.Column(db.String(50), nullable=True)
+    time_slot_2 = db.Column(db.String(50), nullable=True)
+    time_slot_3 = db.Column(db.String(50), nullable=True)
+
 
 # ========================================
 # ADD THESE NEW MODELS AT THE END OF THE FILE
@@ -225,6 +230,8 @@ class Match(db.Model):
     opposition_score = db.Column(db.Float, nullable=False)
     match_decision = db.Column(db.String(50), nullable=False)  # 'ideal_match', 'too_similar', 'too_extreme'
     
+    scheduled_time_slot = db.Column(db.String(50), nullable=True)
+
     # Openness compatibility (both users are open-minded)
     both_open_minded = db.Column(db.Boolean, default=True)
     
