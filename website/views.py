@@ -138,8 +138,6 @@ def new_questionnaire():
                 current_user.demo = True
                 db.session.commit()
 
-                Thread(target=find_matches_for_user, args=(current_user.id,)).start()
-
                 # after both parts → demographics
                 return redirect(url_for('views.demographics'))
         else:
@@ -151,46 +149,91 @@ def new_questionnaire():
 # ========================================
 # NEW FUNCTION - Background Matching Task
 # ========================================
-def find_matches_for_user(user_id):
-    """Background task to find matches using MatchingService"""
-    from website import create_app
-    from .matching_service import MatchingService
+# def find_matches_for_user(user_id):
+#     """Background task to find matches using MatchingService"""
+#     # from website import create_app
+#     from .matching_service import MatchingService
     
-    app = create_app()
-    with app.app_context():
-        user = User.query.get(user_id)
-        if user:
-            result = MatchingService.find_best_match_for_user(user)
-            if result:
-                matched_user, score, decision = result
-                match = MatchingService.create_match(user, matched_user, score, decision)
+#     app = create_app()
+#     with app.app_context():
+#         user = User.query.get(user_id)
+#         if user:
+#             result = MatchingService.find_best_match_for_user(user)
+#             if result:
+#                 matched_user, score, decision, common_slot = result
+#                 match = MatchingService.create_match(
+#                     user, 
+#                     matched_user, 
+#                     score, 
+#                     decision, 
+#                     common_slot
+#                 )
                 
-                # Update haspartner flags
-                user.haspartner = True
-                matched_user.haspartner = True
+#                 # Update haspartner flags
+#                 user.haspartner = True
+#                 matched_user.haspartner = True
                 
-                # Set partner_id for compatibility with old system
-                user.partner_id = matched_user.id
-                matched_user.partner_id = user.id
-                user.meeting_id = user.id
-                matched_user.meeting_id = user.id
+#                 # Set partner_id for compatibility with old system
+#                 user.partner_id = matched_user.id
+#                 matched_user.partner_id = user.id
+#                 user.meeting_id = user.id
+#                 matched_user.meeting_id = user.id
                 
-                db.session.commit()
+#                 db.session.commit()
                 
-                print(f"✓ Match created: User {user.id} <-> User {matched_user.id}, Score: {score:.2f}")
+#                 print(f"✓ Match created: User {user.id} <-> User {matched_user.id}, Score: {score:.2f}")
                 
-                # Send email notifications
-                try:
-                    confirmation1 = Message('Zusage', sender='TolerantTogether@gmail.com')
-                    confirmation2 = Message('Zusage', sender='TolerantTogether@gmail.com')
-                    confirmation1.add_recipient(user.email)
-                    confirmation2.add_recipient(matched_user.email)
-                    confirmation1.html = render_template('Email/zusage.html')
-                    confirmation2.html = render_template('Email/zusage.html')
-                    mail.send(confirmation1)
-                    mail.send(confirmation2)
-                except Exception as e:
-                    print(f"Error sending email: {e}")
+#                 # Send email notifications
+#                 try:
+#                     confirmation1 = Message('Zusage', sender='TolerantTogether@gmail.com')
+#                     confirmation2 = Message('Zusage', sender='TolerantTogether@gmail.com')
+#                     confirmation1.add_recipient(user.email)
+#                     confirmation2.add_recipient(matched_user.email)
+#                     confirmation1.html = render_template('Email/zusage.html')
+#                     confirmation2.html = render_template('Email/zusage.html')
+#                     mail.send(confirmation1)
+#                     mail.send(confirmation2)
+#                 except Exception as e:
+#                     print(f"Error sending email: {e}")
+def find_matches_for_user(user_id):
+    """Find matches for a user using the existing app/db context"""
+    from .matching_service import MatchingService
+
+    user = User.query.get(user_id)
+    if not user:
+        print(f"[MATCH] User {user_id} not found")
+        return
+
+    # Step 1: find best match
+    result = MatchingService.find_best_match_for_user(user)
+    if not result:
+        print(f"[MATCH] No suitable match found for user {user.id}")
+        return
+
+    matched_user, score, decision, common_slot = result
+
+    # Step 2: create match record
+    match = MatchingService.create_match(
+        user,
+        matched_user,
+        score,
+        decision,
+        common_slot,
+    )
+
+    # Step 3: update both users
+    user.haspartner = True
+    matched_user.haspartner = True
+    user.partner_id = matched_user.id
+    matched_user.partner_id = user.id
+    user.meeting_id = user.id
+    matched_user.meeting_id = user.id
+
+    db.session.commit()
+
+    print(f"✓ Match created: User {user.id} <-> User {matched_user.id}, "
+          f"Score: {score:.2f}, Slot: {common_slot}")
+
 
 
 # Questionnaire 1, Part 1: demographic questions view
@@ -204,16 +247,34 @@ def demographics():
             age = request.form.get('age')
             education = request.form.get('education')
             job = request.form.get('job')
+
+            # 2） Availability slots (NEW)
+            slot1 = request.form.get('availability1')
+            slot2 = request.form.get('availability2')
+            slot3 = request.form.get('availability3')
             
-            if not gender or not age or not education or not job:
+            if (
+                not gender or not age or not education or not job
+                or not slot1  # at least one slot must be selected
+            ):
                 flash('Please select a valid answer for each question..', category='error')
             else:
                 current_user.gender = gender
                 current_user.age = age
                 current_user.education = education
                 current_user.job = job
+
+# 5） Save availability slots
+                current_user.time_slot_1 = slot1
+                current_user.time_slot_2 = slot2
+                current_user.time_slot_3 = slot3
+
                 db.session.commit()
                 flash('Demographic Data  Daten was saved successfully.', category='success')
+                
+                find_matches_for_user(current_user.id)
+
+
                 return redirect(url_for('views.endofq1'))
 
             
@@ -299,44 +360,48 @@ def questions2():
 @login_required
 def endofq1():
     # If the user already has a partner, just show the page
-    if current_user.haspartner:
-        return render_template('Questionnaire1/endofq1.html', user=current_user)
-
-    # Try to find a partner
-    partner_query = User.query.filter(
-        User.classification != None,
-        User.haspartner == False,
-        User.id != current_user.id,
-        User.topic == current_user.topic,
-        func.abs(User.classification - current_user.classification) >= 3
-    )
-
-    partner = partner_query.first()
-
-    if partner:
-        # Match them
-        partner.haspartner = True
-        current_user.haspartner = True
-        partner.partner_id = current_user.id
-        current_user.partner_id = partner.id
-        current_user.meeting_id = current_user.id
-        partner.meeting_id = current_user.id
-        db.session.commit()
-
-        # Try email
-        try:
-            zusage1 = Message('Zusage', sender='TolerantTogether@gmail.com')
-            zusage2 = Message('Zusage', sender='TolerantTogether@gmail.com')
-            zusage1.add_recipient(current_user.email)
-            zusage2.add_recipient(partner.email)
-            zusage1.html = render_template('Email/zusage.html')
-            zusage2.html = render_template('Email/zusage.html')
-            mail.send(zusage1)
-            mail.send(zusage2)
-        except Exception as e:
-            flash('Error sending the e-mail.', category='error')
-
     return render_template('Questionnaire1/endofq1.html', user=current_user)
+# @login_required
+# def endofq1():
+#     # If the user already has a partner, just show the page
+#     if current_user.haspartner:
+#         return render_template('Questionnaire1/endofq1.html', user=current_user)
+
+#     # Try to find a partner
+#     partner_query = User.query.filter(
+#         User.classification != None,
+#         User.haspartner == False,
+#         User.id != current_user.id,
+#         User.topic == current_user.topic,
+#         func.abs(User.classification - current_user.classification) >= 3
+#     )
+
+#     partner = partner_query.first()
+
+#     if partner:
+#         # Match them
+#         partner.haspartner = True
+#         current_user.haspartner = True
+#         partner.partner_id = current_user.id
+#         current_user.partner_id = partner.id
+#         current_user.meeting_id = current_user.id
+#         partner.meeting_id = current_user.id
+#         db.session.commit()
+
+#         # Try email
+#         try:
+#             zusage1 = Message('Zusage', sender='TolerantTogether@gmail.com')
+#             zusage2 = Message('Zusage', sender='TolerantTogether@gmail.com')
+#             zusage1.add_recipient(current_user.email)
+#             zusage2.add_recipient(partner.email)
+#             zusage1.html = render_template('Email/zusage.html')
+#             zusage2.html = render_template('Email/zusage.html')
+#             mail.send(zusage1)
+#             mail.send(zusage2)
+#         except Exception as e:
+#             flash('Error sending the e-mail.', category='error')
+
+#     return render_template('Questionnaire1/endofq1.html', user=current_user)
  
 
 # View of the introduction page of the interaction 

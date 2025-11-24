@@ -6,7 +6,8 @@
     <div class="col-lg-8 col-md-8 mx-auto">
       <h1 class="fw-light">Registration for the Discussion</h1>
       <p class="lead text-body-secondary">
-        The following information is required for registration. <br>Please provide the following details truthfully.<br>Your data will only be used anonymously for evaluation purposes.</p>
+        The following information is required for registration. <br>Please provide the following details
+        truthfully.<br>Your data will only be used anonymously for evaluation purposes.</p>
     </div>
   </div>
 </section>
@@ -76,6 +77,42 @@
             Please select a valid employment status.
           </div>
         </div>
+        <!-- NEW: Availability Time Slots -->
+        <h3 style="color:red">DEBUG: THIS IS NEW DEMO PAGE</h3>
+
+        <div class="col-md-8 mx-auto">
+          <label for="availability1" class="form-label">Available Time Slot 1 (required)</label>
+          <select class="form-select" id="availability1" name="availability1" required>
+            <option selected disabled>Choose...</option>
+            <option value="slot_mon_18_19">Monday 18:00–19:00</option>
+            <option value="slot_tue_19_20">Tuesday 19:00–20:00</option>
+            <option value="slot_sat_10_11">Saturday 10:00–11:00</option>
+          </select>
+        </div>
+
+        <div class="col-md-8 mx-auto">
+          <label for="availability2" class="form-label">Available Time Slot 2 (optional)</label>
+          <select class="form-select" id="availability2" name="availability2">
+            <option selected value="">None</option>
+            <option value="slot_mon_18_19">Monday 18:00–19:00</option>
+            <option value="slot_tue_19_20">Tuesday 19:00–20:00</option>
+            <option value="slot_sat_10_11">Saturday 10:00–11:00</option>
+          </select>
+        </div>
+
+        <div class="col-md-8 mx-auto">
+          <label for="availability3" class="form-label">Available Time Slot 3 (optional)</label>
+          <select class="form-select" id="availability3" name="availability3">
+            <option selected value="">None</option>
+            <option value="slot_mon_18_19">Monday 18:00–19:00</option>
+            <option value="slot_tue_19_20">Tuesday 19:00–20:00</option>
+            <option value="slot_sat_10_11">Saturday 10:00–11:00</option>
+          </select>
+        </div>
+
+        <hr class="my-4">
+
+
         <hr class="my-4">
         <div class="d-grid gap-2 col-6 mx-auto">
           <button class="btn btn-primary" type="submit">Next</button>
