@@ -1,6 +1,12 @@
 {% extends "base.html" %}
 {% block titel %}Second Questionnaire – UEQ{% endblock %}
 {% block content %}
+
+<style>
+    .custom_labels{
+    font-size: 1.3rem !important;
+}
+</style>
 <section class="py-3 text-center container">
     <div class="row py-lg-5">
       <div class="col-lg-7 col-md-8 mx-auto">
@@ -13,7 +19,7 @@
 <div class="album py-5 bg-body-tertiary">
     <div class="col-6 py-3 mx-auto">
 
-        <label class="form-label"><h1>application is…</h1> </label>
+        <label class="form-label"><h2>application is…</h2> </label>
         <input type="range" class="form-range custom-track-color" min="1" max="7" id="ueq1" name="ueq1" form="ueq">
         <div class="custom-labels">
             <span class="fw-light">hindering</span>

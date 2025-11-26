@@ -1,246 +1,204 @@
-from flask import Blueprint, render_template, request, flash, jsonify, url_for, redirect, session
+# views.py — unified and cleaned
+
+from flask import Blueprint, render_template, request, flash, url_for, redirect, session
 from flask_login import login_required, current_user
-from .models import User
+from datetime import datetime, timedelta, time, date
+from threading import Thread
+
+from flask_mail import Message
+
 from . import db, mail
-import json
-import datetime
-from flask_mail import Mail, Message
-from sqlalchemy import func
-from threading import Thread  # NEW: for background matching
+from .models import User, SuggestedTopic, ScheduledEmail
+from .matching_service import MatchingService
+from . import save_questionnaire_responses, get_openness_category
+
+
 
 views = Blueprint('views', __name__)
 
 
-# function that only allows participants to start the interaction on the day of the interaction
 def is_button_disabled():
-    # current_time = datetime.datetime.now()
-    # target_time = datetime.datetime(2023, 7, 12, 13, 0, 0)  
-
-    # if current_time < target_time:
-    #     return True
-    # else:
+    """Placeholder for time-based disabling of the start button. Currently always enabled."""
     return False
 
 
-# Index Page or homepage of the application
-@views.route('/index', methods=['GET','POST'])
+def schedule_followup_email(user):
+    """Schedule a follow-up email 7 days after the discussion."""
+    # Avoid scheduling duplicates for the same user + subject
+    existing = ScheduledEmail.query.filter_by(
+        user_id=user.id,
+        subject="Your Dialogue Experience – One Week Later",
+        sent=False
+    ).first()
+
+    if existing:
+        return  # already scheduled
+
+    send_time = datetime.utcnow() + timedelta(days=7)
+
+    # Use your follow-up email template
+    body_html = render_template("Email/followup.html", user=user)
+
+    email = ScheduledEmail(
+        user_id=user.id,
+        send_at=send_time,
+        subject="Your Dialogue Experience – One Week Later",
+        body_html=body_html,
+    )
+    db.session.add(email)
+    db.session.commit()
+
+
+@views.route('/index', methods=['GET', 'POST'])
 def index():
     if request.method == 'POST':
-        topic = request.form.get("topic")
+        form_type = request.form.get('form_type')
+
+        # 1) User is suggesting a new topic
+        if form_type == 'suggest_topic':
+            title = (request.form.get('title') or '').strip()
+            description = (request.form.get('description') or '').strip()
+
+            if not title or not description:
+                flash('Please fill in both a title and a description for your topic suggestion.', 'error')
+                return redirect(url_for('views.index'))
+
+            new_topic = SuggestedTopic(
+                title=title,
+                description=description,
+                created_by_id=current_user.id if current_user.is_authenticated else None
+            )
+            db.session.add(new_topic)
+            db.session.commit()
+
+            flash('Thank you! Your topic suggestion has been saved.', 'success')
+            return redirect(url_for('views.index'))
+
+        # 2) Any other POST on index (e.g. a "Get started" button) → go to home
         return redirect(url_for('views.home'))
-    else:
-        return render_template('index.html', user=current_user)
+
+    # GET request → just render landing page
+    return render_template('index.html', user=current_user)
 
 
-# Theme home page view that is dependent upon having completed the first questionnaire
-# and upon being assigned to an interaction partner
 @views.route('/', methods=['GET', 'POST'])
 @login_required
 def home():
     if request.method == 'POST':
-        # read topic from the form (coming from index.html buttons)
         selected_topic = request.form.get('topic')
-
         if selected_topic:
             current_user.topic = selected_topic
             db.session.commit()
-
-        # NEW: after saving topic, go to new 15-question questionnaire first
         return redirect(url_for('views.new_questionnaire_part1'))
 
-    
-    if current_user.demo:
-        button_disabled = is_button_disabled()
-        partner = None
-        if current_user.haspartner:
-            # OLD SYSTEM: use partner_id if present
-            partner = User.query.get(current_user.partner_id)
+    partner = None
+    if getattr(current_user, 'demo', False) and getattr(current_user, 'haspartner', False):
+        partner = User.query.get(current_user.partner_id)
 
-            # OPTIONAL NEW SYSTEM FALLBACK: if no partner found but user is marked as having a partner,
-            # try to look up matches via MatchingService
-            if not partner:
-                try:
-                    from .matching_service import MatchingService
-                    matches = MatchingService.get_user_matches(current_user.id, status='accepted')
-                    if matches:
-                        match = matches[0]
-                        partner_id = match.user_b_id if match.user_a_id == current_user.id else match.user_a_id
-                        partner = User.query.get(partner_id)
-                except Exception:
-                    pass
-        
-        db.session.commit()
-        return render_template("home.html", user=current_user, partner=partner, button_disabled=button_disabled)
-    
-    return render_template("home.html", user=current_user)
+    return render_template('home.html', user=current_user, partner=partner, button_disabled=is_button_disabled())
+
 
 @views.route('/new_questionnaire/part1', methods=['GET', 'POST'])
 @login_required
 def new_questionnaire_part1():
+    """Part 1 contains attitude1..attitude5 and stores them in session."""
     if request.method == 'POST':
-        # store attitude1–5 temporarily in the session
         for i in range(1, 6):
-            key = f'attitude{i}'
-            session[key] = request.form.get(key)
-        # go to part B
+            session[f'attitude{i}'] = request.form.get(f'attitude{i}')
         return redirect(url_for('views.new_questionnaire'))
 
-    # template with only the first 5 questions
     return render_template('new_questionnaire_part1.html', user=current_user)
 
-# ========================================
-# NEW ROUTE - 15-Question Questionnaire
-# ========================================
+
 @views.route('/new_questionnaire', methods=['GET', 'POST'])
 @login_required
 def new_questionnaire():
-    from . import save_questionnaire_responses, get_openness_category
-    from .matching_service import MatchingService
-
+    """Part 2 of the 15-question openness questionnaire (match1..match10)."""
     if request.method == 'POST':
-        # 1) Collect attitude1–5 from the session (Part A)
-        combined_data = {}
-        for i in range(1, 6):
-            key = f'attitude{i}'
-            if key in session:
-                combined_data[key] = session[key]
+        try:
+            # 1) collect part1 from session
+            combined = {}
+            for i in range(1, 6):
+                key = f'attitude{i}'
+                if key in session and session[key] is not None:
+                    combined[key] = session[key]
 
-        # 2) Add all Part B fields (match1–10) from this form
-        combined_data.update(request.form.to_dict())
+            # 2) add form values (match1..match10 and any other fields)
+            combined.update(request.form.to_dict())
 
-        # 3) Save all 15 responses together
-        result = save_questionnaire_responses(
-            user_id=current_user.id,
-            form_data=combined_data
-        )
+            # 3) Save match1..match10 as integers if provided
+            for i in range(1, 11):
+                key = f'match{i}'
+                if key in combined and combined[key] not in (None, ''):
+                    try:
+                        setattr(current_user, key, int(combined[key]))
+                    except ValueError:
+                        setattr(current_user, key, combined[key])
 
-        if result:
-            openness = result['openness_score']
-            category = get_openness_category(openness)
+            db.session.commit()
 
-            if result['is_extremist']:
-                # Kind message, no score shown
+            # 4) Use helper to calculate openness and check eligibility
+            result = save_questionnaire_responses(user_id=current_user.id, form_data=combined)
+            if not result:
+                flash('An error occurred while saving your answers. Please try again.', 'error')
+                return render_template('new_questionnaire_part2.html', user=current_user)
+
+            if result.get('is_extremist'):
                 flash(
-                    'Thank you very much for taking the time to complete the questionnaire. '
-                    'Unfortunately, based on your answers, you do not meet the eligibility criteria for this study. '
-                    'We are sorry for not inviting you to a dialogue session.',
+                    'Thank you for completing the questionnaire. Unfortunately, you do not meet the eligibility criteria.',
                     'error'
                 )
                 return redirect(url_for('views.index'))
-            else:
-                # Neutral / positive message, no score shown
-                flash(
-                    'Thank you for completing the questionnaire. '
-                    'Your responses have been successfully recorded and you are eligible to continue in the study.',
-                    'success'
-                )
 
-                current_user.demo = True
-                db.session.commit()
+            current_user.demo = True
+            db.session.commit()
 
-                # after both parts → demographics
-                return redirect(url_for('views.demographics'))
-        else:
-            flash('An error occurred while saving your answers. Please try again.', 'error')
+            return redirect(url_for('views.demographics'))
 
-    # GET: show only Part B (match1–10)
+        except Exception as exc:
+            db.session.rollback()
+            print(f"Error in new_questionnaire: {exc}")
+            flash('There was an error processing your questionnaire. Please try again.', 'error')
+
     return render_template('new_questionnaire_part2.html', user=current_user)
 
-# ========================================
-# NEW FUNCTION - Background Matching Task
-# ========================================
-# def find_matches_for_user(user_id):
-#     """Background task to find matches using MatchingService"""
-#     # from website import create_app
-#     from .matching_service import MatchingService
-    
-#     app = create_app()
-#     with app.app_context():
-#         user = User.query.get(user_id)
-#         if user:
-#             result = MatchingService.find_best_match_for_user(user)
-#             if result:
-#                 matched_user, score, decision, common_slot = result
-#                 match = MatchingService.create_match(
-#                     user, 
-#                     matched_user, 
-#                     score, 
-#                     decision, 
-#                     common_slot
-#                 )
-                
-#                 # Update haspartner flags
-#                 user.haspartner = True
-#                 matched_user.haspartner = True
-                
-#                 # Set partner_id for compatibility with old system
-#                 user.partner_id = matched_user.id
-#                 matched_user.partner_id = user.id
-#                 user.meeting_id = user.id
-#                 matched_user.meeting_id = user.id
-                
-#                 db.session.commit()
-                
-#                 print(f"✓ Match created: User {user.id} <-> User {matched_user.id}, Score: {score:.2f}")
-                
-#                 # Send email notifications
-#                 try:
-#                     confirmation1 = Message('Zusage', sender='TolerantTogether@gmail.com')
-#                     confirmation2 = Message('Zusage', sender='TolerantTogether@gmail.com')
-#                     confirmation1.add_recipient(user.email)
-#                     confirmation2.add_recipient(matched_user.email)
-#                     confirmation1.html = render_template('Email/zusage.html')
-#                     confirmation2.html = render_template('Email/zusage.html')
-#                     mail.send(confirmation1)
-#                     mail.send(confirmation2)
-#                 except Exception as e:
-#                     print(f"Error sending email: {e}")
-def find_matches_for_user(user_id):
-    """Find matches for a user using the existing app/db context"""
-    from .matching_service import MatchingService
+def generate_time_slots():
+    """
+    Generate time slot options for the next 7 days,
+    starting from the upcoming Sunday (including today if today is Sunday).
+    Times: 11:00, 13:00, 15:00, 18:00
+    """
 
-    user = User.query.get(user_id)
-    if not user:
-        print(f"[MATCH] User {user_id} not found")
-        return
+    today = date.today()
 
-    # Step 1: find best match
-    result = MatchingService.find_best_match_for_user(user)
-    if not result:
-        print(f"[MATCH] No suitable match found for user {user.id}")
-        return
+    # Find upcoming Sunday (weekday: Mon=0 ... Sun=6 → Sunday=6)
+    days_until_sunday = (6 - today.weekday()) % 7
+    start_day = today + timedelta(days=days_until_sunday)
 
-    matched_user, score, decision, common_slot = result
+    times = [11, 13, 15, 18]  # Hours for the sessions
+    slots = []
 
-    # Step 2: create match record
-    match = MatchingService.create_match(
-        user,
-        matched_user,
-        score,
-        decision,
-        common_slot,
-    )
+    for day_offset in range(7):  # Only 7 days for one full week
+        this_day = start_day + timedelta(days=day_offset)
 
-    # Step 3: update both users
-    user.haspartner = True
-    matched_user.haspartner = True
-    user.partner_id = matched_user.id
-    matched_user.partner_id = user.id
-    user.meeting_id = user.id
-    matched_user.meeting_id = user.id
+        # Example label: "Sun 01.12. 11:00"
+        prefix = this_day.strftime('%a %d.%m.')
 
-    db.session.commit()
+        for hour in times:
+            dt = datetime.combine(this_day, time(hour, 0))
+            label = f"{prefix} {dt.strftime('%H:%M')}"
+            value = dt.isoformat()  # Stored in DB
+            slots.append({'value': value, 'label': label})
 
-    print(f"✓ Match created: User {user.id} <-> User {matched_user.id}, "
-          f"Score: {score:.2f}, Slot: {common_slot}")
+    return slots
 
 
-
-# Questionnaire 1, Part 1: demographic questions view
-# Writing of submitted answers into database
-@views.route('/demographics', methods=['POST', 'GET'])
+@views.route('/demographics', methods=['GET', 'POST'])
 @login_required
 def demographics():
+    """Collect demographic info and availability, then trigger background matching."""
+    slots = generate_time_slots()
+
     if request.method == 'POST':
         try:
             gender = request.form.get('gender')
@@ -248,350 +206,378 @@ def demographics():
             education = request.form.get('education')
             job = request.form.get('job')
 
-            # 2） Availability slots (NEW)
             slot1 = request.form.get('availability1')
-            slot2 = request.form.get('availability2')
-            slot3 = request.form.get('availability3')
-            
-            if (
-                not gender or not age or not education or not job
-                or not slot1  # at least one slot must be selected
-            ):
-                flash('Please select a valid answer for each question..', category='error')
-            else:
-                current_user.gender = gender
-                current_user.age = age
-                current_user.education = education
-                current_user.job = job
+            slot2 = request.form.get('availability2') or None
+            slot3 = request.form.get('availability3') or None
 
-# 5） Save availability slots
-                current_user.time_slot_1 = slot1
-                current_user.time_slot_2 = slot2
-                current_user.time_slot_3 = slot3
+            if not (gender and age and education and job and slot1):
+                flash('Please fill all required demographic fields (and at least one availability).', 'error')
+                return render_template('Questionnaire1/demographics.html', user=current_user, slots=slots)
 
-                db.session.commit()
-                flash('Demographic Data  Daten was saved successfully.', category='success')
-                
-                find_matches_for_user(current_user.id)
-
-
-                return redirect(url_for('views.endofq1'))
-
-            
-        except Exception as e:
-            flash('There was an error in the processing of the demographic data.', category='error')
-
-    return render_template('Questionnaire1/demographics.html', user=current_user)
-
-
-# Questionnaire 1, Part 2: questions on the topic
-# Writing of submitted answers into database
-@views.route('/q1', methods=['POST', 'GET'])
-@login_required
-def questions1():
-    if request.method == 'POST':
-        try:
-            # Classification is common for all topics
-            current_user.classification = request.form.get('classify1')
-
-            # Decide which questions to save based on selected topic
-            topic = current_user.topic or 'climate'
-
-            if topic == 'climate':
-                current_user.climate1 = request.form.get('climate1')
-                current_user.climate2 = request.form.get('climate2')
-                current_user.climate3 = request.form.get('climate3')
-
-            elif topic == 'ai_employment':
-                current_user.ai_q1 = request.form.get('ai_q1')
-                current_user.ai_q2 = request.form.get('ai_q2')
-                current_user.ai_q3 = request.form.get('ai_q3')
-
-            elif topic == 'freedom_speech':
-                current_user.speech_q1 = request.form.get('speech_q1')
-                current_user.speech_q2 = request.form.get('speech_q2')
-                current_user.speech_q3 = request.form.get('speech_q3')
-
-            # These are still common across all topics
-            current_user.emotion1 = request.form.get('emotion1')
-            current_user.emotion2 = request.form.get('emotion2')
-            current_user.emotion3 = request.form.get('emotion3')
-            current_user.future = request.form.get('future')
-
+            current_user.gender = gender
+            current_user.age = age
+            current_user.education = education
+            current_user.job = job
+            current_user.time_slot_1 = slot1
+            current_user.time_slot_2 = slot2
+            current_user.time_slot_3 = slot3
             db.session.commit()
-            return redirect(url_for('views.questions2'))
 
-        except Exception as e:
-            flash('There was an error processing the data. Please try again.', category='error')
-
-    return render_template('Questionnaire1/questions1.html', user=current_user)
-
-
-# Questionnaire 1, Part 3: questions on the two constructs
-# Writing of submitted answers into database
-@views.route('/Questionnaire1/q2', methods=['GET','POST'])
-@login_required
-def questions2():
-    if request.method == 'POST':
-        try:
-            current_user.construct1 = request.form.get('construct1')
-            current_user.construct2 = request.form.get('construct2')
-            current_user.construct3 = request.form.get('construct3')
-            current_user.construct4 = request.form.get('construct4')
-            current_user.construct5 = request.form.get('construct5')
-            current_user.construct6 = request.form.get('construct6')
-            current_user.construct7 = request.form.get('construct7')
-            current_user.construct8 = request.form.get('construct8')
-            current_user.demo = True
-            db.session.commit()
-            flash('Registration was successful!', category='success')
+            Thread(target=find_matches_for_user, args=(current_user.id,), daemon=True).start()
+            flash('Questionnaire and timeslots data saved. We will notify you when a match is found.', 'success')
             return redirect(url_for('views.endofq1'))
 
-        except Exception as e:
-            flash('There was an error processing the data. Please try again.', category='error')
+        except Exception as exc:
+            db.session.rollback()
+            print(f"Error saving demographics: {exc}")
+            flash('There was an error saving timeslot data. Please try again.', 'error')
 
-    return render_template('Questionnaire1/questions2.html', user=current_user)
+    return render_template('Questionnaire1/demographics.html', user=current_user, slots=slots)
 
 
-# End of Questionnaire 1 page
-# On this page the matching of conversation partners takes place
-# The system goes through the list of participants and searches for a partner with a different opinion and who is not assigned to another user
-@views.route('/Questionnaire1/end', methods=['GET','POST'])
+def find_matches_for_user(user_id):
+    """Find best match for user, create match record, and notify both via email."""
+    try:
+        user = User.query.get(user_id)
+        if not user:
+            print(f"[MATCH] User {user_id} not found")
+            return
+
+        result = MatchingService.find_best_match_for_user(user)
+        if not result:
+            print(f"[MATCH] No match found for user {user_id}")
+            return
+
+        matched_user, score, decision, common_slot = result
+        match = MatchingService.create_match(user, matched_user, score, decision, common_slot)
+
+        # Mark both users as matched
+        user.haspartner = True
+        matched_user.haspartner = True
+        user.partner_id = matched_user.id
+        matched_user.partner_id = user.id
+        user.meeting_id = user.id
+        matched_user.meeting_id = user.id
+
+        db.session.commit()
+
+        # ---------- Format the time slot for email ----------
+        slot_label = None
+        if common_slot:
+            try:
+                # common_slot is stored as ISO string, e.g. "2025-11-28T11:00:00"
+                dt = datetime.fromisoformat(common_slot)
+                # Nice human-readable format, adjust language if needed
+                slot_label = dt.strftime('%A, %d %B %Y, %H:%M')
+            except Exception as e:
+                print(f"[MATCH] Could not parse common_slot '{common_slot}': {e}")
+                slot_label = common_slot  # fallback to raw string
+
+        # ---------- Send notification emails to both users ----------
+        try:
+            # Email to user A
+            m1 = Message(
+                'You have been matched for a dialogue session',
+                sender='TogetherTolerant@gmail.com',
+                recipients=[user.email]
+            )
+            m1.html = render_template(
+                'Email/zusage.html',
+                user=user,
+                partner=matched_user,
+                topic=user.topic,
+                slot_label=slot_label
+            )
+
+            # Email to user B
+            m2 = Message(
+                'You have been matched for a dialogue session',
+                sender='TogetherTolerant@gmail.com',
+                recipients=[matched_user.email]
+            )
+            m2.html = render_template(
+                'Email/zusage.html',
+                user=matched_user,
+                partner=user,
+                topic=matched_user.topic,
+                slot_label=slot_label
+            )
+
+            mail.send(m1)
+            mail.send(m2)
+            print(f"[MATCH] Match emails sent to {user.email} and {matched_user.email}")
+
+        except Exception as mail_exc:
+            print(f"[MATCH] Warning: failed to send match emails: {mail_exc}")
+
+    except Exception as exc:
+        print(f"[MATCH] Error during matching: {exc}")
+
+
+@views.route('/Questionnaire1/end', methods=['GET'])
 @login_required
 def endofq1():
-    # If the user already has a partner, just show the page
     return render_template('Questionnaire1/endofq1.html', user=current_user)
-# @login_required
-# def endofq1():
-#     # If the user already has a partner, just show the page
-#     if current_user.haspartner:
-#         return render_template('Questionnaire1/endofq1.html', user=current_user)
 
-#     # Try to find a partner
-#     partner_query = User.query.filter(
-#         User.classification != None,
-#         User.haspartner == False,
-#         User.id != current_user.id,
-#         User.topic == current_user.topic,
-#         func.abs(User.classification - current_user.classification) >= 3
-#     )
 
-#     partner = partner_query.first()
-
-#     if partner:
-#         # Match them
-#         partner.haspartner = True
-#         current_user.haspartner = True
-#         partner.partner_id = current_user.id
-#         current_user.partner_id = partner.id
-#         current_user.meeting_id = current_user.id
-#         partner.meeting_id = current_user.id
-#         db.session.commit()
-
-#         # Try email
-#         try:
-#             zusage1 = Message('Zusage', sender='TolerantTogether@gmail.com')
-#             zusage2 = Message('Zusage', sender='TolerantTogether@gmail.com')
-#             zusage1.add_recipient(current_user.email)
-#             zusage2.add_recipient(partner.email)
-#             zusage1.html = render_template('Email/zusage.html')
-#             zusage2.html = render_template('Email/zusage.html')
-#             mail.send(zusage1)
-#             mail.send(zusage2)
-#         except Exception as e:
-#             flash('Error sending the e-mail.', category='error')
-
-#     return render_template('Questionnaire1/endofq1.html', user=current_user)
- 
-
-# View of the introduction page of the interaction 
-@views.route('/Interaction/introduction', methods=['GET','POST'])
+# Interaction flow
+@views.route('/Interaction/introduction', methods=['GET', 'POST'])
 @login_required
 def introduction():
-    if request.method=='POST':
+    if request.method == 'POST':
         return redirect(url_for('views.waitpage'))
     return render_template('Interaction/introduction.html', user=current_user)
 
 
-# View of the waiting page that waits until both participants have started the interaction
-@views.route('/Interaction/WaitingPage', methods=['GET','POST'])
+@views.route('/Interaction/WaitingPage', methods=['GET', 'POST'])
 @login_required
 def waitpage():
     try:
-        partner = User.query.get(current_user.partner_id)
+        partner = User.query.get(current_user.partner_id) if current_user.partner_id else None
         current_user.hasarrived = True
         db.session.commit()
-        
-        # TESTING MODE: Add "?test=1" to URL to bypass waiting
+
         is_test_mode = request.args.get('test') == '4'
-        
-        if request.method=='POST':
-            # Simulate partner arrival in test mode
-            if is_test_mode or partner.hasarrived:
+
+        if request.method == 'POST':
+            if is_test_mode or (partner and getattr(partner, 'hasarrived', False)):
                 return 'partner_arrived'
-            else:
-                return 'no_partner_arrived'
-        else:
-            # In test mode, also mark partner as arrived immediately
-            if is_test_mode and partner:
-                partner.hasarrived = True
-                db.session.commit()
-                
-            return render_template('Interaction/waitPage.html', user=current_user, test_mode=is_test_mode)
-        
-    except Exception as e:
+            return 'no_partner_arrived'
+
+        if is_test_mode and partner:
+            partner.hasarrived = True
+            db.session.commit()
+
+        return render_template('Interaction/waitPage.html', user=current_user, test_mode=is_test_mode)
+    except Exception:
         return render_template('Interaction/waitPage.html', user=current_user)
-# View of the first interaction part 
-@views.route('/Interaction/climate', methods=['GET','POST'])
+
+
+@views.route('/Interaction/climate')
 @login_required
 def climate():
     return render_template('Interaction/climate.html', user=current_user)
 
 
-# View of the second interaction part
-@views.route('/Interaction/opinion', methods=['GET','POST'])
+@views.route('/Interaction/opinion')
 @login_required
 def opinion():
     return render_template('Interaction/opinion.html', user=current_user)
 
 
-# View of the third interaction part
-@views.route('/Interaction/future', methods=['GET','POST'])
+@views.route('/Interaction/future')
 @login_required
 def future():
     current_user.hasarrived = False
-    db.session.commit()  # add this line
+    db.session.commit()
     return render_template('Interaction/future.html', user=current_user)
 
+
+# ---------------- Perspective Questionnaire ----------------
 @views.route('/Questionnaire2/perspective', methods=['GET', 'POST'])
 @login_required
 def perspective_questionnaire():
+    fields = [
+        'post_match1_support', 'post_match2_benefits', 'post_match3_action', 'post_match4_impact',
+        'post_match5_attention', 'post_match6_trust', 'post_match7_econnected', 'post_match8_misunderstanding',
+        'post_match9_priority', 'post_match10_values', 'participate_again', 'post_reflection'
+    ]
+
     if request.method == 'POST':
         try:
-            # Save the new post-discussion experience answers
-            fields = [
-                'post_confident',
-                'post_open_listen',
-                'post_shared_understanding',
-                'post_respectful',
-                'post_comfortable',
-                'post_learned',
-                'post_listened',
-                'post_deep_think',
-                'post_participate_again',
-                'post_reflection',
-            ]
-            for field in fields:
-                setattr(current_user, field, request.form.get(field))
+            for f in fields:
+                val = request.form.get(f)
+                if val in (None, ''):
+                    val = None
+                else:
+                    if f.startswith('post_match') or f == 'participate_again':
+                        try:
+                            val = int(val)
+                        except (ValueError, TypeError):
+                            val = None
+                setattr(current_user, f, val)
+                print(f"[DEBUG] {f} = {getattr(current_user, f)}")  # Debug print
 
             db.session.commit()
-
-            # After this questionnaire → go directly to evaluation2 (no score page)
             return redirect(url_for('views.evaluation2'))
 
-        except Exception as e:
-            flash('There was an error saving your answers. Please try again.', category='error')
+        except Exception as exc:
+            db.session.rollback()
+            print(f"Error saving perspective questionnaire: {exc}")
+            flash('There was an error saving your answers. Please try again.', 'error')
 
-    # GET → just show the questionnaire
     return render_template('Questionnaire2/perspective.html', user=current_user)
 
-# Questionnaire 2: Perspective-Taking score view
-# Calculation of perspective score
-@views.route('/Questionnaire2/score', methods=['POST', 'GET'])
-@login_required
-def score():
-    # Score page disabled – always forward into the remaining questionnaire
-    return redirect(url_for('views.evaluation2'))
 
-
-# Questionnaire 2: View of the Evaluation of the interaction behaviour and the construct
-# Writing of submitted answers into database
-@views.route('/Questionnaire2/evaluation', methods=['POST', 'GET'])
-@login_required
-def evaluation():
-    if request.method == 'POST':
-        try:
-            # Store the 10 post-discussion responses
-            for i in range(1, 11):
-                field_name = f'match_post{i}'
-                value = request.form.get(field_name)
-                setattr(current_user, field_name, value)
-
-            db.session.commit()
-            
-            # Optional: Calculate opinion change
-            opinion_change = calculate_opinion_change(current_user)
-            
-            return redirect(url_for('views.evaluation2'))
-        
-        except Exception as e:
-            flash('There was an error processing the data..', category='error')
-
-    return render_template('Questionnaire2/evaluation.html', user=current_user)
-
-
-def calculate_opinion_change(user):
-    """Calculate the change in opinions before and after discussion"""
-    total_change = 0
-    for i in range(1, 11):
-        pre = getattr(user, f'match{i}', 0) or 0
-        post = getattr(user, f'match_post{i}', 0) or 0
-        total_change += abs(post - pre)
-    
-    avg_change = total_change / 10
-    return round(avg_change, 2)
-
-# Questionnaire 2: View of the evaluation of the application
-# Writing of submitted answers into database
-@views.route('/Questionnaire2/evaluation2', methods=['POST', 'GET'])
+# ---------------- Evaluation 2 ----------------
+@views.route('/Questionnaire2/evaluation2', methods=['GET', 'POST'])
 @login_required
 def evaluation2():
     if request.method == 'POST':
         try:
-            attributes = [
-                'ueq1', 'ueq2', 'ueq3', 'ueq4', 'ueq5', 'ueq6', 'ueq7', 'ueq8'
-            ]
-            
-            for attr in attributes:
-                setattr(current_user, attr, request.form.get(attr))
-
+            for attr in ['ueq1', 'ueq2', 'ueq3', 'ueq4', 'ueq5', 'ueq6', 'ueq7', 'ueq8']:
+                val = request.form.get(attr)
+                setattr(current_user, attr, val if val not in (None, '') else None)
             db.session.commit()
-
             return redirect(url_for('views.evaluation3'))
-        except Exception as e:
-            flash('There was an error processing the data.', category='error')
+        except Exception as exc:
+            db.session.rollback()
+            print(f"Error saving evaluation2: {exc}")
+            flash('There was an error processing the data.', 'error')
 
     return render_template('Questionnaire2/evaluation2.html', user=current_user)
 
 
-# Questionnaire 2: View of the evaluation of the application
-# Writing of submitted answers into database
-@views.route('/Questionnaire2/evaluation3', methods=['POST', 'GET'])
+# ---------------- Evaluation 3 ----------------
+@views.route('/Questionnaire2/evaluation3', methods=['GET', 'POST'])
 @login_required
 def evaluation3():
     if request.method == 'POST':
         try:
-            attributes = [
-                'eval3', 'feedback', 'perspective', 'construct'
-            ]
-            
-            for attr in attributes:
-                setattr(current_user, attr, request.form.get(attr))
-            
+            for attr in ['eval3', 'feedback', 'perspective', 'construct']:
+                val = request.form.get(attr)
+                setattr(current_user, attr, val if val not in (None, '') else None)
             db.session.commit()
-            
-            return redirect(url_for('views.reward'))
-        
-        except Exception as e:
-            flash('There was an error processing the data..', category='error')
-            # Handle the exception or log the error if needed
+            return redirect(url_for('views.opinion_shift_analysis'))
+        except Exception as exc:
+            db.session.rollback()
+            print(f"Error saving evaluation3: {exc}")
+            flash('There was an error processing the data.', 'error')
 
     return render_template('Questionnaire2/evaluation3.html', user=current_user)
 
+# ---------------- Opinion Shift Analysis ----------------
+@views.route('/opinion_shift_analysis')
+@login_required
+def opinion_shift_analysis():
+    """Display before/after opinion shift visualization for the same 10 questions"""
 
-# View of final page where participant is informed about his reward
-# Automated email containing information on paying process
-@views.route('/Reward', methods=['POST', 'GET'])
+    try:
+        # Map the 10 identical questions (before vs after)
+        questions = [
+            "Support the main idea/goal",
+            "Benefits outweigh risks",
+            "Would take action",
+            "Positive societal impact",
+            "Deserves more attention",
+            "Trust experts/authorities",
+            "Feel emotionally connected",
+            "Opposing views = misunderstanding",
+            "Should be a priority",
+            "Aligns with personal values"
+        ]
+
+        # Collect BEFORE discussion data (match1-match10)
+        before_values = []
+        for i in range(1, 11):
+            val = getattr(current_user, f'match{i}', None)
+            try:
+                before_values.append(int(val) if val not in (None, '', 'None') else None)
+            except (ValueError, TypeError):
+                before_values.append(None)
+
+        # Collect AFTER discussion data (post_match1_support through post_match10_values)
+        after_fields = [
+            'post_match1_support', 'post_match2_benefits', 'post_match3_action',
+            'post_match4_impact', 'post_match5_attention', 'post_match6_trust',
+            'post_match7_econnected', 'post_match8_misunderstanding',
+            'post_match9_priority', 'post_match10_values'
+        ]
+
+        after_values = []
+        for field in after_fields:
+            val = getattr(current_user, field, None)
+            try:
+                after_values.append(int(val) if val not in (None, '', 'None') else None)
+            except (ValueError, TypeError):
+                after_values.append(None)
+
+        # Calculate shifts for each question
+        shifts = []
+        for before, after in zip(before_values, after_values):
+            if before is not None and after is not None:
+                shifts.append(after - before)
+            else:
+                shifts.append(None)
+
+        # Calculate overall average shift
+        valid_shifts = [s for s in shifts if s is not None]
+        avg_shift = sum(valid_shifts) / len(valid_shifts) if valid_shifts else None
+
+        # Calculate average before/after scores
+        valid_before = [v for v in before_values if v is not None]
+        valid_after = [v for v in after_values if v is not None]
+        avg_before = sum(valid_before) / len(valid_before) if valid_before else None
+        avg_after = sum(valid_after) / len(valid_after) if valid_after else None
+
+        # Get openness score and category
+        openness_score = getattr(current_user, 'openness_score', None)
+        openness_category = get_openness_category(openness_score) if openness_score is not None else None
+
+        return render_template(
+            'opinion_shift_analysis.html',
+            user=current_user,
+            questions=questions,
+            before_values=before_values,
+            after_values=after_values,
+            shifts=shifts,
+            avg_shift=avg_shift,
+            avg_before=avg_before,
+            avg_after=avg_after,
+            openness_score=openness_score,
+            openness_category=openness_category
+        )
+
+    except Exception as e:
+        print(f"Error in opinion_shift_analysis: {e}")
+        import traceback
+        traceback.print_exc()
+        flash('An error occurred while loading the opinion shift analysis.', 'error')
+        return redirect(url_for('views.reward'))
+
+
+# ---------------- Reward ----------------
+@views.route('/Reward', methods=['GET', 'POST'])
 @login_required
 def reward():
-    return render_template('Questionnaire2/reward.html', user=current_user)
+    partner = User.query.get(current_user.partner_id) if current_user.partner_id else None
+
+    # 🔔 Schedule follow-up email in 7 days (only once)
+    schedule_followup_email(current_user)
+
+    try:
+        if getattr(current_user, 'behaviour_score', None):
+            payout = Message(
+                'Payout Information',
+                sender='TogetherTolerant@gmail.com',
+                recipients=[current_user.email]
+            )
+            payout.html = render_template('Email/auszahlung.html', user=current_user)
+            mail.send(payout)
+    except Exception as exc:
+        print(f"Error sending payout email: {exc}")
+        flash('There was an error sending the payout email. Please contact the study administrator.', 'error')
+
+    return render_template('Questionnaire2/reward.html', user=current_user, partner=partner)
+
+
+# ---------------- Debug / Check User ----------------
+@views.route('/check_user')
+@login_required
+def check_user():
+    from .models import OpinionDimension, UserOpinion
+    dims = OpinionDimension.query.count()
+    user_opinions = UserOpinion.query.filter_by(user_id=current_user.id).count()
+    return f"""
+    <h2>User Debug Info</h2>
+    <p>User ID: {current_user.id}</p>
+    <p>Email: {current_user.email}</p>
+    <p>Topic: {current_user.topic}</p>
+    <p>Demo: {current_user.demo}</p>
+    <p>Openness Score: {current_user.openness_score}</p>
+    <p>Is Extremist: {current_user.is_extremist}</p>
+    <hr>
+    <p>Total Opinion Dimensions in DB: {dims}</p>
+    <p>User's Opinion Records: {user_opinions}</p>
+    <a href="/">Go Home</a>
+    """

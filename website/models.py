@@ -21,32 +21,6 @@ class User(db.Model, UserMixin):
 
     classification = db.Column(db.Integer)
 
-    climate1 = db.Column(db.Integer)
-    climate2 = db.Column(db.Integer)
-    climate3 = db.Column(db.Integer)
-
-    ai_q1 = db.Column(db.Integer)
-    ai_q2 = db.Column(db.Integer)
-    ai_q3 = db.Column(db.Integer)
-
-    speech_q1 = db.Column(db.Integer)
-    speech_q2 = db.Column(db.Integer)
-    speech_q3 = db.Column(db.Integer)
-    
-    emotion1 = db.Column(db.Integer)
-    emotion2 = db.Column(db.Integer)
-    emotion3 = db.Column(db.Integer)
-    future = db.Column(db.Integer)
-    
-    construct1 = db.Column(db.Integer)
-    construct2 = db.Column(db.Integer)
-    construct3 = db.Column(db.Integer)
-    construct4 = db.Column(db.Integer)
-    construct5 = db.Column(db.Integer)
-    construct6 = db.Column(db.Integer)
-    construct7 = db.Column(db.Integer)
-    construct8 = db.Column(db.Integer)
-
     haspartner = db.Column(db.Boolean, default=False)  # Already exists ✓
     partner_id = db.Column(db.Integer)
     meeting_id = db.Column(db.Integer)
@@ -56,53 +30,7 @@ class User(db.Model, UserMixin):
     paypal = db.Column(db.Boolean, default=False)
 
     classification_p = db.Column(db.Integer)
-    climate_p1 = db.Column(db.Integer)
-    climate_p2 = db.Column(db.Integer)
-    climate_p3 = db.Column(db.Integer)
-    emotion_p1 = db.Column(db.Integer)
-    emotion_p2 = db.Column(db.Integer)
-    emotion_p3 = db.Column(db.Integer)
-    future_p = db.Column(db.Integer)
-
-        # Post-discussion experience questionnaire (after the discussion)
-    post_confident = db.Column(db.Integer)              # I felt confident expressing my opinion
-    post_open_listen = db.Column(db.Integer)            # I was open to listening...
-    post_shared_understanding = db.Column(db.Integer)   # I believe it is possible to find shared understanding
-    post_respectful = db.Column(db.Integer)             # The discussion was respectful and constructive
-    post_comfortable = db.Column(db.Integer)            # I felt comfortable sharing my thoughts
-    post_learned = db.Column(db.Integer)                # I learned something new
-    post_listened = db.Column(db.Integer)               # I felt listened to and understood
-    post_deep_think = db.Column(db.Integer)             # The discussion encouraged me to think more deeply
-    post_participate_again = db.Column(db.Integer)      # I would participate in a similar discussion again
-    post_reflection = db.Column(db.Text)                # Additional reflections
-
-    construct12 = db.Column(db.Integer)
-    construct22 = db.Column(db.Integer)
-    construct32 = db.Column(db.Integer)
-    construct42 = db.Column(db.Integer)
-    construct52 = db.Column(db.Integer)
-    construct62 = db.Column(db.Integer)
-    construct72 = db.Column(db.Integer)
-    construct82 = db.Column(db.Integer)
-
-    ueq1 = db.Column(db.Integer)
-    ueq2 = db.Column(db.Integer)
-    ueq3 = db.Column(db.Integer)
-    ueq4 = db.Column(db.Integer)
-    ueq5 = db.Column(db.Integer)
-    ueq6 = db.Column(db.Integer)
-    ueq7 = db.Column(db.Integer)
-    ueq8 = db.Column(db.Integer)
-
-    eval11 = db.Column(db.Integer)
-    eval12 = db.Column(db.Integer) 
-    eval13 = db.Column(db.Integer)
-    eval14 = db.Column(db.Integer)
-
-    eval11 = db.Column(db.Integer)
-    eval12 = db.Column(db.Integer) 
-    eval13 = db.Column(db.Integer)
-    eval14 = db.Column(db.Integer)
+    
 
     # PRE-DISCUSSION opinion responses (from new_questionnaire_part2.html)
     match1 = db.Column(db.Integer)
@@ -116,19 +44,54 @@ class User(db.Model, UserMixin):
     match9 = db.Column(db.Integer)
     match10 = db.Column(db.Integer)
 
-    # POST-DISCUSSION opinion responses (same questions, after discussion)
-    match_post1 = db.Column(db.Integer)
-    match_post2 = db.Column(db.Integer)
-    match_post3 = db.Column(db.Integer)
-    match_post4 = db.Column(db.Integer)
-    match_post5 = db.Column(db.Integer)
-    match_post6 = db.Column(db.Integer)
-    match_post7 = db.Column(db.Integer)
-    match_post8 = db.Column(db.Integer)
-    match_post9 = db.Column(db.Integer)
-    match_post10 = db.Column(db.Integer)
+        # Post-discussion opinion response (after the discussion)
+    post_match1_support = db.Column(db.Integer)              # I generally support the main idea or goal of this topic
+    post_match2_benefits = db.Column(db.Integer)             # I believe the benefits of this topic outweigh its risks
+    post_match3_action = db.Column(db.Integer)               # I would personally take action in support of this issue
+    post_match4_impact = db.Column(db.Integer)               # I think this issue has an overall positive impact on society
+    post_match5_attention = db.Column(db.Integer)            # I believe this topic deserves more public attention
+    post_match6_trust = db.Column(db.Integer)                # I trust the experts or authorities who promote this topic
+    post_match7_econnected = db.Column(db.Integer)           # I feel emotionally connected to this issue
+    post_match8_misunderstanding = db.Column(db.Integer)     # I think opposing views on this topic are often based on misunderstanding
+    post_match9_priority = db.Column(db.Integer)             # I believe addressing this issue should be a priority
+    post_match10_values = db.Column(db.Integer)              # I think this topic aligns with my personal values
+    participate_again = db.Column(db.Integer)                # I would participate in a similar discussion again
+    post_reflection = db.Column(db.Text)                     # Additional reflections
 
-    eval3 = db.Column(db.Integer)
+ # ========================================
+    # EVALUATION 2: UEQ (User Experience Questionnaire)
+    # ========================================
+    ueq1 = db.Column(db.Integer)  # hindering/supportive
+    ueq2 = db.Column(db.Integer)  # complicated/simple
+    ueq3 = db.Column(db.Integer)  # inefficient/efficient
+    ueq4 = db.Column(db.Integer)  # confusing/organized
+    ueq5 = db.Column(db.Integer)  # boring/exciting
+    ueq6 = db.Column(db.Integer)  # uninteresting/interesting
+    ueq7 = db.Column(db.Integer)  # conventional/original
+    ueq8 = db.Column(db.Integer)  # traditional/innovative
+
+    # ========================================
+    # EVALUATION 3: Feedback and Reflections
+    # ========================================
+    eval3 = db.Column(db.Integer)              # Would recommend to others
+    perspective = db.Column(db.String(500))     # New perspective learned
+    construct = db.Column(db.String(500))       # Changed perception of social cohesion
+    feedback = db.Column(db.String(500))        # Additional feedback/suggestions
+
+    # Additional eval fields (if used elsewhere)
+    eval11 = db.Column(db.Integer)
+    eval12 = db.Column(db.Integer) 
+    eval13 = db.Column(db.Integer)
+    eval14 = db.Column(db.Integer)
+    # ========================================
+    #  ATTITUDE COLUMNS
+    # ========================================
+    attitude1 = db.Column(db.Integer)  # - openness to different opinions
+    attitude2 = db.Column(db.Integer)  # - see both sides
+    attitude3 = db.Column(db.Integer)  # - willing to adjust view
+    attitude4 = db.Column(db.Integer)  # - valid concerns from others
+    attitude5 = db.Column(db.Integer)  # - find common ground
+
     feedback = db.Column(db.String(500))
 
     
@@ -136,7 +99,7 @@ class User(db.Model, UserMixin):
     perspective = db.Column(db.String(500))
     
     # ========================================
-    # ADD THESE NEW FIELDS FOR MATCHING SYSTEM
+    #  MATCHING SYSTEM
     # ========================================
     openness_score = db.Column(db.Float, nullable=True)  # NEW
     is_extremist = db.Column(db.Boolean, default=False)  # NEW
@@ -154,7 +117,6 @@ class User(db.Model, UserMixin):
 
 
 # ========================================
-# ADD THESE NEW MODELS AT THE END OF THE FILE
 # ========================================
 
 class OpinionDimension(db.Model):
@@ -316,3 +278,27 @@ class MatchingSession(db.Model):
     
     # Optional: store configuration
     config_json = db.Column(db.JSON, nullable=True)
+
+class SuggestedTopic(db.Model):
+    __tablename__ = 'suggested_topics'
+
+    id = db.Column(db.Integer, primary_key=True)
+    title = db.Column(db.String(200), nullable=False)
+    description = db.Column(db.Text, nullable=False)
+
+    # Optional: who suggested it
+    created_by_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=True)
+
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+
+class ScheduledEmail(db.Model):
+    __tablename__ = 'scheduled_emails'
+
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+
+    send_at = db.Column(db.DateTime, nullable=False)      # When to send it
+    subject = db.Column(db.String(200), nullable=False)
+    body_html = db.Column(db.Text, nullable=False)
+
+    sent = db.Column(db.Boolean, default=False)
