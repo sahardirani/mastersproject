@@ -4,60 +4,18 @@
 {% block content %}
 
 <style>
-/* --- Questionnaire Container --- */
-.album {
-    background-color: var(--bs-body-bg);
-}
-
-.col-6.mx-auto {
-    max-width: 720px;
-}
-
-/* --- Slider Track + Thumb Styling --- */
-.custom-track-color::-webkit-slider-thumb {
-    background-color: #0d6efd;
-}
-
-.custom-track-color::-webkit-slider-runnable-track {
-    background: #e9ecef;
-    height: 0.45rem;
-    border-radius: 1rem;
-}
-
-.custom-track-color {
-    width: 100%;
-    accent-color: #0d6efd;
-}
-
-/* --- Five Labels Under Slider --- */
-.custom-labels {
-    display: grid;
-    grid-template-columns: repeat(5, 1fr);
-    text-align: center;
-    margin-top: 6px;
-    margin-bottom: 25px;
-}
-
-.custom-labels span {
-    font-size: 0.85rem;
-    color: #6c757d;
-}
-
-/* --- Spacing + Typography --- */
-.form-label {
-    margin-top: 28px;
-    font-weight: 500;
-}
-
-textarea.form-control {
-    margin-top: 12px;
-}
 
 .question-text {
     font-size: 1.45rem !important;
 }
-</style>
 
+.form-label {
+    margin-bottom: 1.5rem;
+    font-size: 1.5rem;
+    margin-top: 2rem;
+    font-weight: 300;
+}
+</style>
 
 <section class="py-3 text-center container">
     <div class="row py-lg-4">
@@ -70,133 +28,153 @@ textarea.form-control {
     </div>
 </section>
 
-
 <div class="album py-3 bg-body-tertiary">
     <div class="col-6 py-4 mx-auto">
+        <form action="{{ url_for('views.perspective_questionnaire') }}" method="post" id="perspective">
 
-        <!-- Q1 -->
-        <label class="form-label">I felt confident expressing my opinion on this topic.</label>
-        <input type="range" class="form-range custom-track-color" min="1" max="5"
-               id="post_confident" name="post_confident" form="perspective">
-        <div class="custom-labels">
-            <span>Strongly disagree</span>
-            <span>Disagree</span>
-            <span>Neutral</span>
-            <span>Agree</span>
-            <span>Strongly agree</span>
-        </div>
+            <!-- Question 1 -->
+            <label class="form-label">1. I generally support the main idea or goal of this topic.</label>
+            <input type="range" class="form-range custom-track-color" min="-2" max="2" step="1" value="0"
+                   id="post_match1_support" name="post_match1_support">
+            <div class="custom-labels">
+                <span>Strongly disagree</span>
+                <span>Disagree</span>
+                <span>Neutral</span>
+                <span>Agree</span>
+                <span>Strongly agree</span>
+            </div>
 
-        <!-- Q2 -->
-        <label class="form-label">I was open to listening to my discussion partner’s perspective.</label>
-        <input type="range" class="form-range custom-track-color" min="1" max="5"
-               id="post_open_listen" name="post_open_listen" form="perspective">
-        <div class="custom-labels">
-            <span>Strongly disagree</span>
-            <span>Disagree</span>
-            <span>Neutral</span>
-            <span>Agree</span>
-            <span>Strongly agree</span>
-        </div>
+            <!-- Question 2 -->
+            <label class="form-label">2. I believe the benefits of this topic outweigh its risks.</label>
+            <input type="range" class="form-range custom-track-color" min="-2" max="2" step="1" value="0"
+                   id="post_match2_benefits" name="post_match2_benefits">
+            <div class="custom-labels">
+                <span>Strongly disagree</span>
+                <span>Disagree</span>
+                <span>Neutral</span>
+                <span>Agree</span>
+                <span>Strongly agree</span>
+            </div>
 
-        <!-- Q3 -->
-        <label class="form-label">I believe it is possible to find shared understanding on this issue.</label>
-        <input type="range" class="form-range custom-track-color" min="1" max="5"
-               id="post_shared_understanding" name="post_shared_understanding" form="perspective">
-        <div class="custom-labels">
-            <span>Strongly disagree</span>
-            <span>Disagree</span>
-            <span>Neutral</span>
-            <span>Agree</span>
-            <span>Strongly agree</span>
-        </div>
+            <!-- Question 3 -->
+            <label class="form-label">3. I would personally take action in support of this issue.</label>
+            <input type="range" class="form-range custom-track-color" min="-2" max="2" step="1" value="0"
+                   id="post_match3_action" name="post_match3_action">
+            <div class="custom-labels">
+                <span>Strongly disagree</span>
+                <span>Disagree</span>
+                <span>Neutral</span>
+                <span>Agree</span>
+                <span>Strongly agree</span>
+            </div>
 
-        <!-- Q4 -->
-        <label class="form-label">The discussion was respectful and constructive.</label>
-        <input type="range" class="form-range custom-track-color" min="1" max="5"
-               id="post_respectful" name="post_respectful" form="perspective">
-        <div class="custom-labels">
-            <span>Strongly disagree</span>
-            <span>Disagree</span>
-            <span>Neutral</span>
-            <span>Agree</span>
-            <span>Strongly agree</span>
-        </div>
+            <!-- Question 4 -->
+            <label class="form-label">4. I think this issue has an overall positive impact on society.</label>
+            <input type="range" class="form-range custom-track-color" min="-2" max="2" step="1" value="0"
+                   id="post_match4_impact" name="post_match4_impact">
+            <div class="custom-labels">
+                <span>Strongly disagree</span>
+                <span>Disagree</span>
+                <span>Neutral</span>
+                <span>Agree</span>
+                <span>Strongly agree</span>
+            </div>
 
-        <!-- Q5 -->
-        <label class="form-label">I felt comfortable sharing my honest thoughts and opinions.</label>
-        <input type="range" class="form-range custom-track-color" min="1" max="5"
-               id="post_comfortable" name="post_comfortable" form="perspective">
-        <div class="custom-labels">
-            <span>Strongly disagree</span>
-            <span>Disagree</span>
-            <span>Neutral</span>
-            <span>Agree</span>
-            <span>Strongly agree</span>
-        </div>
+            <!-- Question 5 -->
+            <label class="form-label">5. I believe this topic deserves more public attention.</label>
+            <input type="range" class="form-range custom-track-color" min="-2" max="2" step="1" value="0"
+                   id="post_match5_attention" name="post_match5_attention">
+            <div class="custom-labels">
+                <span>Strongly disagree</span>
+                <span>Disagree</span>
+                <span>Neutral</span>
+                <span>Agree</span>
+                <span>Strongly agree</span>
+            </div>
 
-        <!-- Q6 -->
-        <label class="form-label">I learned something new from the discussion.</label>
-        <input type="range" class="form-range custom-track-color" min="1" max="5"
-               id="post_learned" name="post_learned" form="perspective">
-        <div class="custom-labels">
-            <span>Strongly disagree</span>
-            <span>Disagree</span>
-            <span>Neutral</span>
-            <span>Agree</span>
-            <span>Strongly agree</span>
-        </div>
+            <!-- Question 6 -->
+            <label class="form-label">6. I trust the experts or authorities who promote this topic.</label>
+            <input type="range" class="form-range custom-track-color" min="-2" max="2" step="1" value="0"
+                   id="post_match6_trust" name="post_match6_trust">
+            <div class="custom-labels">
+                <span>Strongly disagree</span>
+                <span>Disagree</span>
+                <span>Neutral</span>
+                <span>Agree</span>
+                <span>Strongly agree</span>
+            </div>
 
-        <!-- Q7 -->
-        <label class="form-label">I felt listened to and understood by my conversation partner.</label>
-        <input type="range" class="form-range custom-track-color" min="1" max="5"
-               id="post_listened" name="post_listened" form="perspective">
-        <div class="custom-labels">
-            <span>Strongly disagree</span>
-            <span>Disagree</span>
-            <span>Neutral</span>
-            <span>Agree</span>
-            <span>Strongly agree</span>
-        </div>
+            <!-- Question 7 -->
+            <label class="form-label">7. I feel emotionally connected to this issue.</label>
+            <input type="range" class="form-range custom-track-color" min="-2" max="2" step="1" value="0"
+                   id="post_match7_econnected" name="post_match7_econnected">
+            <div class="custom-labels">
+                <span>Strongly disagree</span>
+                <span>Disagree</span>
+                <span>Neutral</span>
+                <span>Agree</span>
+                <span>Strongly agree</span>
+            </div>
 
-        <!-- Q8 -->
-        <label class="form-label">The discussion encouraged me to think more deeply about the topic.</label>
-        <input type="range" class="form-range custom-track-color" min="1" max="5"
-               id="post_deep_think" name="post_deep_think" form="perspective">
-        <div class="custom-labels">
-            <span>Strongly disagree</span>
-            <span>Disagree</span>
-            <span>Neutral</span>
-            <span>Agree</span>
-            <span>Strongly agree</span>
-        </div>
+            <!-- Question 8 -->
+            <label class="form-label">8. I think opposing views on this topic are often based on misunderstanding.</label>
+            <input type="range" class="form-range custom-track-color" min="-2" max="2" step="1" value="0"
+                   id="post_match8_misunderstanding" name="post_match8_misunderstanding">
+            <div class="custom-labels">
+                <span>Strongly disagree</span>
+                <span>Disagree</span>
+                <span>Neutral</span>
+                <span>Agree</span>
+                <span>Strongly agree</span>
+            </div>
 
-        <!-- Q9 -->
-        <label class="form-label">I would participate in a similar discussion again.</label>
-        <input type="range" class="form-range custom-track-color" min="1" max="5"
-               id="post_participate_again" name="post_participate_again" form="perspective">
-        <div class="custom-labels">
-            <span>Strongly disagree</span>
-            <span>Disagree</span>
-            <span>Neutral</span>
-            <span>Agree</span>
-            <span>Strongly agree</span>
-        </div>
+            <!-- Question 9 -->
+            <label class="form-label">9. I believe addressing this issue should be a priority.</label>
+            <input type="range" class="form-range custom-track-color" min="-2" max="2" step="1" value="0"
+                   id="post_match9_priority" name="post_match9_priority">
+            <div class="custom-labels">
+                <span>Strongly disagree</span>
+                <span>Disagree</span>
+                <span>Neutral</span>
+                <span>Agree</span>
+                <span>Strongly agree</span>
+            </div>
 
-        <!-- Q10 (Text) -->
-        <label class="form-label mt-4">Additional reflections:</label>
-        <textarea class="form-control" id="post_reflection" name="post_reflection" form="perspective"
-                  rows="4" placeholder="Write anything you want to add..."></textarea>
+            <!-- Question 10 -->
+            <label class="form-label">10. I think this topic aligns with my personal values.</label>
+            <input type="range" class="form-range custom-track-color" min="-2" max="2" step="1" value="0"
+                   id="post_match10_values" name="post_match10_values">
+            <div class="custom-labels">
+                <span>Strongly disagree</span>
+                <span>Disagree</span>
+                <span>Neutral</span>
+                <span>Agree</span>
+                <span>Strongly agree</span>
+            </div>
 
-        <!-- Submit -->
-        <div class="col-8 mx-auto">
-            <hr class="my-4">
-            <form action="#" method="post" id="perspective">
-                <div class="d-grid gap-2 col-10 mx-auto">
-                    <button class="btn btn-primary btn-lg" type="submit">Next</button>
-                </div>
-            </form>
-        </div>
+            <!-- Question 11 -->
+            <label class="form-label">11. I would participate in a similar discussion again.</label>
+            <input type="range" class="form-range custom-track-color" min="-2" max="2" step="1" value="0"
+                   id="participate_again" name="participate_again">
+            <div class="custom-labels">
+                <span>Strongly disagree</span>
+                <span>Disagree</span>
+                <span>Neutral</span>
+                <span>Agree</span>
+                <span>Strongly agree</span>
+            </div>
 
+            <!-- Question 12 (Text) -->
+            <label class="form-label mt-4">12. Additional reflections:</label>
+            <textarea class="form-control" id="post_reflection" name="post_reflection"
+                      rows="4" placeholder="Write anything you want to add..."></textarea>
+
+            <!-- Submit -->
+            <div class="d-grid gap-2 col-10 mx-auto mt-4">
+                <button class="btn btn-primary btn-lg" type="submit">Next</button>
+            </div>
+
+        </form>
     </div>
 </div>
 

@@ -4,17 +4,21 @@ from sqlalchemy import exc, text
 import os
 from flask_login import LoginManager
 from flask_migrate import Migrate
-from flask_mail import Mail
+from flask_mail import Mail, Message
 from dotenv import load_dotenv
 from datetime import datetime
 import time
 from threading import Thread  # for scheduler threads
+
+# 🚫 IMPORTANT: do NOT import models here to avoid circular imports
+# from .models import ScheduledEmail  # ❌ remove this
 
 # Load environment variables from .env (DATABASE_URL)
 load_dotenv()
 
 db = SQLAlchemy()
 mail = Mail()
+
 
 def create_app():
     # instance_relative_config=True so app.instance_path points to /instance
@@ -41,7 +45,7 @@ def create_app():
 
     print("📌 USING DATABASE:", app.config['SQLALCHEMY_DATABASE_URI'])
 
-    # 📧 Email Configuration (kept from first version)
+    # 📧 Email Configuration
     app.config['MAIL_SERVER'] = 'smtp.gmail.com'
     app.config['MAIL_PORT'] = 587
     app.config['MAIL_USE_TLS'] = True
@@ -54,25 +58,26 @@ def create_app():
     db.init_app(app)
     migrate = Migrate(app, db)
 
+    # Blueprints
     from .views import views
     from .auth import auth
     app.register_blueprint(views, url_prefix='/')
     app.register_blueprint(auth, url_prefix='/')
 
-    # NEW: matching blueprint
+    # Matching blueprint
     from .matching_routes import matching_bp
     app.register_blueprint(matching_bp)
 
+    # Import models only AFTER db is created
     from .models import User
 
     # Optional: create tables if they don't exist
     with app.app_context():
         db.create_all()
         db.session.commit()
-
-        # NEW: initialize opinion dimensions
         initialize_opinion_dimensions()
 
+    # Login manager
     login_manager = LoginManager()
     login_manager.login_view = 'auth.login'
     login_manager.init_app(app)
@@ -100,10 +105,9 @@ def create_app():
     def handle_internal_server_error(e):
         return "Internal Server Error", 500
 
-    # ✅ TEST EMAIL ROUTE — for debugging mail (kept from first version)
+    # ✅ TEST EMAIL ROUTE — for debugging mail
     @app.route("/test-receive")
     def test_receive():
-        from flask_mail import Message
         try:
             msg = Message(
                 subject="Test to Gmail Inbox",
@@ -116,7 +120,7 @@ def create_app():
             print("MAIL ERROR:", e)
             return f"Error while sending mail: {e}", 500
 
-    # NEW: start autonomous matching scheduler
+    # Start autonomous matching + follow-up scheduler
     init_scheduler(app)
 
     return app
@@ -141,9 +145,7 @@ def initialize_opinion_dimensions():
     from .models import OpinionDimension
 
     dimensions = [
-        # ============================================================
-        # A. GENERAL ATTITUDE TOWARD OPPOSING VIEWS (5 questions)
-        # ============================================================
+        # A. GENERAL ATTITUDE (5)
         {
             'name': 'attitude_open_to_differ',
             'display_name': 'Open to Different Opinions',
@@ -185,9 +187,7 @@ def initialize_opinion_dimensions():
             'weight': 1.0
         },
 
-        # ============================================================
-        # B. TOPIC-SPECIFIC ATTITUDE (10 questions)
-        # ============================================================
+        # B. TOPIC-SPECIFIC ATTITUDE (10)
         {
             'name': 'match_support_main_idea',
             'display_name': 'Support Main Idea/Goal',
@@ -389,8 +389,53 @@ def get_openness_category(openness_score):
 
 
 # ========================================
-# Scheduler Class
+# Follow-up Email Sending
 # ========================================
+
+def send_due_followup_emails():
+    """Send follow-up emails that are scheduled and due."""
+    # Import models here to avoid circular import at module load time
+    from .models import User, ScheduledEmail
+
+    now = datetime.utcnow()
+
+    pending = ScheduledEmail.query.filter(
+        ScheduledEmail.sent.is_(False),
+        ScheduledEmail.send_at <= now
+    ).all()
+
+    if not pending:
+        return
+
+    print(f"⏰ Sending {len(pending)} scheduled follow-up email(s)")
+
+    for email in pending:
+        user = User.query.get(email.user_id)
+        if not user or not user.email:
+            # Nothing to send, mark as done so we don't retry forever
+            email.sent = True
+            db.session.commit()
+            continue
+
+        try:
+            msg = Message(
+                subject=email.subject,
+                recipients=[user.email],
+            )
+            msg.html = email.body_html
+            mail.send(msg)
+
+            email.sent = True
+            db.session.commit()
+        except Exception as e:
+            db.session.rollback()
+            print(f"Error sending scheduled email {email.id}: {e}")
+
+
+# ========================================
+# Scheduler Class (matching + follow-up)
+# ========================================
+
 class MatchingScheduler:
     def __init__(self, app):
         self.app = app
@@ -402,7 +447,7 @@ class MatchingScheduler:
             self.running = True
             self.thread = Thread(target=self._run_scheduler, daemon=True)
             self.thread.start()
-            print("✓ Autonomous matching scheduler started")
+            print("✓ Autonomous matching + follow-up scheduler started")
 
     def _run_scheduler(self):
         from .matching_service import MatchingService
@@ -410,10 +455,14 @@ class MatchingScheduler:
         while self.running:
             try:
                 with self.app.app_context():
+                    # 1) Run matching
                     stats = MatchingService.run_batch_matching()
                     expired = MatchingService.expire_old_matches()
                     if expired > 0:
                         print(f"✓ Expired {expired} old matches")
+
+                    # 2) Send any due follow-up emails
+                    send_due_followup_emails()
             except Exception as e:
                 print(f"✗ Scheduler error: {e}")
 

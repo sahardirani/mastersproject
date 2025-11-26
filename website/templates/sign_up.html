@@ -1,22 +1,29 @@
 {% extends "base.html" %} 
-{% block title %}Sign Up / Registrierung{% endblock %} 
+{% block title %}Sign Up / Registration{% endblock %} 
 {% block content %}
+
+<style>
+  form{
+    padding-left: 100px;
+    padding-right: 100px;
+  }
+</style>
 <section class="col-8 py-5 mx-auto">
   <form method="POST">
-    <h2 align="center" class="fw-light">Registrierung / Sign Up</h2>
+    <h2 align="center" class="fw-light">Registration / Sign Up</h2>
     <p class="lead text-body-secondary text-center">
-      Bitte machen Sie die folgenden Angaben wahrheitsgetreu. Ihre Daten werden nur anonymisiert für Auswertungszwecke verwendet.
-      <strong>Nur Ihr Benutzername</strong> wird anderen Teilnehmern angezeigt.<br>
+      Please provide the following information truthfully. Your data will only be used anonymously for evaluation purposes.
+      <strong>Only your username</strong> will be visible to other participants.<br>
       <small>
-        (Please provide the following information truthfully. Your data will only be used anonymously for evaluation purposes.
-        <strong>Only your username</strong> will be visible to other participants.)
+        (Bitte machen Sie die folgenden Angaben wahrheitsgetreu. Ihre Daten werden nur anonymisiert für Auswertungszwecke verwendet.
+        <strong>Nur Ihr Benutzername</strong> wird anderen Teilnehmern angezeigt.)
       </small>
     </p>
     <hr>
     <p class="lead text-body-secondary text-center">
-      Bitte geben Sie Ihre <strong>gültige E-Mail-Adresse</strong> an. Diese wird benötigt, um Ihnen weitere Informationen zum Ablauf der Teilnahme zuzusenden.<br>
+      Please enter your <strong>valid email address</strong>. This is needed so we can send you further information about your participation.<br>
       <small>
-        (Please provide a <strong>valid email address</strong>. This is needed to send you further information about your participation.)
+        (Bitte geben Sie Ihre <strong>gültige E-Mail-Adresse</strong> an. Diese wird benötigt, um Ihnen weitere Informationen zum Ablauf der Teilnahme zuzusenden.)
       </small>
     </p>
     <hr>
@@ -27,63 +34,63 @@
         class="form-control"
         id="email"
         name="email"
-        placeholder="Email eingeben / Enter your email"
+        placeholder="Enter your email"
       />
     </div>
     <div class="form-group">
-      <label for="email1" class="lead">Email (Bestätigen / Confirm)</label>
+      <label for="email1" class="lead">Email (Confirm)</label>
       <input
         type="email"
         class="form-control"
         id="email1"
         name="email1"
-        placeholder="Email erneut eingeben / Enter your email again"
+        placeholder="Enter your email again"
       />
     </div>
     <div class="form-group">
-      <label for="user_name" class="lead">Benutzername / Username</label>
+      <label for="user_name" class="lead">Username</label>
       <input
         type="text"
         class="form-control"
         id="user_name"
         name="user_name"
-        placeholder="Benutzername eingeben / Enter your username"
+        placeholder="Enter your username"
       />
     </div>
     <div class="form-group">
-      <label for="password1" class="lead">Passwort / Password</label>
+      <label for="password1" class="lead">Password</label>
       <input
         type="password"
         class="form-control"
         id="password1"
         name="password1"
-        placeholder="Passwort eingeben / Enter your password"
+        placeholder="Enter your password"
       />
     </div>
     <div class="form-group">
-      <label for="password2" class="lead">Passwort (Bestätigen / Confirm)</label>
+      <label for="password2" class="lead">Password (Confirm)</label>
       <input
         type="password"
         class="form-control"
         id="password2"
         name="password2"
-        placeholder="Passwort bestätigen / Confirm your password"
+        placeholder="Confirm your password"
       />
     </div>
     <div class="text-center">
       <div class="form-check">
         <input class="form-check-input bg-secondary" type="checkbox" value="" id="security" name="security">
         <label class="form-check-label lead text-body-secondary" for="security">
-          Ich habe die 
+          I have read and agree to the 
           <a class="link-primary" href="https://bwsyncandshare.kit.edu/s/zpyey6NWd9fnbGf" target="_blank">
-            Einwilligungserklärung und die Datenschutzerklärung
-          </a> gelesen und bin damit einverstanden.
+            Consent Form and Privacy Policy
+          </a>.
           <br>
           <small>
-            (I have read and agree to the 
+            (Ich habe die 
             <a class="link-primary" href="https://bwsyncandshare.kit.edu/s/zpyey6NWd9fnbGf" target="_blank">
-              Consent Form and Privacy Policy
-            </a>.)
+              Einwilligungserklärung und die Datenschutzerklärung
+            </a> gelesen und bin damit einverstanden.)
           </small>
         </label>
       </div>
@@ -91,7 +98,7 @@
     <br />
     <div class="d-grid gap-2 col-4 mx-auto">
       <button type="submit" class="btn btn-primary" id="register" disabled>
-        Registrieren / Register
+        Register
       </button>
     </div>
   </form>

@@ -14,16 +14,16 @@
             <p class="lead text-body-secondary">
                 This platform helps you connect with someone who sees the world differently,
                 in a structured and respectful setting. Before being matched, participants
-                answer a few questions about their opinions and general openness. These answers
-                are used only to create balanced and constructive pairings.
+                answer a few questions about political attitudes and personal background. 
+                Based on this information, the system pairs you with someone who holds 
+                different views on an important societal issue, such as climate activism, 
+                AI and employment, or freedom of speech on social media.
             </p>
-
             <p class="lead text-body-secondary">
-                To ensure a safe and meaningful dialogue, participants whose responses indicate
-                support for violence, hatred, or extreme rejection of democratic principles
-                may be gently excluded from the matching process. This is not about silencing
-                opinions, but about protecting all users and keeping the conversations respectful,
-                open-minded, and constructive for everyone involved.
+                Your conversation is structured around a short video, pre-defined questions, 
+                and space for personal reflection. You will not be forced to change your views, 
+                but you may gain new perspectives, understand the other side better, and contribute 
+                to more constructive public debates.
             </p>
         </div>
         <div class="col-lg-5 col-md-6 mx-auto">
@@ -31,19 +31,13 @@
                  class="rounded mx-auto mb-3" width="100%"/>
             <img src="{{ url_for('static', filename='polarization11.png') }}" 
                  class="rounded mx-auto" width="100%"/>
-
         </div>
     </div>
 
     <div class="py-3 text-center">
-        <h3 class="fw-light">
-            Available Discussion Topics 
-            <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" fill="currentColor" 
-                 class="bi bi-arrow-down" viewBox="0 0 16 16">
-                <path fill-rule="evenodd" 
-                      d="M8 1a.5.5 0 0 1 .5.5v11.793l3.146-3.147a.5.5 0 0 1 .708.708l-4 4a.5.5 0 0 1-.708 0l-4-4a.5.5 0 0 1 .708-.708L7.5 13.293V1.5A.5.5 0 0 1 8 1z"/>
-            </svg>
-        </h3>
+        <h2 class="fw-light">
+            Available Discussion Topics ⬇
+        </h2>
     </div>
 </section>
 
@@ -60,19 +54,66 @@
         flex-direction: column;
     }
     .equal-card-body {
-        flex: 1;
         display: flex;
         flex-direction: column;
-        justify-content: space-between;
+        justify-content: space-between; /* evenly distributes content vertically */
+        height: 100%;
+        padding: 1.5rem;
     }
+    .equal-card-body h2 {
+        min-height: 3rem;         /* ensure some space for heading */
+    }
+    .equal-card-body p {
+        flex-grow: 1;             /* paragraph grows to fill space */
+    }
+
+    .btn-outline-primary {
+    color: white;
+    background: #007bff;
+    border-color: #007bff;
+}
+.btn-outline-primary:hover{
+    color: white;
+    background: #0053ac;
+}
+
+@media (min-width: 992px) {
+    .col-lg-6 {
+        -ms-flex: 0 0 50%;
+        flex: 0 0 100%;
+        max-width: 75%;
+    }
+}
 </style>
 
+<!-- 1) SEARCH BAR BELOW THE HEADING -->
+<div class="container py-3">
+    <div class="row justify-content-center">
+        <div class="col-12 d-flex flex-column align-items-center">
+
+            <h4 class="fw-light mb-3 text-center">Browse &amp; Search Topics</h4>
+            <p class="text-muted text-center">
+                Use the search bar to quickly find one of the current discussion topics.
+            </p>
+
+            <!-- Centered search bar, 80% width -->
+            <input id="topicSearch"
+                   type="text"
+                   class="form-control"
+                   style="width: 80%; max-width: 650px;"
+                   placeholder="Search topics (e.g. climate, AI, speech)...">
+        </div>
+    </div>
+</div>
+
+
+<!-- 2) THREE TOPIC CARDS -->
 <div class="album py-3 bg-body-tertiary">
     <div class="container">
         <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-3">
 
             <!-- TOPIC 1: Climate Activism -->
-            <div class="col mx-auto">
+            <div class="col mx-auto topic-card">
                 <div class="card shadow-sm equal-card">
                     <div class="card-body text-center equal-card-body">
                         <h2 class="fw-light">Climate <br>Activism</h2>
@@ -92,10 +133,10 @@
             </div>
 
             <!-- TOPIC 2: Artificial Intelligence & Employment -->
-            <div class="col mx-auto">
+            <div class="col mx-auto topic-card">
                 <div class="card shadow-sm equal-card">
                     <div class="card-body text-center equal-card-body">
-                        <h2 class="fw-light">Artificial Intelligence & Employment</h2>
+                        <h2 class="fw-light">Artificial Intelligence &amp; Employment</h2>
                         <img src="{{ url_for('static', filename='AI.jpg') }}" 
                              class="topic-image"/>
                         <p class="card-text lead text-body-secondary mt-3">
@@ -112,7 +153,7 @@
             </div>
 
             <!-- TOPIC 3: Freedom of Speech on Social Media -->
-            <div class="col mx-auto">
+            <div class="col mx-auto topic-card">
                 <div class="card shadow-sm equal-card">
                     <div class="card-body text-center equal-card-body">
                         <h2 class="fw-light">Freedom of Speech on Social Media</h2>
@@ -135,5 +176,67 @@
         </div>
     </div>
 </div>
+
+<!-- 3) SUGGEST A NEW TOPIC BELOW THE CARDS -->
+<div class="container py-3">
+    <div class="row">
+        <div class="col-lg-6 mx-auto">
+            <h4 class="fw-light mb-3 text-center">Suggest a New Topic</h4>
+            <p class="text-muted text-center">
+                Is there a topic you care about?
+                Propose it here so it can be considered for future discussions.
+                All suggestions will be <strong>reviewed by the moderator</strong> to ensure they align with the goals of this platform. 
+                If you wish, you may also propose <strong>three discussion questions</strong> (one emotional, one argumentative, one future-oriented) 
+                together with your topic description. If no questions are provided, the moderator will create them based on our dialogue framework.
+            </p>
+
+
+            <form method="post" action="{{ url_for('views.index') }}">
+                <input type="hidden" name="form_type" value="suggest_topic">
+
+                <div class="mb-3">
+                    <label for="suggestedTitle" class="form-label">Topic title</label>
+                    <input type="text"
+                           class="form-control"
+                           id="suggestedTitle"
+                           name="title"
+                           maxlength="200"
+                           required>
+                </div>
+
+                <div class="mb-3">
+                    <label for="suggestedDescription" class="form-label">Short description</label>
+                    <textarea class="form-control"
+                              id="suggestedDescription"
+                              name="description"
+                              rows="3"
+                              required></textarea>
+                </div>
+
+                <div class="text-center">
+                    <button type="submit" class="btn btn-outline-primary">
+                        Submit topic suggestion
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Simple client-side search: hides topic cards that don't match the query
+    const searchInput = document.getElementById('topicSearch');
+    if (searchInput) {
+        searchInput.addEventListener('input', function () {
+            const query = this.value.toLowerCase();
+            const cards = document.querySelectorAll('.topic-card');
+
+            cards.forEach(card => {
+                const text = card.innerText.toLowerCase();
+                card.style.display = text.includes(query) ? '' : 'none';
+            });
+        });
+    }
+</script>
 
 {% endblock %}

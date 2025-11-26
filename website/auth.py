@@ -29,14 +29,14 @@ def login():
                     login_user(user, remember=True)
                     return redirect(url_for('views.home'))
                 else:
-                    flash('Das Passwort ist falsch, versuchen Sie es erneut.', category='error')
+                    flash('The password is incorrect, please try again.', category='error')
             else:
-                flash('Unter dieser Email ist kein Nutzer registriert.', category='error')
+                flash('No user is registered under this email.', category='error')
 
         except Exception as e:
             # Debug output in console
             print("Login error:", e)
-            flash('Es gab einen Fehler bei der Datenverarbeitung. Bitte versuchen Sie es erneut.', category='error')
+            flash('There was an error processing the data. Please try again..', category='error')
 
     return render_template("login.html", user=current_user)
 
@@ -49,7 +49,7 @@ def logout():
         logout_user()
     except Exception as e:
         print("Logout error:", e)
-        flash('Es gab einen Fehler bei ausloggen. Versuchen Sie es erneut.', category='error')
+        flash('There was an error logging out. Please try again.', category='error')
 
     return redirect(url_for('auth.login'))
 
@@ -72,17 +72,17 @@ def sign_up():
 
         try:
             if user:
-                flash('Die Email ist bereits einem Nutzer zugeordnet', category='error')
+                flash('The email is already assigned to a user', category='error')
             elif len(email) < 4:
-                flash('Die Email muss länger als 4 Buchstaben sein.', category='error')
+                flash('The email must be longer than 4 letters.', category='error')
             elif email != email1:
-                flash('Die Emails stimmen nicht überein.', category='error')
+                flash('The emails do not match.', category='error')
             elif len(user_name) < 2:
-                flash('Der Benutzername muss länger als zwei Buchstaben sein.', category='error')
+                flash('The username must be longer than two letters.', category='error')
             elif password1 != password2:
-                flash('Die Passwörter stimmen nicht überein.', category='error')
+                flash('The passwords do not match.', category='error')
             elif len(password1) < 7:
-                flash('Das Passwort muss mindestens 8 Zeichen enthalten.', category='error')
+                flash('The password must be at least 8 characters long.', category='error')
             else:
                 # Nutzer anlegen – Standard-Hash verwenden (pbkdf2:sha256)
                 new_user = User(
@@ -112,12 +112,12 @@ def sign_up():
                     print("Signup email error:", e)
 
                 login_user(new_user, remember=True)
-                flash('Registrierung war erfolgreich! Bitte melden Sie sich zur Diskussion an.', category='success')
+                flash('Registration was successful! Please sign in to join the discussion.', category='success')
                 return redirect(url_for('views.home'))
 
         except Exception as e:
             # Zeig den echten Fehler in der Konsole
             print("Sign-up error:", e)
-            flash('Es gab einen Fehler bei der Datenverarbeitung. Bitte versuchen Sie es erneut.', category='error')
+            flash('There was an error processing the data. Please try again.', category='error')
 
     return render_template("sign_up.html", user=current_user)

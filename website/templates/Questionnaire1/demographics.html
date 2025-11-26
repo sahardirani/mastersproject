@@ -8,6 +8,10 @@
       <p class="lead text-body-secondary">
         The following information is required for registration. <br>Please provide the following details
         truthfully.<br>Your data will only be used anonymously for evaluation purposes.</p>
+        <p>Currently, demographic data is collected only for interface testing. It is not used for matching
+           or analysis and will not be stored long-term. In future versions, demographics may be used to 
+           improve matching quality, but users will be fully informed beforehand.
+        </p>
     </div>
   </div>
 </section>
@@ -76,39 +80,36 @@
           <div class="invalid-feedback">
             Please select a valid employment status.
           </div>
-        </div>
-        <!-- NEW: Availability Time Slots -->
-        <h3 style="color:red">DEBUG: THIS IS NEW DEMO PAGE</h3>
+        </div><br>
 
         <div class="col-md-8 mx-auto">
-          <label for="availability1" class="form-label">Available Time Slot 1 (required)</label>
-          <select class="form-select" id="availability1" name="availability1" required>
-            <option selected disabled>Choose...</option>
-            <option value="slot_mon_18_19">Monday 18:00–19:00</option>
-            <option value="slot_tue_19_20">Tuesday 19:00–20:00</option>
-            <option value="slot_sat_10_11">Saturday 10:00–11:00</option>
-          </select>
+          <label for="availability1" class="form-label">Preferred time slot 1</label>
+<select name="availability1" id="availability1" class="form-select" required>
+    <option value="">Please choose a time slot</option>
+    {% for s in slots %}
+        <option value="{{ s.value }}">{{ s.label }}</option>
+    {% endfor %}
+</select>
+
+<label for="availability2" class="form-label mt-3">Preferred time slot 2 (optional)</label>
+<select name="availability2" id="availability2" class="form-select">
+    <option value="">Optional: choose another time slot</option>
+    {% for s in slots %}
+        <option value="{{ s.value }}">{{ s.label }}</option>
+    {% endfor %}
+</select>
+
+<label for="availability3" class="form-label mt-3">Preferred time slot 3 (optional)</label>
+<select name="availability3" id="availability3" class="form-select">
+    <option value="">Optional: choose a third time slot</option>
+    {% for s in slots %}
+        <option value="{{ s.value }}">{{ s.label }}</option>
+    {% endfor %}
+</select>
+
         </div>
 
-        <div class="col-md-8 mx-auto">
-          <label for="availability2" class="form-label">Available Time Slot 2 (optional)</label>
-          <select class="form-select" id="availability2" name="availability2">
-            <option selected value="">None</option>
-            <option value="slot_mon_18_19">Monday 18:00–19:00</option>
-            <option value="slot_tue_19_20">Tuesday 19:00–20:00</option>
-            <option value="slot_sat_10_11">Saturday 10:00–11:00</option>
-          </select>
-        </div>
-
-        <div class="col-md-8 mx-auto">
-          <label for="availability3" class="form-label">Available Time Slot 3 (optional)</label>
-          <select class="form-select" id="availability3" name="availability3">
-            <option selected value="">None</option>
-            <option value="slot_mon_18_19">Monday 18:00–19:00</option>
-            <option value="slot_tue_19_20">Tuesday 19:00–20:00</option>
-            <option value="slot_sat_10_11">Saturday 10:00–11:00</option>
-          </select>
-        </div>
+       
 
         <hr class="my-4">
 
