@@ -1,8 +1,11 @@
 from datetime import datetime, timedelta
 from itertools import combinations
 
-from .models import UserOpinion, OpinionDimension, User, Match, db
+from flask import render_template
+from flask_mail import Message
 
+from .models import UserOpinion, OpinionDimension, User, Match, db
+from . import mail
 
 def time_overlap(u1, u2):
     """
@@ -247,16 +250,61 @@ class MatchingService:
             if partner.haspartner:
                 continue
 
-            # Create the match and update user flags here?
+            # Create the match row
             match = MatchingService.create_match(user, partner, score, decision, slot)
 
-            # Update convenience flags on User (old system compatibility)
+            # Update convenience flags on User
             user.haspartner = True
             partner.haspartner = True
             user.partner_id = partner.id
             partner.partner_id = user.id
             user.meeting_id = user.id
             partner.meeting_id = user.id
+
+            # ---------- Format the time slot for email ----------
+            slot_label = None
+            if slot:
+                try:
+                    dt = datetime.fromisoformat(slot)
+                    slot_label = dt.strftime('%A, %d %B %Y, %H:%M')
+                except Exception as e:
+                    print(f"[BATCH MATCH] Could not parse slot '{slot}': {e}")
+                    slot_label = slot  # fallback
+
+            # ---------- Send zusage email to both users ----------
+            try:
+                # Email to user A
+                m1 = Message(
+                    'You have been matched for a dialogue session',
+                    recipients=[user.email]
+                )
+                m1.html = render_template(
+                    'Email/zusage.html',
+                    user=user,
+                    partner=partner,
+                    topic=user.topic,
+                    slot_label=slot_label
+                )
+
+                # Email to user B
+                m2 = Message(
+                    'You have been matched for a dialogue session',
+                    recipients=[partner.email]
+                )
+                m2.html = render_template(
+                    'Email/zusage.html',
+                    user=partner,
+                    partner=user,
+                    topic=partner.topic,
+                    slot_label=slot_label
+                )
+
+                mail.send(m1)
+                mail.send(m2)
+                print(f"[BATCH MATCH] Match emails sent to {user.email} and {partner.email}")
+
+            except Exception as mail_exc:
+                print(f"[BATCH MATCH] Failed to send match emails: {mail_exc}")
 
             db.session.commit()
             stats["matches_created"] += 1
