@@ -223,7 +223,7 @@ def demographics():
             current_user.time_slot_3 = slot3
             db.session.commit()
 
-            Thread(target=find_matches_for_user, args=(current_user.id,), daemon=True).start()
+            find_matches_for_user(current_user.id)
             flash('Questionnaire and timeslots data saved. We will notify you when a match is found.', 'success')
             return redirect(url_for('views.endofq1'))
 
