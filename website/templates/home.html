@@ -45,6 +45,16 @@
       flex-direction: column;
       justify-content: space-between;
   }
+
+  .row{
+    display: -ms-flexbox;
+    display: flex;
+    -ms-flex-wrap: wrap;
+    flex-wrap: wrap;
+    margin-right: -15px;
+    margin-left: -15px;
+    justify-content: space-evenly;
+}
 </style>
 
 {% if user.demo %}
@@ -115,11 +125,10 @@
       <div class="row row-cols-1 row-cols-md-3 g-3 mt-3">
 
         <!-- Topic 1: Climate Activism -->
-        <div class="col">
+        <!-- <div class="col">
           <div class="card shadow-sm h-100">
             <div class="card-body text-center d-flex flex-column">
               <h4 class="fw-light">Climate Activism</h4>
-              <!-- <img src="{{ url_for('static', filename='klimakleber1.jpg') }}" class="topic-image my-2" /> -->
               <p class="card-text lead text-body-secondary mt-2">
                 Discuss the topic of climate activism and climate protests.
               </p>
@@ -129,7 +138,7 @@
               </form>
             </div>
           </div>
-        </div>
+        </div> -->
 
         <!-- Topic 2: AI & Employment -->
         <div class="col">
