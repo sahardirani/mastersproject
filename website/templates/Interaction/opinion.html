@@ -95,57 +95,78 @@
 
 <script src="https://meet.jit.si/external_api.js"></script>
 <script>
-    // Create a Jitsi meeting with the same shared meeting ID
-    var meetingid = "{{ user.meeting_id }}";
-    var room_name = 'Part Two ' + meetingid;
-    const domain = 'meet.jit.si';
-    const options = {
-        roomName: room_name,
-        width: '100%',
-        height: 500,
-        parentNode: document.querySelector('#jitsi-container'),
-        interfaceConfigOverwrite: {
-            filmStripOnly: false
-        }
-    };
+document.addEventListener('DOMContentLoaded', () => {
+    console.log("Part 2 loaded");
 
-    const api = new JitsiMeetExternalAPI(domain, options);
+    let api = null;
+    let timersStarted = false;
 
-    // End meeting and go to Part 3
     function timerCallback() {
-        api.dispose();
-        window.location.href = "future";
+        console.log("Part 2: timer fired → go to Part 3 (future.html)");
+        if (api) {
+            api.dispose();
+        }
+        window.location.href = "{{ url_for('views.future') }}";
     }
 
-    // Show 1-minute warning
     function showFlashMessage() {
-        const flashMessageElement = document.getElementById('flash-message');
-        flashMessageElement.style.display = 'block';
+        console.log("Part 2: flash message shown");
+        const el = document.getElementById('flash-message');
+        if (el) el.style.display = 'block';
     }
 
-    // -------------- TEST TIMERS --------------
-    // 5:00 total, warning at 4:00 → for testing: 10s + 5s
-    function endMeeting(){
-        const timer = setTimeout(timerCallback, 10000);      // TEST: 10 seconds (normally 300000 ms)
-        const flashTimer = setTimeout(showFlashMessage, 5000); // TEST: 5 seconds (normally 240000 ms)
+    function startDiscussionTimers() {
+        if (timersStarted) return;
+        timersStarted = true;
+        console.log("Part 2: starting discussion timers (5 min, 4 min warning)");
+        // REAL TIMINGS
+        setTimeout(timerCallback, 300000);    // 5:00 total
+        setTimeout(showFlashMessage, 240000); // 4:00 warning
     }
 
-    // TEMP TEST: start timers as soon as the page loads
-    document.addEventListener('DOMContentLoaded', () => {
-        console.log("Part 2 loaded, starting test timer");
-        endMeeting();
-    });
+    function checkAndStartTimers() {
+        if (!api) return;
+        try {
+            const count = api.getNumberOfParticipants(); // includes yourself
+            console.log("Part 2: participant count =", count);
+            if (count >= 2) {
+                startDiscussionTimers();
+            }
+        } catch (e) {
+            console.error("Part 2: error getting participant count:", e);
+        }
+    }
 
-    // Later, when test is done, remove the DOMContentLoaded block above
-    // and use this instead so the timer starts only after you have joined the meeting:
+    try {
+        const meetingid = "{{ user.meeting_id }}";
+        const room_name = 'Part Two ' + meetingid;
 
-    /*
-    api.addListener('videoConferenceJoined', (event) => {
-        console.log("videoConferenceJoined fired in Part 2", event);
-        endMeeting();
-    });
-    */
+        api = new JitsiMeetExternalAPI('meet.jit.si', {
+            roomName: room_name,
+            width: '100%',
+            height: 500,
+            parentNode: document.querySelector('#jitsi-container')
+        });
+
+        // When YOU fully joined
+        api.addListener('videoConferenceJoined', (event) => {
+            console.log("Part 2: videoConferenceJoined", event);
+            checkAndStartTimers();
+        });
+
+        // When your PARTNER joins
+        api.addListener('participantJoined', (event) => {
+            console.log("Part 2: participantJoined", event);
+            checkAndStartTimers();
+        });
+
+    } catch (e) {
+        console.error("Jitsi init failed in Part 2:", e);
+    }
+});
 </script>
+
+
 
 
 {% endblock %}

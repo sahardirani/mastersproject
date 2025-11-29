@@ -31,6 +31,15 @@ class User(db.Model, UserMixin):
 
     classification_p = db.Column(db.Integer)
     
+    # ========================================
+    #  ATTITUDE COLUMNS
+    # ========================================
+    attitude1 = db.Column(db.Integer)  # - openness to different opinions
+    attitude2 = db.Column(db.Integer)  # - see both sides
+    attitude3 = db.Column(db.Integer)  # - willing to adjust view
+    attitude4 = db.Column(db.Integer)  # - valid concerns from others
+    attitude5 = db.Column(db.Integer)  # - find common ground
+
 
     # PRE-DISCUSSION opinion responses (from new_questionnaire_part2.html)
     match1 = db.Column(db.Integer)
@@ -44,6 +53,11 @@ class User(db.Model, UserMixin):
     match9 = db.Column(db.Integer)
     match10 = db.Column(db.Integer)
 
+    # Availability for up to three time slots
+    time_slot_1 = db.Column(db.String(50), nullable=True)
+    time_slot_2 = db.Column(db.String(50), nullable=True)
+    time_slot_3 = db.Column(db.String(50), nullable=True)
+
         # Post-discussion opinion response (after the discussion)
     post_match1_support = db.Column(db.Integer)              # I generally support the main idea or goal of this topic
     post_match2_benefits = db.Column(db.Integer)             # I believe the benefits of this topic outweigh its risks
@@ -55,20 +69,22 @@ class User(db.Model, UserMixin):
     post_match8_misunderstanding = db.Column(db.Integer)     # I think opposing views on this topic are often based on misunderstanding
     post_match9_priority = db.Column(db.Integer)             # I believe addressing this issue should be a priority
     post_match10_values = db.Column(db.Integer)              # I think this topic aligns with my personal values
-    participate_again = db.Column(db.Integer)                # I would participate in a similar discussion again
     post_reflection = db.Column(db.Text)                     # Additional reflections
 
- # ========================================
-    # EVALUATION 2: UEQ (User Experience Questionnaire)
     # ========================================
-    ueq1 = db.Column(db.Integer)  # hindering/supportive
-    ueq2 = db.Column(db.Integer)  # complicated/simple
-    ueq3 = db.Column(db.Integer)  # inefficient/efficient
-    ueq4 = db.Column(db.Integer)  # confusing/organized
-    ueq5 = db.Column(db.Integer)  # boring/exciting
-    ueq6 = db.Column(db.Integer)  # uninteresting/interesting
-    ueq7 = db.Column(db.Integer)  # conventional/original
-    ueq8 = db.Column(db.Integer)  # traditional/innovative
+    #  DISCUSSION EVALUATION COLUMNS
+    # ========================================
+    disc_evaluation1 = db.Column(db.Integer)  # - confident expressing opinion
+    disc_evaluation2 = db.Column(db.Integer)  # - open to listening to partner's perspective
+    disc_evaluation3 = db.Column(db.Integer)  # - possible to find shared understanding
+    disc_evaluation4 = db.Column(db.Integer)  # - discussion was respectful and constructive
+    disc_evaluation5 = db.Column(db.Integer)  # - comfortable sharing honest thoughts
+    disc_evaluation6 = db.Column(db.Integer)  # - learned something new
+    disc_evaluation7 = db.Column(db.Integer)  # - felt listened to and understood
+    disc_evaluation8 = db.Column(db.Integer)  # - encouraged to think more deeply
+    disc_evaluation9 = db.Column(db.Integer)  # - would participate again
+    disc_evaluation10 = db.Column(db.Text)     # - additional reflections (text area)
+ 
 
     # ========================================
     # EVALUATION 3: Feedback and Reflections
@@ -78,25 +94,7 @@ class User(db.Model, UserMixin):
     construct = db.Column(db.String(500))       # Changed perception of social cohesion
     feedback = db.Column(db.String(500))        # Additional feedback/suggestions
 
-    # Additional eval fields (if used elsewhere)
-    eval11 = db.Column(db.Integer)
-    eval12 = db.Column(db.Integer) 
-    eval13 = db.Column(db.Integer)
-    eval14 = db.Column(db.Integer)
-    # ========================================
-    #  ATTITUDE COLUMNS
-    # ========================================
-    attitude1 = db.Column(db.Integer)  # - openness to different opinions
-    attitude2 = db.Column(db.Integer)  # - see both sides
-    attitude3 = db.Column(db.Integer)  # - willing to adjust view
-    attitude4 = db.Column(db.Integer)  # - valid concerns from others
-    attitude5 = db.Column(db.Integer)  # - find common ground
 
-    feedback = db.Column(db.String(500))
-
-    
-    construct = db.Column(db.String(500))
-    perspective = db.Column(db.String(500))
     
     # ========================================
     #  MATCHING SYSTEM
@@ -110,10 +108,7 @@ class User(db.Model, UserMixin):
     matches_initiated = db.relationship('Match', foreign_keys='Match.user_a_id', back_populates='user_a', cascade='all, delete-orphan')
     matches_received = db.relationship('Match', foreign_keys='Match.user_b_id', back_populates='user_b', cascade='all, delete-orphan')
 
-    # Availability for up to three time slots
-    time_slot_1 = db.Column(db.String(50), nullable=True)
-    time_slot_2 = db.Column(db.String(50), nullable=True)
-    time_slot_3 = db.Column(db.String(50), nullable=True)
+ 
 
 
 # ========================================
@@ -297,7 +292,7 @@ class ScheduledEmail(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
 
-    send_at = db.Column(db.DateTime, nullable=False)      # When to send it
+    send_at = db.Column(db.DateTime, nullable=False)
     subject = db.Column(db.String(200), nullable=False)
     body_html = db.Column(db.Text, nullable=False)
 

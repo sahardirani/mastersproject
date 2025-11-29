@@ -480,3 +480,4 @@ def init_scheduler(app):
         scheduler = MatchingScheduler(app)
         scheduler.start()
     return scheduler
+

@@ -13,7 +13,6 @@ from .matching_service import MatchingService
 from . import save_questionnaire_responses, get_openness_category
 
 
-
 views = Blueprint('views', __name__)
 
 
@@ -24,29 +23,74 @@ def is_button_disabled():
 
 def schedule_followup_email(user):
     """Schedule a follow-up email 7 days after the discussion."""
-    # Avoid scheduling duplicates for the same user + subject
-    existing = ScheduledEmail.query.filter_by(
-        user_id=user.id,
-        subject="Your Dialogue Experience – One Week Later",
-        sent=False
-    ).first()
+    try:
+        print(f"[FOLLOWUP] Scheduling follow-up for user {user.id} ({user.email})")
 
-    if existing:
-        return  # already scheduled
+        # When you are done testing, change minutes=1 to days=7
+        send_time = datetime.utcnow() + timedelta(days=7)
 
-    send_time = datetime.utcnow() + timedelta(days=7)
+        body_html = render_template("Email/followup.html", user=user)
 
-    # Use your follow-up email template
-    body_html = render_template("Email/followup.html", user=user)
+        email = ScheduledEmail(
+            user_id=user.id,
+            send_at=send_time,
+            subject="Your Dialogue Experience – One Week Later",
+            body_html=body_html,
+            sent=False,  # <-- important, so scheduler knows it's not sent yet
+        )
 
-    email = ScheduledEmail(
-        user_id=user.id,
-        send_at=send_time,
-        subject="Your Dialogue Experience – One Week Later",
-        body_html=body_html,
-    )
-    db.session.add(email)
-    db.session.commit()
+        db.session.add(email)
+        db.session.commit()
+        print(f"[FOLLOWUP] Created ScheduledEmail id={email.id} for {user.email} at {send_time}")
+    except Exception as e:
+        db.session.rollback()
+        print(f"[FOLLOWUP] ERROR while scheduling follow-up for user {user.id}: {e}")
+
+def send_due_scheduled_emails():
+    """Send all scheduled emails that are due and not yet sent."""
+    now = datetime.utcnow()
+    try:
+        due_emails = (
+            ScheduledEmail.query
+            .filter(ScheduledEmail.sent == False)   # noqa: E712
+            .filter(ScheduledEmail.send_at <= now)
+            .all()
+        )
+
+        print(f"[FOLLOWUP] Found {len(due_emails)} due scheduled email(s)")
+
+        for email in due_emails:
+            # we store only user_id in ScheduledEmail, so fetch the user
+            user = User.query.get(email.user_id)
+            if not user:
+                print(f"[FOLLOWUP] No user found for ScheduledEmail id={email.id}, marking as sent to skip")
+                email.sent = True
+                continue
+
+            try:
+                msg = Message(
+                    subject=email.subject,
+                    sender="TogetherTolerant@gmail.com",
+                    recipients=[user.email],
+                )
+                msg.html = email.body_html
+                mail.send(msg)
+                email.sent = True
+                print(f"[FOLLOWUP] Sent follow-up email id={email.id} to {user.email}")
+            except Exception as exc:
+                # don't mark as sent so we can retry later
+                print(f"[FOLLOWUP] Error sending email id={email.id} to {user.email}: {exc}")
+
+        db.session.commit()
+    except Exception as exc:
+        db.session.rollback()
+        print(f"[FOLLOWUP] ERROR in send_due_scheduled_emails: {exc}")
+@views.route('/admin/run_scheduled_emails')
+@login_required
+def run_scheduled_emails():
+    """Manually trigger sending of all due scheduled emails."""
+    send_due_scheduled_emails()
+    return "Scheduled emails processed."
 
 
 @views.route('/index', methods=['GET', 'POST'])
@@ -95,7 +139,12 @@ def home():
     if getattr(current_user, 'demo', False) and getattr(current_user, 'haspartner', False):
         partner = User.query.get(current_user.partner_id)
 
-    return render_template('home.html', user=current_user, partner=partner, button_disabled=is_button_disabled())
+    return render_template(
+        'home.html',
+        user=current_user,
+        partner=partner,
+        button_disabled=is_button_disabled()
+    )
 
 
 @views.route('/new_questionnaire/part1', methods=['GET', 'POST'])
@@ -162,13 +211,13 @@ def new_questionnaire():
 
     return render_template('new_questionnaire_part2.html', user=current_user)
 
+
 def generate_time_slots():
     """
     Generate time slot options for the next 7 days,
     starting from the upcoming Sunday (including today if today is Sunday).
     Times: 11:00, 13:00, 15:00, 18:00
     """
-
     today = date.today()
 
     # Find upcoming Sunday (weekday: Mon=0 ... Sun=6 → Sunday=6)
@@ -320,7 +369,7 @@ def endofq1():
     return render_template('Questionnaire1/endofq1.html', user=current_user)
 
 
-# Interaction flow
+# ----------- Interaction flow -----------
 @views.route('/Interaction/introduction', methods=['GET', 'POST'])
 @login_required
 def introduction():
@@ -373,14 +422,14 @@ def future():
     return render_template('Interaction/future.html', user=current_user)
 
 
-# ---------------- Perspective Questionnaire ----------------
-@views.route('/Questionnaire2/perspective', methods=['GET', 'POST'])
+# ---------------- post_match Questionnaire ----------------
+@views.route('/Questionnaire2/post_match_questionnaire', methods=['GET', 'POST'])
 @login_required
-def perspective_questionnaire():
+def post_match_questionnaire():
     fields = [
         'post_match1_support', 'post_match2_benefits', 'post_match3_action', 'post_match4_impact',
         'post_match5_attention', 'post_match6_trust', 'post_match7_econnected', 'post_match8_misunderstanding',
-        'post_match9_priority', 'post_match10_values', 'participate_again', 'post_reflection'
+        'post_match9_priority', 'post_match10_values', 'post_reflection'
     ]
 
     if request.method == 'POST':
@@ -390,7 +439,7 @@ def perspective_questionnaire():
                 if val in (None, ''):
                     val = None
                 else:
-                    if f.startswith('post_match') or f == 'participate_again':
+                    if f.startswith('post_match'):
                         try:
                             val = int(val)
                         except (ValueError, TypeError):
@@ -399,52 +448,39 @@ def perspective_questionnaire():
                 print(f"[DEBUG] {f} = {getattr(current_user, f)}")  # Debug print
 
             db.session.commit()
-            return redirect(url_for('views.evaluation2'))
+            return redirect(url_for('views.discussion_evaluation'))
 
         except Exception as exc:
             db.session.rollback()
-            print(f"Error saving perspective questionnaire: {exc}")
+            print(f"Error saving post match questionnaire: {exc}")
             flash('There was an error saving your answers. Please try again.', 'error')
 
-    return render_template('Questionnaire2/perspective.html', user=current_user)
+    return render_template('Questionnaire2/post_match_questionnaire.html', user=current_user)
 
 
-# ---------------- Evaluation 2 ----------------
-@views.route('/Questionnaire2/evaluation2', methods=['GET', 'POST'])
+# ---------------- discussion evaluation ----------------
+@views.route('/Questionnaire2/discussion_evaluation', methods=['GET', 'POST'])
 @login_required
-def evaluation2():
+def discussion_evaluation():
     if request.method == 'POST':
         try:
-            for attr in ['ueq1', 'ueq2', 'ueq3', 'ueq4', 'ueq5', 'ueq6', 'ueq7', 'ueq8']:
+            for attr in [
+                'disc_evaluation1', 'disc_evaluation2', 'disc_evaluation3', 'disc_evaluation4',
+                'disc_evaluation5', 'disc_evaluation6', 'disc_evaluation7', 'disc_evaluation8',
+                'disc_evaluation9', 'disc_evaluation10'
+            ]:
                 val = request.form.get(attr)
                 setattr(current_user, attr, val if val not in (None, '') else None)
             db.session.commit()
-            return redirect(url_for('views.evaluation3'))
-        except Exception as exc:
-            db.session.rollback()
-            print(f"Error saving evaluation2: {exc}")
-            flash('There was an error processing the data.', 'error')
-
-    return render_template('Questionnaire2/evaluation2.html', user=current_user)
-
-
-# ---------------- Evaluation 3 ----------------
-@views.route('/Questionnaire2/evaluation3', methods=['GET', 'POST'])
-@login_required
-def evaluation3():
-    if request.method == 'POST':
-        try:
-            for attr in ['eval3', 'feedback', 'perspective', 'construct']:
-                val = request.form.get(attr)
-                setattr(current_user, attr, val if val not in (None, '') else None)
-            db.session.commit()
+            # go directly to opinion shift analysis
             return redirect(url_for('views.opinion_shift_analysis'))
         except Exception as exc:
             db.session.rollback()
-            print(f"Error saving evaluation3: {exc}")
+            print(f"Error saving discussion evaluation: {exc}")
             flash('There was an error processing the data.', 'error')
 
-    return render_template('Questionnaire2/evaluation3.html', user=current_user)
+    return render_template('Questionnaire2/discussion_evaluation.html', user=current_user)
+
 
 # ---------------- Opinion Shift Analysis ----------------
 @views.route('/opinion_shift_analysis')
