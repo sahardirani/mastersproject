@@ -83,9 +83,13 @@
           <span data-i18n="signup_consent_prefix">
             I have read and agree to the 
           </span>
-          <a class="link-primary" href="https://bwsyncandshare.kit.edu/s/zpyey6NWd9fnbGf" target="_blank" data-i18n="signup_consent_link">
-            Consent Form and Privacy Policy
-          </a>.
+          <a class="link-primary"
+            href="{{ url_for('static', filename='pdf/consent_form.pdf') }}"
+            target="_blank"
+            data-i18n="signup_consent_link">
+              Consent Form and Privacy Policy
+          </a>
+
           <br>
         </label>
       </div>
