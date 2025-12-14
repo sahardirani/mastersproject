@@ -20,11 +20,19 @@
 
 <section class="py-3 text-center container">
   <div class="row py-lg-3">
-    <h1 class="fw-light">Discussion Round 3: {{ round_title }}</h1>
+    <h1 class="fw-light">
+      <span data-i18n="round3_title_prefix">Discussion Round 3:</span>
+      {{ round_title }}
+    </h1>
     <div class="col-lg-9 col-md-9 mx-auto">
       <p class="lead text-body-secondary">
-        Welcome to the third discussion round.<br>
-        <b>Discussion focus: {{ intro_topic }}</b>
+        <span data-i18n="round3_intro_prefix">
+          Welcome to the third discussion round.
+        </span><br>
+        <b>
+          <span data-i18n="round3_focus_prefix">Discussion focus:</span>
+          {{ intro_topic }}
+        </b>
       </p>
     </div>
   </div>
@@ -36,41 +44,90 @@
       <div>
         <div id="jitsi-container"></div>
         <div id="flash-message" class="flash-message" style="display: none;">
-          You have 1 minute left.
+          <span data-i18n="round3_flash_message">You have 1 minute left.</span>
         </div>
       </div>
     </div>
     <div class="col-lg-4 col-md-8 col-sm-12">
       <div class="d-grid gap-2 text-center">
-        <h2 class="fw-light">Discussion Prompts</h2>
+        <h2 class="fw-light" data-i18n="round3_prompts_title">Discussion Prompts</h2>
         <ul class="list-group d-grid gap-2">
 
-          {% if topic == 'climate' %}
-            <li class="list-group-item lead text-body-secondary"><b>1. What impact do you think very disruptive climate activism has on ordinary citizens?</b></li>
-            <li class="list-group-item lead text-body-secondary"><b>2. Do you think climate activism is effective in changing political decisions?</b></li>
-            <li class="list-group-item lead text-body-secondary"><b>3. In your view, what would be the most effective ways to fight climate change?</b></li>
-            <li class="list-group-item lead text-body-secondary"><b>4. Is there anything you would still like to tell or ask your conversation partner?</b></li>
+  {% if topic == 'climate' %}
+    <li class="list-group-item lead text-body-secondary"
+        data-i18n="round3_climate_q1">
+      <b>1. What impact do you think very disruptive climate activism has on ordinary citizens?</b>
+    </li>
+    <li class="list-group-item lead text-body-secondary"
+        data-i18n="round3_climate_q2">
+      <b>2. Do you think climate activism is effective in changing political decisions?</b>
+    </li>
+    <li class="list-group-item lead text-body-secondary"
+        data-i18n="round3_climate_q3">
+      <b>3. In your view, what would be the most effective ways to fight climate change?</b>
+    </li>
+    <li class="list-group-item lead text-body-secondary"
+        data-i18n="round3_climate_q4">
+      <b>4. Is there anything you would still like to tell or ask your conversation partner?</b>
+    </li>
 
-          {% elif topic == 'ai_employment' %}
-            <li class="list-group-item lead text-body-secondary"><b>1. Who do you think will benefit most from AI in the long run, and who might lose out?</b></li>
-            <li class="list-group-item lead text-body-secondary"><b>2. What political or social measures would you like to see to make the AI transition fairer?</b></li>
-            <li class="list-group-item lead text-body-secondary"><b>3. How do you imagine an ideal future in which humans and AI work together?</b></li>
-            <li class="list-group-item lead text-body-secondary"><b>4. Is there anything you would still like to tell or ask your conversation partner?</b></li>
+  {% elif topic == 'ai_employment' %}
+    <li class="list-group-item lead text-body-secondary"
+        data-i18n="round3_ai_q1">
+      <b>1. Who do you think will benefit most from AI in the long run, and who might lose out?</b>
+    </li>
+    <li class="list-group-item lead text-body-secondary"
+        data-i18n="round3_ai_q2">
+      <b>2. What political or social measures would you like to see to make the AI transition fairer?</b>
+    </li>
+    <li class="list-group-item lead text-body-secondary"
+        data-i18n="round3_ai_q3">
+      <b>3. How do you imagine an ideal future in which humans and AI work together?</b>
+    </li>
+    <li class="list-group-item lead text-body-secondary"
+        data-i18n="round3_ai_q4">
+      <b>4. Is there anything you would still like to tell or ask your conversation partner?</b>
+    </li>
 
-          {% elif topic == 'freedom_speech' %}
-            <li class="list-group-item lead text-body-secondary"><b>1. What impact do you think social media will have on democracy and public debate in the long term?</b></li>
-            <li class="list-group-item lead text-body-secondary"><b>2. What kind of regulation (if any) would you like to see for social media platforms in the future?</b></li>
-            <li class="list-group-item lead text-body-secondary"><b>3. How could we protect freedom of speech while also protecting people from harm online?</b></li>
-            <li class="list-group-item lead text-body-secondary"><b>4. Is there anything you would still like to tell or ask your conversation partner?</b></li>
+  {% elif topic == 'freedom_speech' %}
+    <li class="list-group-item lead text-body-secondary"
+        data-i18n="round3_speech_q1">
+      <b>1. What impact do you think social media will have on democracy and public debate in the long term?</b>
+    </li>
+    <li class="list-group-item lead text-body-secondary"
+        data-i18n="round3_speech_q2">
+      <b>2. What kind of regulation (if any) would you like to see for social media platforms in the future?</b>
+    </li>
+    <li class="list-group-item lead text-body-secondary"
+        data-i18n="round3_speech_q3">
+      <b>3. How could we protect freedom of speech while also protecting people from harm online?</b>
+    </li>
+    <li class="list-group-item lead text-body-secondary"
+        data-i18n="round3_speech_q4">
+      <b>4. Is there anything you would still like to tell or ask your conversation partner?</b>
+    </li>
 
-          {% else %}
-            <li class="list-group-item lead text-body-secondary"><b>1. What long-term consequences do you expect from how this topic is handled today?</b></li>
-            <li class="list-group-item lead text-body-secondary"><b>2. What changes would you personally like to see in the future?</b></li>
-            <li class="list-group-item lead text-body-secondary"><b>3. What could be done to reduce conflict and increase understanding around this topic?</b></li>
-            <li class="list-group-item lead text-body-secondary"><b>4. Is there anything you would still like to tell or ask your conversation partner?</b></li>
-          {% endif %}
+  {% else %}
+    <li class="list-group-item lead text-body-secondary"
+        data-i18n="round3_generic_q1">
+      <b>1. What long-term consequences do you expect from how this topic is handled today?</b>
+    </li>
+    <li class="list-group-item lead text-body-secondary"
+        data-i18n="round3_generic_q2">
+      <b>2. What changes would you personally like to see in the future?</b>
+    </li>
+    <li class="list-group-item lead text-body-secondary"
+        data-i18n="round3_generic_q3">
+      <b>3. What could be done to reduce conflict and increase understanding around this topic?</b>
+    </li>
+    <li class="list-group-item lead text-body-secondary"
+        data-i18n="round3_generic_q4">
+      <b>4. Is there anything you would still like to tell or ask your conversation partner?</b>
+    </li>
+  {% endif %}
 
-        </ul>
+</ul>
+
       </div>
     </div>
   </div>
@@ -147,7 +204,5 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 });
 </script>
-
-
 
 {% endblock %}

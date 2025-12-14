@@ -19,17 +19,12 @@ class User(db.Model, UserMixin):
 
     topic = db.Column(db.String(100))  # Already exists ✓
 
-    classification = db.Column(db.Integer)
 
     haspartner = db.Column(db.Boolean, default=False)  # Already exists ✓
     partner_id = db.Column(db.Integer)
     meeting_id = db.Column(db.Integer)
     hasarrived = db.Column(db.Boolean, default=False)
-    perspective_score = db.Column(db.Float)
-    behaviour_score = db.Column(db.Float)
     paypal = db.Column(db.Boolean, default=False)
-
-    classification_p = db.Column(db.Integer)
     
     # ========================================
     #  ATTITUDE COLUMNS
@@ -85,16 +80,6 @@ class User(db.Model, UserMixin):
     disc_evaluation9 = db.Column(db.Integer)  # - would participate again
     disc_evaluation10 = db.Column(db.Text)     # - additional reflections (text area)
  
-
-    # ========================================
-    # EVALUATION 3: Feedback and Reflections
-    # ========================================
-    eval3 = db.Column(db.Integer)              # Would recommend to others
-    perspective = db.Column(db.String(500))     # New perspective learned
-    construct = db.Column(db.String(500))       # Changed perception of social cohesion
-    feedback = db.Column(db.String(500))        # Additional feedback/suggestions
-
-
     
     # ========================================
     #  MATCHING SYSTEM

@@ -1,11 +1,11 @@
 {% extends "base.html" %}
-{% block titel %}Perspective Score{% endblock %}
+{% block title %}Perspective Score{% endblock %}
 {% block content %}
 <section class="py-3 text-center container">
     <div class="row py-lg-5">
         <div class="col-lg-7 col-md-8 mx-auto">
-            <h1 class="fw-light">Understanding the Other Perspective</h1>
-            <p class="lead text-body-secondary">
+            <h1 class="fw-light" data-i18n="perspective_title">Understanding the Other Perspective</h1>
+            <p class="lead text-body-secondary" data-i18n="perspective_p1">
                 You understood your conversation partner’s perspective to {{ score }}%!
             </p>
             <div class="py-lg-2">
@@ -19,7 +19,7 @@
     <hr>
     <form action="#" method="post">
         <div class="d-grid gap-2 col-4 mx-auto">
-          <button class="btn btn-primary" type="submit">Next</button>
+          <button class="btn btn-primary" type="submit" data-i18n="perspective_next_btn">Next</button>
         </div>
     </form>
 </section>
@@ -32,5 +32,4 @@
     progressBar.setAttribute('aria-valuenow', score);
     progressBar.innerText = `${score}%`;
 </script>
-
 {% endblock %}

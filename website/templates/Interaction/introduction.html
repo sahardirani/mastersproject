@@ -4,27 +4,38 @@
 <section class="py-3 text-center container">
     <div class="row py-lg-3">
         <div class="col-lg-8 col-md-8 mx-auto">
-        <h1 class="fw-light">Explanation of the Interaction Procedure</h1>
-        <p class="lead text-body-secondary">The dialogue is divided into <strong>3 parts</strong>. Each part focuses on one specific question and lasts <strong>5 minutes.</strong></p> 
-        <p class="lead text-body-secondary"><strong>Your task during each 5-minute section is to understand your conversation partner’s views on the given question as accurately as possible. Your partner has the same task. After the conversation, you will be asked questions to assess how well you understood your partner’s viewpoint.</strong></p> 
-        <p class="lead text-body-secondary">Please try to start the interaction punctually at the scheduled time.</p>
-      </div>
+            <h1 class="fw-light" data-i18n="interaction_intro_title">
+                Explanation of the Interaction Procedure
+            </h1>
+            <p class="lead text-body-secondary" data-i18n="interaction_intro_p1">
+                The dialogue is divided into <strong>3 parts</strong>. Each part focuses on one specific question and lasts <strong>5 minutes.</strong>
+            </p>
+            <p class="lead text-body-secondary" data-i18n="interaction_intro_p2">
+                <strong>Your task during each 5-minute section is to understand your conversation partner’s views on the given question as accurately as possible. Your partner has the same task. After the conversation, you will be asked questions to assess how well you understood your partner’s viewpoint.</strong>
+            </p>
+            <p class="lead text-body-secondary" data-i18n="interaction_intro_p3">
+                Please try to start the interaction punctually at the scheduled time.
+            </p>
+        </div>
+    </div>
 </section>
 
 <div class="album py-3 bg-body-tertiary">
   <div class="py-3 container">
     <div class="py-3 col-lg-9 col-md-9 shadow-sm rounded mx-auto bg-white">
         <div class="text-center">
-          <h1 class="fw-light">Rules for the Dialogue</h1>
+          <h1 class="fw-light" data-i18n="interaction_rules_title">Rules for the Dialogue</h1>
         </div>
         <div class="col-lg-11 mx-auto">
-          <p class="lead text-body-secondary"><b>1. Treat your conversation partner with respect.</b></p>
-          <p class="lead text-body-secondary"><b>2. Be polite when interacting with your conversation partner.</b></p>
-          <p class="lead text-body-secondary"><b>3. Allow your conversation partner to speak and finish their thoughts.</b></p>
-          <p class="lead text-body-secondary"><b>4. Avoid judging your partner’s viewpoints.</b></p>
-          <p class="lead text-body-secondary"><b>5. Recording the video call is strictly prohibited.</b></p>
+          <p class="lead text-body-secondary" data-i18n="interaction_rules_1"><b>1. Treat your conversation partner with respect.</b></p>
+          <p class="lead text-body-secondary" data-i18n="interaction_rules_2"><b>2. Be polite when interacting with your conversation partner.</b></p>
+          <p class="lead text-body-secondary" data-i18n="interaction_rules_3"><b>3. Allow your conversation partner to speak and finish their thoughts.</b></p>
+          <p class="lead text-body-secondary" data-i18n="interaction_rules_4"><b>4. Avoid judging your partner’s viewpoints.</b></p>
+          <p class="lead text-body-secondary" data-i18n="interaction_rules_5"><b>5. Recording the video call is strictly prohibited.</b></p>
           <hr>
-          <p class="lead text-body-secondary"><b>The following video calls run on a KIT server and are not recorded.</b></p>
+          <p class="lead text-body-secondary" data-i18n="interaction_rules_norecord">
+            <b>The following video calls run on a KIT server and are not recorded.</b>
+          </p>
         </div>
         <hr>
 
@@ -32,12 +43,20 @@
           <form id="rules" method="post">
             <div class="mb-3 form-check">
               <input type="checkbox" class="form-check-input bg-secondary" id="readrules">
-              <label class="form-check-label lead text-body-secondary" for="readrules">
+              <label class="form-check-label lead text-body-secondary"
+                     for="readrules"
+                     data-i18n="interaction_rules_confirm">
                 I confirm that I have read the rules and that I will follow them.
               </label>
             </div>
             <div class="d-grid gap-2 col-6 mx-auto">
-              <button type="submit" class="btn btn-primary" id="submitButton" disabled>Start Interaction</button>
+              <button type="submit"
+                      class="btn btn-primary"
+                      id="submitButton"
+                      disabled
+                      data-i18n="interaction_rules_button">
+                Start Interaction
+              </button>
             </div>
           </form>
         </div>

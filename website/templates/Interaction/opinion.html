@@ -20,11 +20,19 @@
 
 <section class="py-3 text-center container">
   <div class="row py-lg-3">
-    <h1 class="fw-light">Discussion Round 2: {{ round_title }}</h1>
+    <h1 class="fw-light">
+      <span data-i18n="part2_title_prefix">Discussion Round 2:</span>
+      {{ " " }}{{ round_title }}
+    </h1>
     <div class="col-lg-9 col-md-9 mx-auto">
       <p class="lead text-body-secondary">
-        Welcome to the second discussion round.<br>
-        <b>Discussion focus: {{ intro_topic }}</b>
+        <span data-i18n="part2_intro">
+          Welcome to the second discussion round.
+        </span><br>
+        <b>
+          <span data-i18n="part2_focus_prefix">Discussion focus:</span>
+          {{ " " }}{{ intro_topic }}
+        </b>
       </p>
     </div>
   </div>
@@ -35,7 +43,10 @@
     <div class="col-lg-6 col-md-10 col-sm-12">
       <div>
         <div id="jitsi-container"></div>
-        <div id="flash-message" class="flash-message" style="display: none;">
+        <div id="flash-message"
+             class="flash-message"
+             style="display: none;"
+             data-i18n="part2_flash_1min">
           You have 1 minute left.
         </div>
       </div>
@@ -43,48 +54,66 @@
 
     <div class="col-lg-4 col-md-8 col-sm-12">
       <div class="d-grid gap-2 text-center">
-        <h2 class="fw-light">Discussion Prompts</h2>
+        <h2 class="fw-light" data-i18n="part2_prompts_heading">Discussion Prompts</h2>
         <ul class="list-group d-grid gap-2">
 
           {% if topic == 'climate' %}
-            <li class="list-group-item lead text-body-secondary">
+            <li class="list-group-item lead text-body-secondary"
+                data-i18n="part2_climate_q1">
               <b>1. What do you think about climate activism in general?</b><br>
               (e.g. Fridays for Future)
             </li>
-            <li class="list-group-item lead text-body-secondary">
+            <li class="list-group-item lead text-body-secondary"
+                data-i18n="part2_climate_q2">
               <b>2. What is your opinion on more disruptive protests?</b><br>
               (e.g. road blockades, disrupting events, actions by the “Last Generation”)
             </li>
-            <li class="list-group-item lead text-body-secondary">
+            <li class="list-group-item lead text-body-secondary"
+                data-i18n="part2_climate_q3">
               <b>3. What emotions do such protest actions trigger in you?</b>
             </li>
 
           {% elif topic == 'ai_employment' %}
-            <li class="list-group-item lead text-body-secondary">
+            <li class="list-group-item lead text-body-secondary"
+                data-i18n="part2_ai_q1">
               <b>1. Have you already used AI tools (e.g. chatbots, automation, decision systems) in your work or studies?</b>
             </li>
-            <li class="list-group-item lead text-body-secondary">
+            <li class="list-group-item lead text-body-secondary"
+                data-i18n="part2_ai_q2">
               <b>2. In which situations do you think AI should <i>not</i> make decisions about people (e.g. hiring, firing, grading)?</b>
             </li>
-            <li class="list-group-item lead text-body-secondary">
+            <li class="list-group-item lead text-body-secondary"
+                data-i18n="part2_ai_q3">
               <b>3. How do you feel when important decisions that affect you are made or supported by AI?</b>
             </li>
 
           {% elif topic == 'freedom_speech' %}
-            <li class="list-group-item lead text-body-secondary">
+            <li class="list-group-item lead text-body-secondary"
+                data-i18n="part2_speech_q1">
               <b>1. Have you ever seen content on social media that you think should have been removed?</b>
             </li>
-            <li class="list-group-item lead text-body-secondary">
+            <li class="list-group-item lead text-body-secondary"
+                data-i18n="part2_speech_q2">
               <b>2. Who should decide what is allowed and what is not – platforms, governments, independent bodies, or users?</b>
             </li>
-            <li class="list-group-item lead text-body-secondary">
+            <li class="list-group-item lead text-body-secondary"
+                data-i18n="part2_speech_q3">
               <b>3. Do you think current moderation practices go too far, or not far enough?</b>
             </li>
 
           {% else %}
-            <li class="list-group-item lead text-body-secondary"><b>1. Which specific examples illustrate your opinion on this topic?</b></li>
-            <li class="list-group-item lead text-body-secondary"><b>2. In which situations do you strongly agree or disagree with how this topic is handled today?</b></li>
-            <li class="list-group-item lead text-body-secondary"><b>3. How do you feel emotionally when you think about these situations?</b></li>
+            <li class="list-group-item lead text-body-secondary"
+                data-i18n="part2_generic_q1">
+              <b>1. Which specific examples illustrate your opinion on this topic?</b>
+            </li>
+            <li class="list-group-item lead text-body-secondary"
+                data-i18n="part2_generic_q2">
+              <b>2. In which situations do you strongly agree or disagree with how this topic is handled today?</b>
+            </li>
+            <li class="list-group-item lead text-body-secondary"
+                data-i18n="part2_generic_q3">
+              <b>3. How do you feel emotionally when you think about these situations?</b>
+            </li>
           {% endif %}
 
         </ul>
@@ -119,9 +148,8 @@ document.addEventListener('DOMContentLoaded', () => {
         if (timersStarted) return;
         timersStarted = true;
         console.log("Part 2: starting discussion timers (5 min, 4 min warning)");
-        // REAL TIMINGS
-        setTimeout(timerCallback, 300000);    // 5:00 total
-        setTimeout(showFlashMessage, 240000); // 4:00 warning
+        setTimeout(timerCallback, 300000);    // 5:00
+        setTimeout(showFlashMessage, 240000); // 4:00
     }
 
     function checkAndStartTimers() {
@@ -148,13 +176,11 @@ document.addEventListener('DOMContentLoaded', () => {
             parentNode: document.querySelector('#jitsi-container')
         });
 
-        // When YOU fully joined
         api.addListener('videoConferenceJoined', (event) => {
             console.log("Part 2: videoConferenceJoined", event);
             checkAndStartTimers();
         });
 
-        // When your PARTNER joins
         api.addListener('participantJoined', (event) => {
             console.log("Part 2: participantJoined", event);
             checkAndStartTimers();
@@ -165,8 +191,5 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 });
 </script>
-
-
-
 
 {% endblock %}

@@ -4,120 +4,137 @@
 <section class="py-3 text-center container">
   <div class="row py-lg-4">
     <div class="col-lg-8 col-md-8 mx-auto">
-      <h1 class="fw-light">Registration for the Discussion</h1>
-      <p class="lead text-body-secondary">
-        The following information is required for registration. <br>Please provide the following details
-        truthfully.<br>Your data will only be used anonymously for evaluation purposes.</p>
-        <p>Currently, demographic data is collected only for interface testing. It is not used for matching
-           or analysis and will not be stored long-term. In future versions, demographics may be used to 
-           improve matching quality, but users will be fully informed beforehand.
-        </p>
+      <h1 class="fw-light" data-i18n="demo_title">Registration for the Discussion</h1>
+
+      <p class="lead text-body-secondary" data-i18n="demo_intro1">
+        The following information is required for registration. <br>
+        Please provide the following details truthfully.<br>
+        Your data will only be used anonymously for evaluation purposes.
+      </p>
+
+      <p class="lead text-body-secondary" data-i18n="demo_intro2">
+        Currently, demographic data is collected only for interface testing.  
+        It is not used for matching or analysis and will not be stored long-term.  
+        In future versions, demographics may be used to improve matching quality,  
+        but users will be fully informed beforehand.
+      </p>
     </div>
   </div>
 </section>
+
 <div class="py-3 text-center">
-  <h3 class="fw-light">1. Demographic Information</h3>
+  <h3 class="fw-light" data-i18n="demo_heading1">1. Demographic Information</h3>
 </div>
+
 <div class="album py-5 bg-body-tertiary">
   <div class="container">
     <div class="col-8 mx-auto">
       <form action="#" id="demo" method="post">
+
+        <!-- Gender -->
         <div class="col-md-8 mx-auto">
-          <label for="gender" class="form-label">Gender</label>
+          <label for="gender" class="form-label" data-i18n="demo_gender_label">Gender</label>
           <select class="form-select" name="gender" id="gender" required>
-            <option selected disabled>Choose...</option>
-            <option>Male</option>
-            <option>Female</option>
-            <option>Diverse</option>
-            <option>Other</option>
+            <option selected disabled data-i18n="choose">Choose...</option>
+            <option data-i18n="gender_male">Male</option>
+            <option data-i18n="gender_female">Female</option>
+            <option data-i18n="gender_diverse">Diverse</option>
+            <option data-i18n="gender_other">Other</option>
           </select>
-          <div class="invalid-feedback">
+          <div class="invalid-feedback" data-i18n="demo_gender_invalid">
             Please select a valid gender.
           </div>
         </div>
-        <div class="col-md-8 mx-auto">
-          <label for="age" class="form-label">Age</label>
+
+        <!-- Age -->
+        <div class="col-md-8 mx-auto mt-3">
+          <label for="age" class="form-label" data-i18n="demo_age_label">Age</label>
           <select class="form-select" id="age" name="age" required>
-            <option selected disabled>Choose...</option>
-            <option>0-18 years</option>
-            <option>18-25 years</option>
-            <option>25-35 years</option>
-            <option>35-45 years</option>
-            <option>45-55 years</option>
-            <option>55-65 years</option>
-            <option>65-75 years</option>
-            <option>75+ years</option>
-            <option>Other</option>
+            <option selected disabled data-i18n="choose">Choose...</option>
+            <option data-i18n="age_0_18">0-18 years</option>
+            <option data-i18n="age_18_25">18-25 years</option>
+            <option data-i18n="age_25_35">25-35 years</option>
+            <option data-i18n="age_35_45">35-45 years</option>
+            <option data-i18n="age_45_55">45-55 years</option>
+            <option data-i18n="age_55_65">55-65 years</option>
+            <option data-i18n="age_65_75">65-75 years</option>
+            <option data-i18n="age_75_plus">75+ years</option>
+            <option data-i18n="other">Other</option>
           </select>
-          <div class="invalid-feedback">
+          <div class="invalid-feedback" data-i18n="demo_age_invalid">
             Please select a valid age group.
           </div>
         </div>
-        <div class="col-md-8 mx-auto">
-          <label for="education" class="form-label">Education Level</label>
+
+        <!-- Education -->
+        <div class="col-md-8 mx-auto mt-3">
+          <label for="education" class="form-label" data-i18n="demo_education_label">Education Level</label>
           <select class="form-select" name="education" id="education" required>
-            <option selected disabled>Choose...</option>
-            <option>Secondary School</option>
-            <option>High School Diploma</option>
-            <option>Bachelor's</option>
-            <option>Master's</option>
-            <option>Other</option>
+            <option selected disabled data-i18n="choose">Choose...</option>
+            <option data-i18n="edu_secondary">Secondary School</option>
+            <option data-i18n="edu_highschool">High School Diploma</option>
+            <option data-i18n="edu_bachelor">Bachelor's</option>
+            <option data-i18n="edu_master">Master's</option>
+            <option data-i18n="other">Other</option>
           </select>
-          <div class="invalid-feedback">
+          <div class="invalid-feedback" data-i18n="demo_education_invalid">
             Please select a valid education level.
           </div>
         </div>
-        <div class="col-md-8 mx-auto">
-          <label for="job" class="form-label">Employment Status</label>
+
+        <!-- Employment -->
+        <div class="col-md-8 mx-auto mt-3">
+          <label for="job" class="form-label" data-i18n="demo_job_label">Employment Status</label>
           <select class="form-select" name="job" id="job" required>
-            <option selected disabled>Choose...</option>
-            <option>Student (School)</option>
-            <option>University Student</option>
-            <option>Employed</option>
-            <option>Retired</option>
-            <option>Other</option>
+            <option selected disabled data-i18n="choose">Choose...</option>
+            <option data-i18n="job_school_student">Student (School)</option>
+            <option data-i18n="job_uni_student">University Student</option>
+            <option data-i18n="job_employed">Employed</option>
+            <option data-i18n="job_retired">Retired</option>
+            <option data-i18n="other">Other</option>
           </select>
-          <div class="invalid-feedback">
+          <div class="invalid-feedback" data-i18n="demo_job_invalid">
             Please select a valid employment status.
           </div>
-        </div><br>
-
-        <div class="col-md-8 mx-auto">
-          <label for="availability1" class="form-label">Preferred time slot 1</label>
-<select name="availability1" id="availability1" class="form-select" required>
-    <option value="">Please choose a time slot</option>
-    {% for s in slots %}
-        <option value="{{ s.value }}">{{ s.label }}</option>
-    {% endfor %}
-</select>
-
-<label for="availability2" class="form-label mt-3">Preferred time slot 2 (optional)</label>
-<select name="availability2" id="availability2" class="form-select">
-    <option value="">Optional: choose another time slot</option>
-    {% for s in slots %}
-        <option value="{{ s.value }}">{{ s.label }}</option>
-    {% endfor %}
-</select>
-
-<label for="availability3" class="form-label mt-3">Preferred time slot 3 (optional)</label>
-<select name="availability3" id="availability3" class="form-select">
-    <option value="">Optional: choose a third time slot</option>
-    {% for s in slots %}
-        <option value="{{ s.value }}">{{ s.label }}</option>
-    {% endfor %}
-</select>
-
         </div>
 
-       
+        <!-- Availability -->
+        <div class="col-md-8 mx-auto mt-4">
+          <label for="availability1" class="form-label" data-i18n="slot1_label">Preferred time slot 1</label>
+          <select name="availability1" id="availability1" class="form-select" required>
+            <option value="" data-i18n="slot_choose">Please choose a time slot</option>
+            {% for s in slots %}
+              <option value="{{ s.value }}">{{ s.label }}</option>
+            {% endfor %}
+          </select>
+
+          <label for="availability2" class="form-label mt-3" data-i18n="slot2_label">
+            Preferred time slot 2 (optional)
+          </label>
+          <select name="availability2" id="availability2" class="form-select">
+            <option value="" data-i18n="slot_optional">Optional: choose another time slot</option>
+            {% for s in slots %}
+              <option value="{{ s.value }}">{{ s.label }}</option>
+            {% endfor %}
+          </select>
+
+          <label for="availability3" class="form-label mt-3" data-i18n="slot3_label">
+            Preferred time slot 3 (optional)
+          </label>
+          <select name="availability3" id="availability3" class="form-select">
+            <option value="" data-i18n="slot_optional3">Optional: choose a third time slot</option>
+            {% for s in slots %}
+              <option value="{{ s.value }}">{{ s.label }}</option>
+            {% endfor %}
+          </select>
+        </div>
 
         <hr class="my-4">
 
-
-        <hr class="my-4">
         <div class="d-grid gap-2 col-6 mx-auto">
-          <button class="btn btn-primary" type="submit">Next</button>
+          <button class="btn btn-primary" type="submit" data-i18n="next_button">Next</button>
         </div>
+
       </form>
     </div>
   </div>
