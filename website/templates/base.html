@@ -71,25 +71,80 @@
       <a class="navbar-brand" href="#">
         <img src="{{url_for('static', filename='Toto mit Schrift.png')}}" class="img-fluid" style="max-height: 75px;"/>
       </a>
-      <div class="collapse navbar-collapse" id="navbar">
-        <div class="navbar-nav">
-          {% if user.is_authenticated %}
-            {% if user.demo %}
-              <a class="nav-item mr-4 nav-link h3" id="home" href="/index">Home</a>
-              <a class="nav-item mr-4 nav-link h3 fw-light" id="home" href="/">To Discussion</a>
-              <a class="nav-item mr-4 nav-link h3 fw-light" id="logout" href="/logout">Logout</a>
-            {% else %}
-              <a class="nav-item mr-4 nav-link h3" id="home" href="/index">Home</a>
-              <a class="nav-item mr-4 nav-link h3 fw-light" id="home" href="/">Registration</a>
-              <a class="nav-item mr-4 nav-link h3 fw-light" id="logout" href="/logout">Logout</a>
-            {% endif %}
-          {% else %}
-          <a class="nav-item mr-4 nav-link h3" id="home" href="/index">Home</a>
-          <a class="nav-item mr-4 nav-link h3 fw-light" id="signUp" href="/sign-up">Registration</a>
-          <a class="nav-item mr-4 nav-link h3 fw-light" id="login" href="/login">Login</a>
-          {% endif %}
+        <div class="collapse navbar-collapse" id="navbar">
+    <!-- Left side: normal navigation links -->
+    <div class="navbar-nav mr-auto">
+      {% if user.is_authenticated %}
+        {% if user.demo %}
+          <a class="nav-item mr-4 nav-link h3"
+             id="home"
+             href="/index"
+             data-i18n="nav_home">Home</a>
+
+          <a class="nav-item mr-4 nav-link h3 fw-light"
+             id="toDiscussion"
+             href="/"
+             data-i18n="nav_to_discussion">To Discussion</a>
+
+          <a class="nav-item mr-4 nav-link h3 fw-light"
+             id="logout"
+             href="/logout"
+             data-i18n="nav_logout">Logout</a>
+        {% else %}
+          <a class="nav-item mr-4 nav-link h3"
+             id="home"
+             href="/index"
+             data-i18n="nav_home">Home</a>
+
+          <a class="nav-item mr-4 nav-link h3 fw-light"
+             id="registration"
+             href="/"
+             data-i18n="nav_registration">Registration</a>
+
+          <a class="nav-item mr-4 nav-link h3 fw-light"
+             id="logout"
+             href="/logout"
+             data-i18n="nav_logout">Logout</a>
+        {% endif %}
+      {% else %}
+        <a class="nav-item mr-4 nav-link h3"
+           id="home"
+           href="/index"
+           data-i18n="nav_home">Home</a>
+
+        <a class="nav-item mr-4 nav-link h3 fw-light"
+           id="signUp"
+           href="/sign-up"
+           data-i18n="nav_registration">Registration</a>
+
+        <a class="nav-item mr-4 nav-link h3 fw-light"
+           id="login"
+           href="/login"
+           data-i18n="nav_login">Login</a>
+      {% endif %}
+    </div>
+
+    <!-- Right side: language dropdown -->
+    <div class="navbar-nav ml-auto">
+      <li class="nav-item dropdown">
+        <a class="nav-link dropdown-toggle h4"
+           href="#"
+           id="languageDropdown"
+           role="button"
+           data-toggle="dropdown"
+           aria-haspopup="true"
+           aria-expanded="false">
+          <span id="currentLanguageLabel">EN</span>
+        </a>
+        <div class="dropdown-menu dropdown-menu-right" aria-labelledby="languageDropdown">
+          <a class="dropdown-item language-option" href="#" data-lang="en">English</a>
+          <a class="dropdown-item language-option" href="#" data-lang="de">Deutsch</a>
         </div>
-      </div>
+      </li>
+    </div>
+  </div>
+</nav>
+ 
     </nav>
 
     {% with messages = get_flashed_messages(with_categories=true) %} {% if
@@ -126,6 +181,797 @@
       integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
       crossorigin="anonymous"
     ></script>
+    <script>
+      // Simple i18n dictionary
+      const translations = {
+        en: {
+          nav_home: "Home",
+          nav_registration: "Registration",
+          nav_login: "Login",
+          nav_logout: "Logout",
+          nav_to_discussion: "To Discussion",
+
+          home_title: "Political Dialogue Platform",
+          home_p1: `<br>On this platform, participants can engage in respectful discussions on a variety of current and socially relevant topics.
+                    The aim is to enable constructive dialogue between individuals with different perspectives.`,
+          home_p2: `The platform is designed to cover a wide range of public issues, such as technological change, social values, human rights,
+                    economic developments, and other political questions that shape modern society.
+                    For the purpose of testing and evaluation, we currently focus on two example topics: artificial intelligence and its impact
+                    on employment, and freedom of speech on social media platforms.`,
+          home_p3: `These kinds of topics often generate strong and diverse reactions. It is therefore important to exchange views in a calm,
+                    fair, and constructive manner, allowing for deeper understanding between participants.`,
+
+          index_title: "Dialogue With the Other Side<br>",
+          index_p1: `<br>In times of increasing polarization and online echo chambers, engaging with those
+                     who think differently is essential for a healthy democratic society.`,
+          index_p2: `This platform helps you connect with someone who sees the world differently,
+                     in a structured and respectful setting. Before being matched, participants
+                     answer a few questions about political attitudes and personal background.
+                     Based on this information, the system pairs you with someone who holds
+                     different views on an important societal issue, such as climate activism,
+                     AI and employment, or freedom of speech on social media.`,
+          index_p3: `Your conversation is structured around a short video, pre-defined questions,
+                     and a time-limited chat. The goal is not to convince the other person, but
+                     to understand how they see the world — and to reflect on your own views in
+                     the process.`,
+
+          topics_title: "Available Discussion Topics ⬇",home_participate_title: "Participate in the Discussion",
+          home_demo_partner_sentence1: "A suitable discussion partner has been found for you. The username is",
+          home_demo_partner_sentence2: "On the scheduled date, which you received via email, you can proceed to the dialogue here. On the next page, the further process will be explained to you.",
+          home_demo_button_continue: "Continue to Interaction",
+          home_demo_thanks: "Thank you for registering. You have successfully signed up for the political dialogue.",
+          home_demo_wait_email: "So far, no suitable discussion partner has been assigned to you. You will receive an <strong>email</strong> as soon as a matching partner is found. This email will explain the next steps and schedule the interaction.",
+          home_demo_no_partner: "If you do <strong>not receive an email</strong> by the specified date, no partner could be found for you, and unfortunately, you cannot take part in the dialogue.",
+          home_demo_refresh_btn: "Refresh",
+
+          home_register_title: "Register for the Discussion",
+          home_register_intro: "Please select one of the following topics for your political dialogue. After choosing a topic, you will be guided through the registration and questionnaires.",
+
+          topic_ai_title: "Artificial Intelligence & Employment",
+          topic_ai_desc: "Explore how AI is transforming the job market and employment.",
+          topic_speech_title: "Freedom of Speech on Social Media",
+          topic_speech_desc: "Debate freedom of speech, moderation, and responsibility on social media platforms.",
+          topic_select_btn: "Select Topic",
+              // INDEX PAGE EXTRA
+          index_browse_title: "Browse & Search Topics",
+          index_browse_text: "Use the search bar to quickly find one of the current discussion topics.",
+          index_search_placeholder: "Search topics (e.g. climate, AI, speech)...",
+
+          index_ai_card_title: "Artificial Intelligence & Employment",
+          index_ai_card_desc: `Explore how AI is transforming the job market.
+                              Some view AI as a threat to employment, while others argue it creates
+                              new opportunities and enhances human productivity.`,
+
+          index_speech_card_title: "Freedom of Speech on Social Media",
+          index_speech_card_desc: `Debate the role of social media in supporting freedom of speech.
+                                  Supporters believe platforms amplify marginalized voices,
+                                  while critics worry about misinformation, hate speech,
+                                  and algorithmic bias.`,
+
+          index_join_btn: "Join Discussion",
+
+          index_suggest_title: "Suggest a New Topic",
+          index_suggest_text: `Is there a topic you care about?
+                              Propose it here so it can be considered for future discussions.
+                              All suggestions will be <strong>reviewed by the moderator</strong> to ensure they align with the goals of this platform.
+                              If you wish, you may also propose <strong>three discussion questions</strong> (one emotional, one about experience, one future-oriented)
+                              together with your topic description. If no questions are provided, the moderator will create them based on our dialogue framework.`,
+
+          index_suggest_label_title: "Topic title",
+          index_suggest_label_desc: "Short description",
+          index_suggest_submit: "Submit topic suggestion",
+              // LOGIN PAGE
+          login_title: "Login",
+          login_email_label: "Email",
+          login_email_placeholder: "Enter your email",
+          login_password_label: "Password",
+          login_password_placeholder: "Enter your password",
+          login_no_account: "Don’t have an account yet? Go to",
+          login_signup_link: "Sign Up.",
+          login_button: "Login",
+              // SIGN UP PAGE
+          signup_heading: "Registration / Sign Up",
+          signup_intro1: `Please provide the following information truthfully. Your data will only be used anonymously for evaluation purposes.
+                          <strong>Only your username</strong> will be visible to other participants.<br>`,
+          signup_intro2: `Please enter your <strong>valid email address</strong>. This is needed so we can send you further information about your participation.<br>`,
+
+          signup_email_label: "Email",
+          signup_email_placeholder: "Enter your email",
+          signup_email_confirm_label: "Email (Confirm)",
+          signup_email_confirm_placeholder: "Enter your email again",
+          signup_username_label: "Username",
+          signup_username_placeholder: "Enter your username",
+          signup_password_label: "Password",
+          signup_password_placeholder: "Enter your password",
+          signup_password_confirm_label: "Password (Confirm)",
+          signup_password_confirm_placeholder: "Confirm your password",
+
+          signup_consent_prefix: "I have read and agree to the ",
+          signup_consent_link: "Consent Form and Privacy Policy",
+
+          signup_button: "Register",
+          // EN
+          signup_email_placeholder: "Enter your email",
+          signup_email_confirm_placeholder: "Enter your email again",
+          signup_username_placeholder: "Enter your username",
+          signup_password_placeholder: "Enter your password",
+          signup_password_confirm_placeholder: "Confirm your password",
+          login_success_flash: "Login successful.",
+
+              // QUESTIONNAIRE PART 1
+          q1_title: "Political Dialogue Questionnaire",
+          q1_intro: "To find a suitable discussion partner with an opposing viewpoint, please rate your agreement with the following 15 statements on a scale from Strongly Disagree to Strongly Agree.",
+          q1_topic_prefix: "You selected the topic:",
+          q1_partA_title: "Part A: Openness to Different Views (5 Questions)",
+          q1_partA_desc: "Your answers here determine if you are eligible to participate.",
+          q1_proceed_btn: "Proceed to Part B",
+                    // QUESTIONNAIRE PART 2 (Part B)
+          q2_partB_title: "Part B: Topic-Specific Attitude (10 Questions)",
+          q2_partB_desc: "These answers will be used to match you with a suitable partner with an opposing view.",
+          q2_proceed_btn: "Proceed to Demographics",
+              // OPINION SHIFT PAGE
+          shift_title: "Your Opinion Journey",
+          shift_intro_prefix: "See how your perspective evolved through the discussion on",
+          shift_chart_title: "Before vs After Discussion",
+          shift_overall_title: "Overall Opinion Shift",
+          shift_overall_positive: "Your views became more positive after the discussion",
+          shift_overall_negative: "Your views became more critical after the discussion",
+          shift_overall_stable: "Your views remained relatively stable",
+          shift_detail_title: "Detailed Question Analysis",
+          shift_table_question: "Question",
+          shift_table_before: "Before",
+          shift_table_after: "After",
+          shift_table_change: "Change",
+          shift_missing: "-",
+          shift_continue_btn: "Continue",
+              // SCALE LABELS
+          scale_strongly_disagree: "Strongly Disagree",
+          scale_disagree: "Disagree",
+          scale_neutral: "Neutral",
+          scale_agree: "Agree",
+          scale_strongly_agree: "Strongly Agree",
+
+          // PART A – ATTITUDE QUESTIONS
+          attitude_q1: "1. I am open to hearing opinions on this topic that differ from my own.",
+          attitude_q2: "2. I can see both positive and negative aspects of this issue.",
+          attitude_q3: "3. I would be willing to adjust my view if presented with convincing evidence.",
+          attitude_q4: "4. People who disagree with me on this topic may still have valid concerns.",
+          attitude_q5: "5. I believe it's possible to find common ground between opposing views on this issue.",
+
+          // PART B – TOPIC-SPECIFIC MATCHING QUESTIONS
+          match_q1: "1. I generally support the main idea or goal of this topic.",
+          match_q2: "2. I believe the benefits of this topic outweigh its risks.",
+          match_q3: "3. I would personally take action in support of this issue.",
+          match_q4: "4. I think this issue has an overall positive impact on society.",
+          match_q5: "5. I believe this topic deserves more public attention.",
+          match_q6: "6. I trust the experts or authorities who promote this topic.",
+          match_q7: "7. I feel emotionally connected to this issue.",
+          match_q8: "8. I think opposing views on this topic are often based on misunderstanding.",
+          match_q9: "9. I believe addressing this issue should be a priority.",
+          match_q10: "10. I think this topic aligns with my personal values.",
+              // OPINION SHIFT PAGE
+          shift_title: "Your Opinion Journey",
+          shift_intro_prefix: "See how your perspective evolved through the discussion on",
+          shift_overall_title: "Overall Opinion Shift",
+          shift_overall_positive: "Your views became more positive after the discussion",
+          shift_overall_negative: "Your views became more critical after the discussion",
+          shift_overall_stable: "Your views remained relatively stable",
+
+          shift_openness_title: "Your Openness Score",
+          shift_openness_category_prefix: "Category:",
+          shift_openness_category_na: "Category not available",
+          shift_openness_based_on: "Based on your initial questionnaire responses",
+          shift_openness_not_available: "Not Available",
+          shift_openness_score_value_prefix: "Score value:",
+
+          shift_chart_title: "Before vs After Discussion",
+          shift_shift_chart_title: "Question-by-Question Shift Analysis",
+          shift_shift_chart_hint: "Green bars indicate positive shifts, red bars indicate negative shifts",
+          shift_comparison_title: "Detailed Before/After Comparison",
+          shift_continue_reward_btn: "Continue to Reward",
+
+          shift_chart_before_label: "Before Discussion",
+          shift_chart_after_label: "After Discussion",
+          shift_shift_dataset_label: "Opinion Shift",
+          shift_no_data: "No data",
+          shift_direction_more_positive: "↑ More positive",
+          shift_direction_more_negative: "↓ More negative",
+          shift_direction_no_change: "→ No change",
+          shift_shift_prefix: "Shift: ",
+
+          shift_axis_opinion_change: "Opinion Change",
+          shift_axis_questions: "Questions",
+          shift_axis_agreement_level: "Agreement Level",
+              // DEMOGRAPHICS PAGE (EN)
+          demo_title: "Registration for the Discussion",
+          demo_intro1: "The following information is required for registration. <br>Please provide the following details truthfully.<br>Your data will only be used anonymously for evaluation purposes.",
+          demo_intro2: "Currently, demographic data is collected only for interface testing. It is not used for matching or analysis and will not be stored long-term. In future versions, demographics may be used to improve matching quality, but users will be fully informed beforehand.",
+          demo_heading1: "1. Demographic Information",
+
+          demo_gender_label: "Gender",
+          choose: "Choose...",
+          gender_male: "Male",
+          gender_female: "Female",
+          gender_diverse: "Diverse",
+          gender_other: "Other",
+          demo_gender_invalid: "Please select a valid gender.",
+
+          demo_age_label: "Age",
+          age_0_18: "0-18 years",
+          age_18_25: "18-25 years",
+          age_25_35: "25-35 years",
+          age_35_45: "35-45 years",
+          age_45_55: "45-55 years",
+          age_55_65: "55-65 years",
+          age_65_75: "65-75 years",
+          age_75_plus: "75+ years",
+          other: "Other",
+          demo_age_invalid: "Please select a valid age group.",
+
+          demo_education_label: "Education Level",
+          edu_secondary: "Secondary School",
+          edu_highschool: "High School Diploma",
+          edu_bachelor: "Bachelor's",
+          edu_master: "Master's",
+          demo_education_invalid: "Please select a valid education level.",
+
+          demo_job_label: "Employment Status",
+          job_school_student: "Student (School)",
+          job_uni_student: "University Student",
+          job_employed: "Employed",
+          job_retired: "Retired",
+          demo_job_invalid: "Please select a valid employment status.",
+
+          slot1_label: "Preferred time slot 1",
+          slot2_label: "Preferred time slot 2 (optional)",
+          slot3_label: "Preferred time slot 3 (optional)",
+          slot_choose: "Please choose a time slot",
+          slot_optional: "Optional: choose another time slot",
+          slot_optional3: "Optional: choose a third time slot",
+
+          next_button: "Next",
+                    // REGISTRATION COMPLETED PAGE
+          reg_done_p1: "Thank you for registering! You have successfully signed up for the political exchange.",
+          reg_done_p2: "<strong>Once a discussion partner has been found for you, you will receive an email explaining the next steps.</strong>",
+          reg_done_p3: "Please check regularly whether you have received this email (also check your spam folder). If you do not receive an email, unfortunately no discussion partner could be found for you.",
+          reg_done_p4: "If you have any other questions, please contact <a class=\"link\" href=\"mailto:TogetherTolerant@gmail.com\">TogetherTolerant@gmail.com</a>. You may now close the application.",
+                    // POST-DISCUSSION QUESTIONNAIRE
+          postq_title: "Post-Discussion Questionnaire",
+          postq_intro: "Please think about the discussion you just had and rate your agreement with the following statements.",
+
+          postq_q1: "I felt confident expressing my opinion on this topic.",
+          postq_q2: "I was open to listening to my discussion partner's perspective.",
+          postq_q3: "I believe it is possible to find shared understanding on this issue.",
+          postq_q4: "The discussion was respectful and constructive.",
+          postq_q5: "I felt comfortable sharing my honest thoughts and opinions.",
+          postq_q6: "I learned something new from the discussion.",
+          postq_q7: "I felt listened to and understood by my conversation partner.",
+          postq_q8: "The discussion encouraged me to think more deeply about the topic.",
+          postq_q9: "I would participate in a similar discussion again.",
+          postq_q10_label: "Additional reflections:",
+
+          postq_text_placeholder: "Write anything you want to add...",
+          postq_next_btn: "Next",
+                    // FEEDBACK QUESTIONNAIRE
+          feedback_title: "Evaluation of the Application",
+          feedback_intro: "Please indicate the extent to which you agree with the following statement and then answer the subsequent questions.",
+
+          feedback_q_scale: "I would recommend the use of this application to other people.",
+          feedback_q1: "Did you learn about a new perspective while using the application, and how did your understanding of this perspective change?",
+          feedback_q2: "How did the interaction change your perception of social cohesion and political polarization in society?",
+          feedback_q3: "Do you have any additional feedback, improvement suggestions, or comments for the application?",
+
+          feedback_next_btn: "Next",
+                    // REWARD PAGE (EN)
+          reward_title: "Thank you for your participation!",
+          reward_p1: "Thank you very much for taking part in our study and for sharing your feedback. You have now completed all parts of the experiment and may close the application.",
+          reward_p2: "If you have any questions about the topic or the platform, feel free to contact us at <a class=\"link\" href=\"mailto:TogetherTolerant@gmail.com\">TogetherTolerant@gmail.com</a>.",
+                // PERSPECTIVE SCORE PAGE (EN)
+          perspective_title: "Understanding the Other Perspective",
+          perspective_p1: "You understood your conversation partner’s perspective to {{ score }}%!",
+          perspective_next_btn: "Next",
+          wait_title: "Please have patience.",
+          wait_p1: "You will be automatically redirected to the interaction as soon as your conversation partner also joins the interaction.",
+          wait_p2: "If your conversation partner does not appear within the next 15 minutes, you can close the application. Please then send a message to TogetherTolerant@gmail.com explaining the situation.",
+          part2_title_prefix: "Discussion Round 2:",
+          part2_intro: "Welcome to the second discussion round.",
+          part2_focus_prefix: "Discussion focus:",
+          part2_prompts_heading: "Discussion Prompts",
+          part2_flash_1min: "You have 1 minute left.",
+
+          part2_climate_q1: `<b>1. What do you think about climate activism in general?</b><br>(e.g. Fridays for Future)`,
+          part2_climate_q2: `<b>2. What is your opinion on more disruptive protests?</b><br>(e.g. road blockades, disrupting events, actions by the “Last Generation”)`,
+          part2_climate_q3: `<b>3. What emotions do such protest actions trigger in you?</b>`,
+
+          part2_ai_q1: `<b>1. Have you already used AI tools (e.g. chatbots, automation, decision systems) in your work or studies?</b>`,
+          part2_ai_q2: `<b>2. In which situations do you think AI should <i>not</i> make decisions about people (e.g. hiring, firing, grading)?</b>`,
+          part2_ai_q3: `<b>3. How do you feel when important decisions that affect you are made or supported by AI?</b>`,
+
+          part2_speech_q1: `<b>1. Have you ever seen content on social media that you think should have been removed?</b>`,
+          part2_speech_q2: `<b>2. Who should decide what is allowed and what is not – platforms, governments, independent bodies, or users?</b>`,
+          part2_speech_q3: `<b>3. Do you think current moderation practices go too far, or not far enough?</b>`,
+
+          part2_generic_q1: `<b>1. Which specific examples illustrate your opinion on this topic?</b>`,
+          part2_generic_q2: `<b>2. In which situations do you strongly agree or disagree with how this topic is handled today?</b>`,
+          part2_generic_q3: `<b>3. How do you feel emotionally when you think about these situations?</b>`,
+          interaction_intro_title: "Explanation of the Interaction Procedure",
+          interaction_intro_p1: "The dialogue is divided into <strong>3 parts</strong>. Each part focuses on one specific question and lasts <strong>5 minutes.</strong>",
+          interaction_intro_p2: "<strong>Your task during each 5-minute section is to understand your conversation partner’s views on the given question as accurately as possible. Your partner has the same task. After the conversation, you will be asked questions to assess how well you understood your partner’s viewpoint.</strong>",
+          interaction_intro_p3: "Please try to start the interaction punctually at the scheduled time.",
+
+          interaction_rules_title: "Rules for the Dialogue",
+          interaction_rules_1: "<b>1. Treat your conversation partner with respect.</b>",
+          interaction_rules_2: "<b>2. Be polite when interacting with your conversation partner.</b>",
+          interaction_rules_3: "<b>3. Allow your conversation partner to speak and finish their thoughts.</b>",
+          interaction_rules_4: "<b>4. Avoid judging your partner’s viewpoints.</b>",
+          interaction_rules_5: "<b>5. Recording the video call is strictly prohibited.</b>",
+          interaction_rules_norecord: "<b>The following video calls run on a KIT server and are not recorded.</b>",
+          interaction_rules_confirm: "I confirm that I have read the rules and that I will follow them.",
+          interaction_rules_button: "Start Interaction",
+          round3_title_prefix: "Discussion Round 3:",
+          round3_intro_prefix: "Welcome to the third discussion round.",
+          round3_focus_prefix: "Discussion focus:",
+          round3_prompts_title: "Discussion Prompts",
+          round3_flash_message: "You have 1 minute left.",
+          round1_title_prefix: "Discussion Round 1:",
+          round1_intro_prefix: "Welcome to the first discussion round.",
+          round1_focus_prefix: "Discussion focus:",
+          round1_prompts_hint: "The prompts below are meant to guide your conversation.",
+          round1_notes_title: "Important notes before you join the meeting:",
+          round1_notes_text: "Once you have joined the meeting, please do not leave it. Wait for your conversation partner. You will be automatically forwarded to the next discussion round. If you accidentally leave the meeting, reload the page and join the meeting again.",
+          round1_prompts_title: "Discussion Prompts",
+          round1_flash_message: "You have 1 minute left.",
+          // ROUND 3 – DISCUSSION QUESTIONS (EN)
+          round3_climate_q1: `<b>1. What impact do you think very disruptive climate activism has on ordinary citizens?</b>`,
+          round3_climate_q2: `<b>2. Do you think climate activism is effective in changing political decisions?</b>`,
+          round3_climate_q3: `<b>3. In your view, what would be the most effective ways to fight climate change?</b>`,
+          round3_climate_q4: `<b>4. Is there anything you would still like to tell or ask your conversation partner?</b>`,
+
+          round3_ai_q1: `<b>1. Who do you think will benefit most from AI in the long run, and who might lose out?</b>`,
+          round3_ai_q2: `<b>2. What political or social measures would you like to see to make the AI transition fairer?</b>`,
+          round3_ai_q3: `<b>3. How do you imagine an ideal future in which humans and AI work together?</b>`,
+          round3_ai_q4: `<b>4. Is there anything you would still like to tell or ask your conversation partner?</b>`,
+
+          round3_speech_q1: `<b>1. What impact do you think social media will have on democracy and public debate in the long term?</b>`,
+          round3_speech_q2: `<b>2. What kind of regulation (if any) would you like to see for social media platforms in the future?</b>`,
+          round3_speech_q3: `<b>3. How could we protect freedom of speech while also protecting people from harm online?</b>`,
+          round3_speech_q4: `<b>4. Is there anything you would still like to tell or ask your conversation partner?</b>`,
+
+          round3_generic_q1: `<b>1. What long-term consequences do you expect from how this topic is handled today?</b>`,
+          round3_generic_q2: `<b>2. What changes would you personally like to see in the future?</b>`,
+          round3_generic_q3: `<b>3. What could be done to reduce conflict and increase understanding around this topic?</b>`,
+          round3_generic_q4: `<b>4. Is there anything you would still like to tell or ask your conversation partner?</b>`,
+
+
+        },
+
+        de: {
+          nav_home: "Startseite",
+          nav_registration: "Registrierung",
+          nav_login: "Anmelden",
+          nav_logout: "Abmelden",
+          nav_to_discussion: "Zur Diskussion",
+
+          home_title: "Plattform für politischen Dialog",
+          home_p1: `<br>Auf dieser Plattform können Teilnehmende respektvolle Diskussionen über eine Vielzahl aktueller und gesellschaftlich relevanter Themen führen.
+                    Ziel ist es, einen konstruktiven Dialog zwischen Menschen mit unterschiedlichen Perspektiven zu ermöglichen.`,
+          home_p2: `Die Plattform ist dafür ausgelegt, ein breites Spektrum öffentlicher Themen abzudecken, zum Beispiel technologischen Wandel, gesellschaftliche Werte,
+                    Menschenrechte, wirtschaftliche Entwicklungen und andere politische Fragestellungen, die unsere moderne Gesellschaft prägen.
+                    Für Test- und Evaluationszwecke konzentrieren wir uns derzeit auf zwei Beispielthemen: künstliche Intelligenz und ihre Auswirkungen auf Beschäftigung
+                    sowie Meinungsfreiheit auf sozialen Medien.`,
+          home_p3: `Solche Themen lösen häufig starke und sehr unterschiedliche Reaktionen aus. Umso wichtiger ist es, sich in einem ruhigen,
+                    fairen und konstruktiven Rahmen auszutauschen und so ein tieferes Verständnis füreinander zu entwickeln.`,
+
+          index_title: "Dialog mit der anderen Seite<br>",
+          index_p1: `<br>In Zeiten zunehmender Polarisierung und digitaler Echokammern ist der Austausch mit Menschen,
+                     die anders denken, entscheidend für eine gesunde demokratische Gesellschaft.`,
+          index_p2: `Diese Plattform hilft dir, mit jemandem in Kontakt zu treten, der die Welt anders sieht – in einem strukturierten und respektvollen Rahmen.
+                     Vor dem Matching beantworten die Teilnehmenden einige Fragen zu politischen Einstellungen und persönlichen Hintergründen.
+                     Auf dieser Basis wirst du mit einer Person zusammengeführt, die zu wichtigen gesellschaftlichen Themen andere Ansichten hat,
+                     etwa zu Klimaaktivismus, KI und Arbeit oder Meinungsfreiheit in sozialen Medien.`,
+          index_p3: `Euer Gespräch orientiert sich an einem kurzen Video, vorbereiteten Fragen und einem zeitlich begrenzten Chat.
+                     Ziel ist nicht, die andere Person zu überzeugen, sondern zu verstehen, wie sie die Welt sieht – und gleichzeitig die eigenen Ansichten zu reflektieren.`,
+
+          topics_title: "Verfügbare Diskussionsthemen ⬇",
+          home_participate_title: "An der Diskussion teilnehmen",
+          home_demo_partner_sentence1: "Es wurde eine passende Gesprächspartnerin bzw. ein passender Gesprächspartner für dich gefunden. Der Benutzername lautet",
+          home_demo_partner_sentence2: "Am vereinbarten Termin, den du per E-Mail erhalten hast, kannst du das Gespräch hier starten. Auf der nächsten Seite wird dir der weitere Ablauf erklärt.",
+          home_demo_button_continue: "Zur Interaktion fortfahren",
+          home_demo_thanks: "Vielen Dank für deine Registrierung. Du hast dich erfolgreich für den politischen Dialog angemeldet.",
+          home_demo_wait_email: "Bisher wurde dir noch keine passende Gesprächspartnerin bzw. kein passender Gesprächspartner zugeteilt. Du erhältst eine <strong>E-Mail</strong>, sobald ein Matching gefunden wurde. In dieser E-Mail werden die nächsten Schritte erklärt und der Termin für die Interaktion festgelegt.",
+          home_demo_no_partner: "Solltest du bis zum angegebenen Datum <strong>keine E-Mail erhalten</strong>, konnte leider keine passende Person gefunden werden und du kannst nicht am Gespräch teilnehmen.",
+          home_demo_refresh_btn: "Aktualisieren",
+
+          home_register_title: "Für die Diskussion registrieren",
+          home_register_intro: "Bitte wähle eines der folgenden Themen für deinen politischen Dialog. Nach der Auswahl wirst du durch die Registrierung und die Fragebögen geführt.",
+ 
+          topic_ai_title: "Künstliche Intelligenz & Beschäftigung",
+          topic_ai_desc: "Erkunde, wie KI den Arbeitsmarkt und Beschäftigung verändert.",
+          topic_speech_title: "Meinungsfreiheit in sozialen Medien",
+          topic_speech_desc: "Diskutiere Meinungsfreiheit, Moderation und Verantwortung auf sozialen Medien.",
+          topic_select_btn: "Thema auswählen",
+              // INDEX PAGE EXTRA
+          index_browse_title: "Themen durchsuchen & finden",
+          index_browse_text: "Nutze die Suchleiste, um schnell eines der aktuellen Diskussionsthemen zu finden.",
+          index_search_placeholder: "Themen suchen (z.B. Klima, KI, Meinungsfreiheit)...",
+
+          index_ai_card_title: "Künstliche Intelligenz & Beschäftigung",
+          index_ai_card_desc: `Erkunde, wie KI den Arbeitsmarkt verändert.
+                              Manche sehen KI als Bedrohung für Arbeitsplätze, andere betonen neue Chancen
+                              und eine bessere Unterstützung menschlicher Arbeit.`,
+
+          index_speech_card_title: "Meinungsfreiheit in sozialen Medien",
+          index_speech_card_desc: `Diskutiere die Rolle sozialer Medien für die Meinungsfreiheit.
+                                  Befürworter sehen darin eine Chance für marginalisierte Stimmen,
+                                  Kritiker sorgen sich um Desinformation, Hassrede und algorithmische Verzerrungen.`,
+
+          index_join_btn: "An der Diskussion teilnehmen",
+
+          index_suggest_title: "Neues Thema vorschlagen",
+          index_suggest_text: `Gibt es ein Thema, das dir besonders wichtig ist?
+                              Schlage es hier vor, damit es für zukünftige Diskussionen berücksichtigt werden kann.
+                              Alle Vorschläge werden <strong>von der Moderation geprüft</strong>, um sicherzustellen, dass sie zu den Zielen der Plattform passen.
+                              Wenn du möchtest, kannst du <strong>drei Diskussionsfragen</strong> vorschlagen (eine emotionale, eine erfahrungsbezogene, eine zukunftsorientierte).
+                              Falls du keine Fragen angibst, erstellt die Moderation sie auf Basis unseres Dialograhmens.`,
+
+          index_suggest_label_title: "Thema",
+          index_suggest_label_desc: "Kurzbeschreibung",
+          index_suggest_submit: "Themenvorschlag einreichen",
+              // LOGIN PAGE
+          login_title: "Anmelden",
+          login_email_label: "E-Mail",
+          login_email_placeholder: "Gib deine E-Mail-Adresse ein",
+          login_password_label: "Passwort",
+          login_password_placeholder: "Gib dein Passwort ein",
+          login_no_account: "Du hast noch kein Konto? Gehe zur",
+          login_signup_link: "Registrierung.",
+          login_button: "Anmelden",
+              // SIGN UP PAGE
+          signup_heading: "Registrierung / Anmeldung",
+          signup_intro1: `Bitte gib die folgenden Informationen wahrheitsgemäß an. Deine Daten werden ausschließlich anonym für Auswertungszwecke verwendet.
+                          <strong>Nur dein Benutzername</strong> ist für andere Teilnehmende sichtbar.<br>`,
+          signup_intro2: `Bitte gib deine <strong>gültige E-Mail-Adresse</strong> an. Diese wird benötigt, damit wir dir weitere Informationen zu deiner Teilnahme zusenden können.<br>`,
+
+          signup_email_label: "E-Mail",
+          signup_email_placeholder: "Gib deine E-Mail-Adresse ein",
+          signup_email_confirm_label: "E-Mail (Bestätigung)",
+          signup_email_confirm_placeholder: "Gib deine E-Mail-Adresse erneut ein",
+          signup_username_label: "Benutzername",
+          signup_username_placeholder: "Gib deinen Benutzernamen ein",
+          signup_password_label: "Passwort",
+          signup_password_placeholder: "Gib dein Passwort ein",
+          signup_password_confirm_label: "Passwort (Bestätigung)",
+          signup_password_confirm_placeholder: "Bestätige dein Passwort",
+
+          signup_consent_prefix: "Ich habe die ",
+          signup_consent_link: "Einwilligungserklärung und Datenschutzhinweise",
+          // the final dot is in the HTML label
+
+          signup_button: "Registrieren",
+          // DE
+          signup_email_placeholder: "Gib deine E-Mail-Adresse ein",
+          signup_email_confirm_placeholder: "Gib deine E-Mail-Adresse erneut ein",
+          signup_username_placeholder: "Gib deinen Benutzernamen ein",
+          signup_password_placeholder: "Gib dein Passwort ein",
+          signup_password_confirm_placeholder: "Bestätige dein Passwort",
+          login_success_flash: "Erfolgreich angemeldet.",
+              // QUESTIONNAIRE PART 1
+          q1_title: "Fragebogen zum politischen Dialog",
+          q1_intro: "Um eine passende Gesprächspartnerin bzw. einen passenden Gesprächspartner mit einer gegensätzlichen Sichtweise zu finden, bewerte bitte deine Zustimmung zu den folgenden 15 Aussagen auf einer Skala von „Stimme überhaupt nicht zu“ bis „Stimme voll und ganz zu“.",
+          q1_topic_prefix: "Du hast das Thema ausgewählt:",
+          q1_partA_title: "Teil A: Offenheit für andere Sichtweisen (5 Fragen)",
+          q1_partA_desc: "Deine Antworten hier entscheiden darüber, ob du am Dialog teilnehmen kannst.",
+          q1_proceed_btn: "Weiter zu Teil B",
+
+              // QUESTIONNAIRE PART 2 (Teil B)
+          q2_partB_title: "Teil B: Themenspezifische Einstellung (10 Fragen)",
+          q2_partB_desc: "Diese Antworten werden genutzt, um dich mit einer passenden Person mit gegensätzlicher Sichtweise zu matchen.",
+          q2_proceed_btn: "Weiter zu den demografischen Angaben",
+
+              // OPINION SHIFT PAGE
+          shift_title: "Deine Meinungsreise",
+          shift_intro_prefix: "Sieh dir an, wie sich deine Perspektive im Verlauf der Diskussion verändert hat zu",
+          shift_chart_title: "Vorher–Nachher-Vergleich",
+          shift_overall_title: "Gesamte Meinungsveränderung",
+          shift_overall_positive: "Deine Einstellung ist nach der Diskussion positiver geworden",
+          shift_overall_negative: "Deine Einstellung ist nach der Diskussion kritischer geworden",
+          shift_overall_stable: "Deine Einstellung ist weitgehend stabil geblieben",
+          shift_detail_title: "Detaillierte Frageauswertung",
+          shift_table_question: "Frage",
+          shift_table_before: "Vorher",
+          shift_table_after: "Nachher",
+          shift_table_change: "Veränderung",
+          shift_missing: "-",
+          shift_continue_btn: "Weiter",
+              // SCALE LABELS
+          scale_strongly_disagree: "Stimme überhaupt nicht zu",
+          scale_disagree: "Stimme nicht zu",
+          scale_neutral: "Neutral",
+          scale_agree: "Stimme zu",
+          scale_strongly_agree: "Stimme voll und ganz zu",
+
+          // TEIL A – EINSTELLUNG
+          attitude_q1: "1. Ich bin offen dafür, Meinungen zu diesem Thema zu hören, die sich von meiner eigenen unterscheiden.",
+          attitude_q2: "2. Ich kann sowohl positive als auch negative Aspekte dieses Themas sehen.",
+          attitude_q3: "3. Ich wäre bereit, meine Ansicht zu ändern, wenn mir überzeugende Argumente präsentiert werden.",
+          attitude_q4: "4. Menschen, die mir bei diesem Thema widersprechen, können trotzdem berechtigte Anliegen haben.",
+          attitude_q5: "5. Ich glaube, dass es möglich ist, bei diesem Thema eine gemeinsame Basis zwischen gegensätzlichen Positionen zu finden.",
+
+          // TEIL B – THEMENSPEZIFISCHE EINSTELLUNG
+          match_q1: "1. Grundsätzlich unterstütze ich die Hauptidee bzw. das Ziel dieses Themas.",
+          match_q2: "2. Ich glaube, dass die Vorteile dieses Themas seine Risiken überwiegen.",
+          match_q3: "3. Ich würde persönlich Maßnahmen ergreifen, um dieses Anliegen zu unterstützen.",
+          match_q4: "4. Meiner Meinung nach hat dieses Thema insgesamt eine positive Auswirkung auf die Gesellschaft.",
+          match_q5: "5. Ich finde, dieses Thema sollte mehr öffentliche Aufmerksamkeit bekommen.",
+          match_q6: "6. Ich vertraue den Expertinnen/Experten oder Behörden, die dieses Thema vertreten.",
+          match_q7: "7. Ich fühle mich emotional mit diesem Thema verbunden.",
+          match_q8: "8. Ich denke, gegensätzliche Ansichten zu diesem Thema beruhen häufig auf Missverständnissen.",
+          match_q9: "9. Ich finde, die Auseinandersetzung mit diesem Thema sollte eine Priorität sein.",
+          match_q10: "10. Ich glaube, dieses Thema passt zu meinen persönlichen Werten.",
+              // OPINION SHIFT PAGE
+          shift_title: "Deine Meinungsreise",
+          shift_intro_prefix: "Sieh dir an, wie sich deine Perspektive im Verlauf der Diskussion verändert hat zu",
+          shift_overall_title: "Gesamte Meinungsveränderung",
+          shift_overall_positive: "Deine Einstellung ist nach der Diskussion positiver geworden",
+          shift_overall_negative: "Deine Einstellung ist nach der Diskussion kritischer geworden",
+          shift_overall_stable: "Deine Einstellung ist weitgehend stabil geblieben",
+
+          shift_openness_title: "Dein Offenheitswert",
+          shift_openness_category_prefix: "Kategorie:",
+          shift_openness_category_na: "Kategorie nicht verfügbar",
+          shift_openness_based_on: "Basierend auf deinen Antworten im Einstiegsfragebogen",
+          shift_openness_not_available: "Nicht verfügbar",
+          shift_openness_score_value_prefix: "Wert:",
+
+          shift_chart_title: "Vorher–Nachher-Vergleich",
+          shift_shift_chart_title: "Analyse der Meinungsveränderung pro Frage",
+          shift_shift_chart_hint: "Grüne Balken zeigen positive, rote Balken negative Veränderungen",
+          shift_comparison_title: "Detaillierter Vorher/Nachher-Vergleich",
+          shift_continue_reward_btn: "Weiter zur Belohnung",
+
+          shift_chart_before_label: "Vor der Diskussion",
+          shift_chart_after_label: "Nach der Diskussion",
+          shift_shift_dataset_label: "Meinungsveränderung",
+          shift_no_data: "Keine Daten",
+          shift_direction_more_positive: "↑ Positiver",
+          shift_direction_more_negative: "↓ Negativer",
+          shift_direction_no_change: "→ Keine Veränderung",
+          shift_shift_prefix: "Veränderung: ",
+
+          shift_axis_opinion_change: "Meinungsveränderung",
+          shift_axis_questions: "Fragen",
+          shift_axis_agreement_level: "Zustimmungsniveau",
+          // DEMOGRAPHICS PAGE (DE)
+          demo_title: "Registrierung für die Diskussion",
+          demo_intro1: "Die folgenden Angaben werden für die Registrierung benötigt. <br>Bitte mache deine Angaben wahrheitsgemäß.<br>Deine Daten werden ausschließlich anonym für Auswertungszwecke verwendet.",
+          demo_intro2: "Derzeit werden demografische Daten nur zu Testzwecken der Benutzeroberfläche erhoben. Sie werden weder zum Matching noch für Analysen verwendet und nicht langfristig gespeichert. In zukünftigen Versionen können demografische Angaben genutzt werden, um die Match-Qualität zu verbessern – die Nutzerinnen und Nutzer werden darüber vorher vollständig informiert.",
+          demo_heading1: "1. Demografische Angaben",
+
+          demo_gender_label: "Geschlecht",
+          choose: "Bitte wählen...",
+          gender_male: "Männlich",
+          gender_female: "Weiblich",
+          gender_diverse: "Divers",
+          gender_other: "Anderes",
+          demo_gender_invalid: "Bitte wähle ein gültiges Geschlecht aus.",
+
+          demo_age_label: "Alter",
+          age_0_18: "0–18 Jahre",
+          age_18_25: "18–25 Jahre",
+          age_25_35: "25–35 Jahre",
+          age_35_45: "35–45 Jahre",
+          age_45_55: "45–55 Jahre",
+          age_55_65: "55–65 Jahre",
+          age_65_75: "65–75 Jahre",
+          age_75_plus: "75+ Jahre",
+          other: "Sonstiges",
+          demo_age_invalid: "Bitte wähle eine gültige Altersgruppe aus.",
+
+          demo_education_label: "Bildungsabschluss",
+          edu_secondary: "Sekundarstufe",
+          edu_highschool: "Abitur / Matura",
+          edu_bachelor: "Bachelor",
+          edu_master: "Master",
+          demo_education_invalid: "Bitte wähle einen gültigen Bildungsabschluss aus.",
+
+          demo_job_label: "Beschäftigungsstatus",
+          job_school_student: "Schülerin / Schüler",
+          job_uni_student: "Studentin / Student",
+          job_employed: "Erwerbstätig",
+          job_retired: "Im Ruhestand",
+          demo_job_invalid: "Bitte wähle einen gültigen Beschäftigungsstatus aus.",
+
+          slot1_label: "Bevorzugtes Zeitfenster 1",
+          slot2_label: "Bevorzugtes Zeitfenster 2 (optional)",
+          slot3_label: "Bevorzugtes Zeitfenster 3 (optional)",
+          slot_choose: "Bitte wähle ein Zeitfenster",
+          slot_optional: "Optional: weiteres Zeitfenster wählen",
+          slot_optional3: "Optional: drittes Zeitfenster wählen",
+
+          next_button: "Weiter",
+          // REGISTRATION COMPLETED PAGE
+          reg_done_p1: "Vielen Dank für deine Registrierung! Du hast dich erfolgreich für den politischen Austausch angemeldet.",
+          reg_done_p2: "<strong>Sobald eine passende Gesprächspartnerin bzw. ein passender Gesprächspartner für dich gefunden wurde, erhältst du eine E-Mail mit den nächsten Schritten.</strong>",
+          reg_done_p3: "Bitte prüfe regelmäßig, ob du diese E-Mail erhalten hast (inklusive Spam-Ordner). Wenn du keine E-Mail erhältst, konnte leider keine passende Person für dich gefunden werden.",
+          reg_done_p4: "Wenn du weitere Fragen hast, kannst du uns unter <a class=\"link\" href=\"mailto:TogetherTolerant@gmail.com\">TogetherTolerant@gmail.com</a> kontaktieren. Du kannst die Anwendung jetzt schließen.",
+                    // POST-DISCUSSION QUESTIONNAIRE
+          postq_title: "Fragebogen nach dem Gespräch",
+          postq_intro: "Bitte denke an das Gespräch, das du gerade geführt hast, und bewerte deine Zustimmung zu den folgenden Aussagen.",
+
+          postq_q1: "Ich fühlte mich sicher darin, meine Meinung zu diesem Thema zu äußern.",
+          postq_q2: "Ich war offen dafür, der Perspektive meiner Gesprächspartnerin / meines Gesprächspartners zuzuhören.",
+          postq_q3: "Ich glaube, dass es möglich ist, bei diesem Thema ein gemeinsames Verständnis zu finden.",
+          postq_q4: "Das Gespräch war respektvoll und konstruktiv.",
+          postq_q5: "Ich fühlte mich wohl dabei, meine ehrlichen Gedanken und Meinungen zu teilen.",
+          postq_q6: "Ich habe in diesem Gespräch etwas Neues gelernt.",
+          postq_q7: "Ich hatte das Gefühl, dass mir zugehört und ich von meiner Gesprächspartnerin / meinem Gesprächspartner verstanden wurde.",
+          postq_q8: "Das Gespräch hat mich dazu angeregt, intensiver über das Thema nachzudenken.",
+          postq_q9: "Ich würde wieder an einem ähnlichen Gespräch teilnehmen.",
+          postq_q10_label: "Weitere Gedanken oder Rückmeldungen:",
+
+          postq_text_placeholder: "Schreibe hier alles, was du noch hinzufügen möchtest...",
+          postq_next_btn: "Weiter",
+                    // FEEDBACK QUESTIONNAIRE
+          feedback_title: "Bewertung der Anwendung",
+          feedback_intro: "Bitte gib an, inwieweit du der folgenden Aussage zustimmst, und beantworte anschließend die weiteren Fragen.",
+
+          feedback_q_scale: "Ich würde die Nutzung dieser Anwendung anderen Personen weiterempfehlen.",
+          feedback_q1: "Hast du durch die Nutzung der Anwendung eine neue Perspektive kennengelernt und wie hat sich dein Verständnis dieser Perspektive verändert?",
+          feedback_q2: "Wie hat die Interaktion deine Wahrnehmung von gesellschaftlichem Zusammenhalt und politischer Polarisierung beeinflusst?",
+          feedback_q3: "Hast du weiteres Feedback, Verbesserungsvorschläge oder Kommentare zur Anwendung?",
+
+          feedback_next_btn: "Weiter",
+              // REWARD PAGE (DE)
+          reward_title: "Vielen Dank für deine Teilnahme!",
+          reward_p1: "Vielen Dank, dass du an unserer Studie teilgenommen und dein Feedback mit uns geteilt hast. Du hast nun alle Teile des Experiments abgeschlossen und kannst die Anwendung schließen.",
+          reward_p2: "Wenn du Fragen zum Thema oder zur Plattform hast, kannst du uns gerne unter <a class=\"link\" href=\"mailto:TogetherTolerant@gmail.com\">TogetherTolerant@gmail.com</a> kontaktieren.",
+                // PERSPECTIVE SCORE PAGE (DE)
+          perspective_title: "Das Verständnis der anderen Perspektive",
+          perspective_p1: "Du hast die Perspektive deines Gesprächspartners zu {{ score }}% verstanden!",
+          perspective_next_btn: "Weiter",
+          wait_title: "Bitte habe etwas Geduld.",
+          wait_p1: "Du wirst automatisch zur Interaktion weitergeleitet, sobald deine Gesprächspartnerin bzw. dein Gesprächspartner ebenfalls beitritt.",
+          wait_p2: "Falls deine Gesprächspartnerin bzw. dein Gesprächspartner innerhalb der nächsten 15 Minuten nicht erscheint, kannst du die Anwendung schließen. Bitte sende dann eine Nachricht an TogetherTolerant@gmail.com und schildere die Situation.",
+          part2_title_prefix: "Diskussionsrunde 2:",
+          part2_intro: "Willkommen zur zweiten Gesprächsrunde.",
+          part2_focus_prefix: "Schwerpunkt des Gesprächs:",
+          part2_prompts_heading: "Diskussionsimpulse",
+          part2_flash_1min: "Du hast noch 1 Minute Zeit.",
+
+          part2_climate_q1: `<b>1. Was hältst du ganz allgemein von Klimaprotesten?</b><br>(z.B. Fridays for Future)`,
+          part2_climate_q2: `<b>2. Was ist deine Meinung zu stärker störenden Protestformen?</b><br>(z.B. Straßenblockaden, Stören von Veranstaltungen, Aktionen der „Letzten Generation“)`,
+
+          part2_climate_q3: `<b>3. Welche Gefühle lösen solche Protestaktionen bei dir aus?</b>`,
+
+          part2_ai_q1: `<b>1. Hast du bereits KI-Tools (z.B. Chatbots, Automatisierung, Entscheidungssysteme) in deiner Arbeit oder im Studium verwendet?</b>`,
+          part2_ai_q2: `<b>2. In welchen Situationen sollte KI deiner Meinung nach <i>keine</i> Entscheidungen über Menschen treffen (z.B. Einstellen, Kündigen, Benoten)?</b>`,
+          part2_ai_q3: `<b>3. Wie fühlst du dich, wenn wichtige Entscheidungen, die dich betreffen, von KI getroffen oder unterstützt werden?</b>`,
+
+          part2_speech_q1: `<b>1. Hast du schon Inhalte in sozialen Medien gesehen, von denen du findest, dass sie hätten entfernt werden sollen?</b>`,
+          part2_speech_q2: `<b>2. Wer sollte entscheiden, was erlaubt ist und was nicht – Plattformen, Staat, unabhängige Stellen oder die Nutzenden selbst?</b>`,
+          part2_speech_q3: `<b>3. Findest du, dass die aktuelle Moderation zu weit geht oder nicht weit genug?</b>`,
+
+          part2_generic_q1: `<b>1. Welche konkreten Beispiele veranschaulichen deine Meinung zu diesem Thema?</b>`,
+          part2_generic_q2: `<b>2. In welchen Situationen stimmst du der derzeitigen Umgangsweise mit dem Thema besonders zu oder lehnst sie stark ab?</b>`,
+          part2_generic_q3: `<b>3. Welche Gefühle hast du, wenn du an diese Situationen denkst?</b>`,
+          interaction_intro_title: "Erläuterung des Gesprächsablaufs",
+          interaction_intro_p1: "Der Dialog ist in <strong>3 Teile</strong> unterteilt. Jeder Teil behandelt eine konkrete Frage und dauert <strong>5 Minuten.</strong>",
+          interaction_intro_p2: "<strong>Deine Aufgabe in jedem 5-Minuten-Abschnitt besteht darin, die Sichtweise deiner Gesprächspartnerin bzw. deines Gesprächspartners zur jeweiligen Frage so genau wie möglich zu verstehen. Dein Gegenüber hat die gleiche Aufgabe. Nach dem Gespräch wirst du Fragen beantworten, um einzuschätzen, wie gut du die Perspektive deines Gegenübers verstanden hast.</strong>",
+          interaction_intro_p3: "Bitte versuche, die Interaktion pünktlich zum vereinbarten Zeitpunkt zu beginnen.",
+
+          interaction_rules_title: "Regeln für das Gespräch",
+          interaction_rules_1: "<b>1. Behandle deine Gesprächspartnerin bzw. deinen Gesprächspartner mit Respekt.</b>",
+          interaction_rules_2: "<b>2. Sei höflich im Umgang mit deiner Gesprächspartnerin bzw. deinem Gesprächspartner.</b>",
+          interaction_rules_3: "<b>3. Lass deine Gesprächspartnerin bzw. deinen Gesprächspartner ausreden.</b>",
+          interaction_rules_4: "<b>4. Verzichte darauf, die Ansichten deines Gegenübers zu bewerten.</b>",
+          interaction_rules_5: "<b>5. Das Aufzeichnen des Videoanrufs ist streng verboten.</b>",
+          interaction_rules_norecord: "<b>Die folgenden Videogespräche laufen über einen KIT-Server und werden nicht aufgezeichnet.</b>",
+          interaction_rules_confirm: "Ich bestätige, dass ich die Regeln gelesen habe und mich daran halten werde.",
+          interaction_rules_button: "Interaktion starten",
+          round3_title_prefix: "Gesprächsrunde 3:",
+          round3_intro_prefix: "Willkommen in der dritten Gesprächsrunde.",
+          round3_focus_prefix: "Schwerpunkt des Gesprächs:",
+          round3_prompts_title: "Diskussionsfragen",
+          round3_flash_message: "Du hast noch 1 Minute.",
+          round1_title_prefix: "Gesprächsrunde 1:",
+          round1_intro_prefix: "Willkommen in der ersten Gesprächsrunde.",
+          round1_focus_prefix: "Schwerpunkt des Gesprächs:",
+          round1_prompts_hint: "Die folgenden Fragen dienen als Orientierung für euer Gespräch.",
+          round1_notes_title: "Wichtige Hinweise, bevor du dem Meeting beitrittst:",
+          round1_notes_text: "Sobald du dem Meeting beigetreten bist, bleibe bitte darin und warte auf deine Gesprächspartnerin bzw. deinen Gesprächspartner. Du wirst automatisch zur nächsten Gesprächsrunde weitergeleitet. Falls du das Meeting versehentlich verlässt, lade die Seite neu und tritt dem Meeting erneut bei.",
+          round1_prompts_title: "Diskussionsfragen",
+          round1_flash_message: "Du hast noch 1 Minute.",
+          // RUNDE 3 – DISKUSSIONSFRAGEN (DE)
+          round3_climate_q1: `<b>1. Welche Auswirkungen glaubst du, hat sehr drastischer Klimaprotest auf gewöhnliche Bürgerinnen und Bürger?</b>`,
+          round3_climate_q2: `<b>2. Findest du, dass Klimaprotest wirksam ist, um politische Entscheidungen zu beeinflussen?</b>`,
+          round3_climate_q3: `<b>3. Was wären deiner Meinung nach die wirksamsten Maßnahmen im Kampf gegen den Klimawandel?</b>`,
+          round3_climate_q4: `<b>4. Gibt es etwas, das du deiner Gesprächspartnerin bzw. deinem Gesprächspartner noch sagen oder fragen möchtest?</b>`,
+
+          round3_ai_q1: `<b>1. Wer wird deiner Meinung nach langfristig am meisten von KI profitieren – und wer könnte verlieren?</b>`,
+          round3_ai_q2: `<b>2. Welche politischen oder gesellschaftlichen Maßnahmen würdest du dir wünschen, um den Übergang zu KI gerechter zu gestalten?</b>`,
+          round3_ai_q3: `<b>3. Wie stellst du dir eine ideale Zukunft vor, in der Menschen und KI zusammenarbeiten?</b>`,
+          round3_ai_q4: `<b>4. Gibt es etwas, das du deiner Gesprächspartnerin bzw. deinem Gesprächspartner noch sagen oder fragen möchtest?</b>`,
+
+          round3_speech_q1: `<b>1. Welche langfristigen Auswirkungen werden soziale Medien deiner Meinung nach auf Demokratie und öffentliche Debatten haben?</b>`,
+          round3_speech_q2: `<b>2. Welche Art von Regulierung (falls überhaupt) würdest du dir für soziale Medien in Zukunft wünschen?</b>`,
+          round3_speech_q3: `<b>3. Wie können wir die Meinungsfreiheit schützen und gleichzeitig Menschen vor Schäden im Internet bewahren?</b>`,
+          round3_speech_q4: `<b>4. Gibt es etwas, das du deiner Gesprächspartnerin bzw. deinem Gesprächspartner noch sagen oder fragen möchtest?</b>`,
+
+          round3_generic_q1: `<b>1. Welche langfristigen Folgen erwartest du davon, wie mit diesem Thema heute umgegangen wird?</b>`,
+          round3_generic_q2: `<b>2. Welche Veränderungen würdest du dir persönlich für die Zukunft wünschen?</b>`,
+          round3_generic_q3: `<b>3. Was könnte deiner Meinung nach getan werden, um Konflikte zu verringern und das Verständnis zu diesem Thema zu verbessern?</b>`,
+          round3_generic_q4: `<b>4. Gibt es etwas, das du deiner Gesprächspartnerin bzw. deinem Gesprächspartner noch sagen oder fragen möchtest?</b>`,
+
+
+        }
+      };
+
+      function applyLanguage(lang) {
+        if (!translations[lang]) return;
+
+        // remember choice
+        localStorage.setItem("language", lang);
+
+        // navbar label
+        const label = document.getElementById("currentLanguageLabel");
+        if (label) {
+          label.textContent = lang.toUpperCase();
+        }
+
+        // normal text elements
+        document.querySelectorAll("[data-i18n]").forEach(function (el) {
+          const key = el.getAttribute("data-i18n");
+          const value = translations[lang][key];
+          if (value !== undefined) {
+            el.innerHTML = value;
+          }
+        });
+
+        // 🔹 NEW: placeholders (like "Enter your email")
+        document.querySelectorAll("[data-i18n-placeholder]").forEach(function (el) {
+          const key = el.getAttribute("data-i18n-placeholder");
+          const value = translations[lang][key];
+          if (value !== undefined) {
+            el.setAttribute("placeholder", value);
+          }
+        });
+                // translate known flash messages from backend (e.g. "Login successful.")
+        document.querySelectorAll(".alert").forEach(function (el) {
+          const text = el.textContent.trim();
+
+          // adapt this to your exact English message
+          if (text.includes("Login successful")) {
+            const value = translations[lang]["login_success_flash"];
+            if (value !== undefined) {
+              el.textContent = value;
+            }
+          }
+        });
+
+      }
+
+      document.addEventListener("DOMContentLoaded", function () {
+        const saved = localStorage.getItem("language") || "en";
+        applyLanguage(saved);
+
+        document.querySelectorAll(".language-option").forEach(function (option) {
+          option.addEventListener("click", function (e) {
+            e.preventDefault();
+            const lang = this.getAttribute("data-lang");
+            applyLanguage(lang);
+          });
+        });
+
+        // (Optional) this block can be deleted, but if you keep it, use 'saved'
+        document.querySelectorAll("[data-i18n-placeholder]").forEach(function (el) {
+          const key = el.getAttribute("data-i18n-placeholder");
+          const value = translations[saved][key];
+          if (value !== undefined) {
+            el.setAttribute("placeholder", value);
+          }
+        });
+      });
+      </script>
 
 {% block javascript %}
 <script type="text/javascript">

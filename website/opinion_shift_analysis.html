@@ -29,9 +29,11 @@
 <section class="py-3 text-center container">
     <div class="row py-lg-4">
         <div class="col-lg-8 mx-auto">
-            <h1 class="fw-light">Your Opinion Journey</h1>
+            <h1 class="fw-light" data-i18n="shift_title">Your Opinion Journey</h1>
             <p class="lead text-body-secondary">
-                See how your perspective evolved through the discussion on 
+                <span data-i18n="shift_intro_prefix">
+                    See how your perspective evolved through the discussion on
+                </span>
                 <strong>{{ user.topic|capitalize|replace('_', ' ') }}</strong>
             </p>
         </div>
@@ -50,19 +52,23 @@
                     <div class="col-md-6 mb-3">
                         <div class="card shadow-sm metric-card h-100">
                             <div class="card-body text-center p-4">
-                                <h3 class="mb-3">Overall Opinion Shift</h3>
+                                <h3 class="mb-3" data-i18n="shift_overall_title">Overall Opinion Shift</h3>
                                 <div class="display-4 mb-2">
                                     {% if avg_shift > 0 %}+{% endif %}{{ avg_shift|float|round(2) }}
                                 </div>
-                                <p class="mb-0">
-                                    {% if avg_shift > 0.5 %}
+                                {% if avg_shift > 0.5 %}
+                                    <p class="mb-0" data-i18n="shift_overall_positive">
                                         Your views became more positive after the discussion
-                                    {% elif avg_shift|abs > 0.5 %}
+                                    </p>
+                                {% elif avg_shift|abs > 0.5 %}
+                                    <p class="mb-0" data-i18n="shift_overall_negative">
                                         Your views became more critical after the discussion
-                                    {% else %}
+                                    </p>
+                                {% else %}
+                                    <p class="mb-0" data-i18n="shift_overall_stable">
                                         Your views remained relatively stable
-                                    {% endif %}
-                                </p>
+                                    </p>
+                                {% endif %}
                             </div>
                         </div>
                     </div>
@@ -72,28 +78,31 @@
                     <div class="col-md-6 mb-3">
                         <div class="card shadow-sm openness-card h-100">
                             <div class="card-body text-center p-4">
-                                <h3 class="mb-3">Your Openness Score</h3>
+                                <h3 class="mb-3" data-i18n="shift_openness_title">Your Openness Score</h3>
                                 {% if openness_score is not none and openness_score != 'None' %}
                                     <div class="display-4 mb-2">
                                         {{ openness_score|round(1) }}
                                     </div>
                                     <p class="mb-0">
                                         {% if openness_category %}
-                                            Category: <strong>{{ openness_category }}</strong>
+                                            <span data-i18n="shift_openness_category_prefix">Category:</span>
+                                            <strong> {{ openness_category }} </strong>
                                         {% else %}
-                                            <span class="opacity-75">Category not available</span>
+                                            <span class="opacity-75" data-i18n="shift_openness_category_na">
+                                                Category not available
+                                            </span>
                                         {% endif %}
                                     </p>
-                                    <small class="mt-2 d-block opacity-75">
+                                    <small class="mt-2 d-block opacity-75" data-i18n="shift_openness_based_on">
                                         Based on your initial questionnaire responses
                                     </small>
                                 {% else %}
-                                    <div class="display-6 mb-2 text-muted">
+                                    <div class="display-6 mb-2 text-muted" data-i18n="shift_openness_not_available">
                                         Not Available
                                     </div>
                                     <p class="mb-0 small">
-                                        <!-- Debug info (remove after testing) -->
-                                        Score value: {{ openness_score }}
+                                        <span data-i18n="shift_openness_score_value_prefix">Score value:</span>
+                                        {{ openness_score }}
                                     </p>
                                 {% endif %}
                             </div>
@@ -104,7 +113,7 @@
                 <!-- Line Chart: Before vs After -->
                 <div class="card shadow-sm mb-4">
                     <div class="card-body p-4">
-                        <h4 class="card-title mb-4">Before vs After Discussion</h4>
+                        <h4 class="card-title mb-4" data-i18n="shift_chart_title">Before vs After Discussion</h4>
                         <canvas id="lineChart"></canvas>
                     </div>
                 </div>
@@ -112,8 +121,10 @@
                 <!-- Bar Chart: Detailed Question-by-Question Shift -->
                 <div class="card shadow-sm mb-4">
                     <div class="card-body p-4">
-                        <h4 class="card-title mb-4">Question-by-Question Shift Analysis</h4>
-                        <p class="text-muted mb-3">Green bars indicate positive shifts, red bars indicate negative shifts</p>
+                        <h4 class="card-title mb-4" data-i18n="shift_shift_chart_title">Question-by-Question Shift Analysis</h4>
+                        <p class="text-muted mb-3" data-i18n="shift_shift_chart_hint">
+                            Green bars indicate positive shifts, red bars indicate negative shifts
+                        </p>
                         <canvas id="shiftChart"></canvas>
                     </div>
                 </div>
@@ -121,13 +132,15 @@
                 <!-- Grouped Bar Chart: Before/After Comparison -->
                 <div class="card shadow-sm mb-4">
                     <div class="card-body p-4">
-                        <h4 class="card-title mb-4">Detailed Before/After Comparison</h4>
+                        <h4 class="card-title mb-4" data-i18n="shift_comparison_title">Detailed Before/After Comparison</h4>
                         <canvas id="comparisonChart"></canvas>
                     </div>
                 </div>
 
                 <div class="text-center mt-4">
-                    <a href="{{ url_for('views.reward') }}" class="btn btn-primary btn-lg">Continue to Reward</a>
+                    <a href="{{ url_for('views.reward') }}" class="btn btn-primary btn-lg" data-i18n="shift_continue_reward_btn">
+                        Continue to Reward
+                    </a>
                 </div>
             </div>
         </div>
@@ -145,13 +158,26 @@ document.addEventListener('DOMContentLoaded', function () {
 
     const labels = questionsData.map((q, i) => 'Q' + (i + 1));
 
-    // Value label mapping
+    // current language & helper using global `translations` from base.html
+    const lang = (localStorage.getItem("language") || "en");
+    const t = (key, fallback) => {
+        try {
+            if (typeof translations !== "undefined" &&
+                translations[lang] &&
+                translations[lang][key] !== undefined) {
+                return translations[lang][key];
+            }
+        } catch (e) {}
+        return fallback;
+    };
+
+    // Value label mapping (reuses same keys as sliders)
     const valueMap = {
-        -2: 'Strongly Disagree',
-        -1: 'Disagree',
-        0: 'Neutral',
-        1: 'Agree',
-        2: 'Strongly Agree'
+        -2: t('scale_strongly_disagree', 'Strongly Disagree'),
+        -1: t('scale_disagree', 'Disagree'),
+        0: t('scale_neutral', 'Neutral'),
+        1: t('scale_agree', 'Agree'),
+        2: t('scale_strongly_agree', 'Strongly Agree')
     };
 
     // 1. Line Chart: Before vs After
@@ -163,7 +189,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 labels: labels,
                 datasets: [
                     {
-                        label: 'Before Discussion',
+                        label: t('shift_chart_before_label', 'Before Discussion'),
                         data: beforeData,
                         borderColor: 'rgb(75, 192, 192)',
                         backgroundColor: 'rgba(75, 192, 192, 0.2)',
@@ -173,7 +199,7 @@ document.addEventListener('DOMContentLoaded', function () {
                         tension: 0.3
                     },
                     {
-                        label: 'After Discussion',
+                        label: t('shift_chart_after_label', 'After Discussion'),
                         data: afterData,
                         borderColor: 'rgb(153, 102, 255)',
                         backgroundColor: 'rgba(153, 102, 255, 0.2)',
@@ -213,10 +239,18 @@ document.addEventListener('DOMContentLoaded', function () {
                             callback: function (value) {
                                 return valueMap[value] ?? value;
                             }
+                        },
+                        title: {
+                            display: true,
+                            text: t('shift_axis_agreement_level', 'Agreement Level')
                         }
                     },
                     x: {
-                        grid: { display: false }
+                        grid: { display: false },
+                        title: {
+                            display: true,
+                            text: t('shift_axis_questions', 'Questions')
+                        }
                     }
                 }
             }
@@ -229,7 +263,9 @@ document.addEventListener('DOMContentLoaded', function () {
         // Color bars based on positive/negative shift
         const barColors = shiftsData.map(shift => {
             if (shift === null) return 'rgb(200, 200, 200)';
-            return shift > 0 ? 'rgba(25, 135, 84, 0.8)' : shift < 0 ? 'rgba(220, 53, 69, 0.8)' : 'rgba(108, 117, 125, 0.8)';
+            return shift > 0 ? 'rgba(25, 135, 84, 0.8)' :
+                   shift < 0 ? 'rgba(220, 53, 69, 0.8)' :
+                               'rgba(108, 117, 125, 0.8)';
         });
 
         new Chart(shiftCtx, {
@@ -237,7 +273,7 @@ document.addEventListener('DOMContentLoaded', function () {
             data: {
                 labels: labels,
                 datasets: [{
-                    label: 'Opinion Shift',
+                    label: t('shift_shift_dataset_label', 'Opinion Shift'),
                     data: shiftsData,
                     backgroundColor: barColors,
                     borderColor: barColors.map(c => c.replace('0.8', '1')),
@@ -258,9 +294,14 @@ document.addEventListener('DOMContentLoaded', function () {
                             },
                             label: function (context) {
                                 const shift = context.parsed.y;
-                                if (shift === null) return 'No data';
-                                const direction = shift > 0 ? '↑ More positive' : shift < 0 ? '↓ More negative' : '→ No change';
-                                return `Shift: ${shift > 0 ? '+' : ''}${shift} ${direction}`;
+                                if (shift === null) return t('shift_no_data', 'No data');
+                                const direction =
+                                    shift > 0
+                                        ? t('shift_direction_more_positive', '↑ More positive')
+                                        : shift < 0
+                                            ? t('shift_direction_more_negative', '↓ More negative')
+                                            : t('shift_direction_no_change', '→ No change');
+                                return `${t('shift_shift_prefix', 'Shift: ')}${shift > 0 ? '+' : ''}${shift} ${direction}`;
                             }
                         }
                     }
@@ -270,7 +311,7 @@ document.addEventListener('DOMContentLoaded', function () {
                         beginAtZero: true,
                         title: {
                             display: true,
-                            text: 'Opinion Change'
+                            text: t('shift_axis_opinion_change', 'Opinion Change')
                         },
                         ticks: {
                             stepSize: 1
@@ -279,7 +320,7 @@ document.addEventListener('DOMContentLoaded', function () {
                     x: {
                         title: {
                             display: true,
-                            text: 'Questions'
+                            text: t('shift_axis_questions', 'Questions')
                         }
                     }
                 }
@@ -296,14 +337,14 @@ document.addEventListener('DOMContentLoaded', function () {
                 labels: labels,
                 datasets: [
                     {
-                        label: 'Before Discussion',
+                        label: t('shift_chart_before_label', 'Before Discussion'),
                         data: beforeData,
                         backgroundColor: 'rgba(75, 192, 192, 0.7)',
                         borderColor: 'rgb(75, 192, 192)',
                         borderWidth: 2
                     },
                     {
-                        label: 'After Discussion',
+                        label: t('shift_chart_after_label', 'After Discussion'),
                         data: afterData,
                         backgroundColor: 'rgba(153, 102, 255, 0.7)',
                         borderColor: 'rgb(153, 102, 255)',
@@ -343,13 +384,13 @@ document.addEventListener('DOMContentLoaded', function () {
                         },
                         title: {
                             display: true,
-                            text: 'Agreement Level'
+                            text: t('shift_axis_agreement_level', 'Agreement Level')
                         }
                     },
                     x: {
                         title: {
                             display: true,
-                            text: 'Questions'
+                            text: t('shift_axis_questions', 'Questions')
                         }
                     }
                 }

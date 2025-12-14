@@ -4,32 +4,51 @@
 
 <section class="col-8 py-5 mx-auto">
   <form method="POST">
-    <h2 align="center" class="fw-light">Login</h2>
+    <h2 align="center" class="fw-light" data-i18n="login_title">Login</h2>
+
     <div class="form-group">
-      <label for="email" class="lead">Email</label>
+      <label for="email" class="lead" data-i18n="login_email_label">Email</label>
       <input
         type="email"
         class="form-control"
         id="email"
         name="email"
         placeholder="Enter your email"
+        data-i18n-placeholder="login_email_placeholder"
       />
     </div>
+
     <div class="form-group">
-      <label for="password" class="lead">Password</label>
+      <label for="password" class="lead" data-i18n="login_password_label">Password</label>
       <input
         type="password"
         class="form-control"
         id="password"
         name="password"
         placeholder="Enter your password"
+        data-i18n-placeholder="login_password_placeholder"
       />
     </div>
+
     <div class="text-center">
-      <p class="lead text-body-secondary">Don’t have an account yet? Go to <a class="icon-link icon-link-hover" style="--bs-link-hover-color-rgb: 25, 135, 84;" href="/sign-up">Sign Up.<svg class="bi" aria-hidden="true"><use xlink:href="#arrow-right"></use></svg></a></p>
+      <p class="lead text-body-secondary">
+        <span data-i18n="login_no_account">
+          Don’t have an account yet? Go to
+        </span>
+        <a class="icon-link icon-link-hover"
+           style="--bs-link-hover-color-rgb: 25, 135, 84;"
+           href="/sign-up"
+           data-i18n="login_signup_link">
+          Sign Up.
+          <svg class="bi" aria-hidden="true"><use xlink:href="#arrow-right"></use></svg>
+        </a>
+      </p>
     </div>
+
     <div class="d-grid gap-2 col-4 mx-auto">
-      <button type="submit" class="btn btn-primary">Login</button>
+      <button type="submit" class="btn btn-primary" data-i18n="login_button">
+        Login
+      </button>
     </div>
   </form>
 </section>

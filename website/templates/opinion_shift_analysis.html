@@ -24,10 +24,12 @@
 <section class="py-3 text-center container">
     <div class="row py-lg-4">
         <div class="col-lg-8 mx-auto">
-            <h1 class="fw-light">Your Opinion Journey</h1>
+            <h1 class="fw-light" data-i18n="shift_title">Your Opinion Journey</h1>
             <p class="lead text-body-secondary">
-                See how your perspective evolved through the discussion on 
-                <strong>{{ user.topic|capitalize|replace('_', ' ') }}</strong>
+                <span data-i18n="shift_intro_prefix">
+                    See how your perspective evolved through the discussion on
+                </span>
+                <strong> {{ user.topic|capitalize|replace('_', ' ') }} </strong>
             </p>
         </div>
     </div>
@@ -40,7 +42,7 @@
             <div class="col-lg-10 mx-auto">
                 <div class="card shadow-sm mb-4">
                     <div class="card-body p-4">
-                        <h4 class="card-title mb-4">Before vs After Discussion</h4>
+                        <h4 class="card-title mb-4" data-i18n="shift_chart_title">Before vs After Discussion</h4>
                         <!-- <canvas id="opinionChart"></canvas> -->
                     </div>
                 </div>
@@ -49,19 +51,23 @@
                 {% if avg_shift is not none %}
                 <div class="card shadow-sm metric-card mb-4">
                     <div class="card-body text-center p-4">
-                        <h3 class="mb-3">Overall Opinion Shift</h3>
+                        <h3 class="mb-3" data-i18n="shift_overall_title">Overall Opinion Shift</h3>
                         <div class="display-4 mb-2">
                             {% if avg_shift > 0 %}+{% endif %}{{ avg_shift|float|round(2) }}
                         </div>
-                        <p class="mb-0">
-                            {% if avg_shift > 0.5 %}
+                        {% if avg_shift > 0.5 %}
+                            <p class="mb-0" data-i18n="shift_overall_positive">
                                 Your views became more positive after the discussion
-                            {% elif avg_shift is not none and avg_shift|abs > 0.5 %}
+                            </p>
+                        {% elif avg_shift is not none and avg_shift|abs > 0.5 %}
+                            <p class="mb-0" data-i18n="shift_overall_negative">
                                 Your views became more critical after the discussion
-                            {% else %}
+                            </p>
+                        {% else %}
+                            <p class="mb-0" data-i18n="shift_overall_stable">
                                 Your views remained relatively stable
-                            {% endif %}
-                        </p>
+                            </p>
+                        {% endif %}
                     </div>
                 </div>
                 {% endif %}
@@ -69,16 +75,16 @@
                 <!-- Question-by-Question Breakdown -->
                 <div class="card shadow-sm">
                     <div class="card-body p-4">
-                        <h4 class="card-title mb-4">Detailed Question Analysis</h4>
+                        <h4 class="card-title mb-4" data-i18n="shift_detail_title">Detailed Question Analysis</h4>
                         <div class="table-responsive">
 
                             <table class="table table-hover">
                                 <thead>
                                     <tr>
-                                        <th>Question</th>
-                                        <th class="text-center">Before</th>
-                                        <th class="text-center">After</th>
-                                        <th class="text-center">Change</th>
+                                        <th data-i18n="shift_table_question">Question</th>
+                                        <th class="text-center" data-i18n="shift_table_before">Before</th>
+                                        <th class="text-center" data-i18n="shift_table_after">After</th>
+                                        <th class="text-center" data-i18n="shift_table_change">Change</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -105,7 +111,7 @@
                                             {% if before_values[i] is not none %}
                                                 {{ before_values[i] }}
                                             {% else %}
-                                                <span class="text-muted">-</span>
+                                                <span class="text-muted" data-i18n="shift_missing">-</span>
                                             {% endif %}
                                         </td>
 
@@ -113,7 +119,7 @@
                                             {% if after_values[i] is not none %}
                                                 {{ after_values[i] }}
                                             {% else %}
-                                                <span class="text-muted">-</span>
+                                                <span class="text-muted" data-i18n="shift_missing">-</span>
                                             {% endif %}
                                         </td>
 
@@ -123,7 +129,7 @@
                                                     {% if shift_val > 0 %}+{% endif %}{{ shift_val }} {{ shift_arrow }}
                                                 </span>
                                             {% else %}
-                                                <span class="text-muted">-</span>
+                                                <span class="text-muted" data-i18n="shift_missing">-</span>
                                             {% endif %}
                                         </td>
                                     </tr>
@@ -138,7 +144,9 @@
                 </div>
 
                 <div class="text-center mt-4">
-                    <a href="{{ url_for('views.reward') }}" class="btn btn-primary btn-lg">Continue</a>
+                    <a href="{{ url_for('views.reward') }}" class="btn btn-primary btn-lg" data-i18n="shift_continue_btn">
+                        Continue
+                    </a>
                 </div>
             </div>
         </div>

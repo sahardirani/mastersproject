@@ -19,13 +19,21 @@
 
 <section class="py-3 text-center container">
   <div class="row py-lg-3">
-    <h1 class="fw-light">Discussion Round 1: {{ discussion_title }}</h1>
+    <h1 class="fw-light">
+      <span data-i18n="round1_title_prefix">Discussion Round 1:</span>
+      {{ discussion_title }}
+    </h1>
     <div class="col-lg-9 col-md-9 mx-auto">
       <p class="lead text-body-secondary">
-        Welcome to the first discussion round.<br>
-        <b>Discussion focus: {{ intro_topic }}</b>
+        <span data-i18n="round1_intro_prefix">
+          Welcome to the first discussion round.
+        </span><br>
+        <b>
+          <span data-i18n="round1_focus_prefix">Discussion focus:</span>
+          {{ intro_topic }}
+        </b>
       </p>
-      <p class="lead text-body-secondary">
+      <p class="lead text-body-secondary" data-i18n="round1_prompts_hint">
         The prompts below are meant to guide your conversation.
       </p>
     </div>
@@ -35,8 +43,8 @@
 <div class="album py-5 bg-body-tertiary">
   <div class="row justify-content-center">
     <div class="col-lg-10 col-md-10 col-sm-12">
-      <h3>Important notes before you join the meeting:</h3>
-      <p class="lead text-body-secondary">
+      <h3 data-i18n="round1_notes_title">Important notes before you join the meeting:</h3>
+      <p class="lead text-body-secondary" data-i18n="round1_notes_text">
         Once you have joined the meeting, please do not leave it. Wait for your conversation partner. 
         You will be automatically forwarded to the next discussion round. If you accidentally leave the meeting, 
         reload the page and join the meeting again.
@@ -49,14 +57,14 @@
       <div class="d-grid gap-2 text-center">
         <div id="jitsi-container"></div>
         <div id="flash-message" class="flash-message" style="display: none;">
-          You have 1 minute left.
+          <span data-i18n="round1_flash_message">You have 1 minute left.</span>
         </div>
       </div>
     </div>
 
     <div class="col-lg-4 col-md-8 col-sm-12">
       <div class="d-grid gap-2 text-center">
-        <h2 class="fw-light">Discussion Prompts</h2>
+        <h2 class="fw-light" data-i18n="round1_prompts_title">Discussion Prompts</h2>
         <ul class="list-group d-grid gap-2">
 
           {% if topic == 'climate_change' %}
@@ -116,9 +124,8 @@ document.addEventListener('DOMContentLoaded', () => {
         if (timersStarted) return;
         timersStarted = true;
         console.log("Part 1: starting discussion timers (5 min, 4 min warning)");
-        // REAL TIMINGS
-        setTimeout(timerCallback, 280000);    // 4 min 40 sec → redirect
-        setTimeout(showFlashMessage, 220000); // 3 min 40 sec → “1 minute left”
+        setTimeout(timerCallback, 280000);    // 4:40
+        setTimeout(showFlashMessage, 220000); // 3:40 → “1 minute left”
     }
 
     function checkAndStartTimers() {
@@ -146,13 +153,11 @@ document.addEventListener('DOMContentLoaded', () => {
             userInfo: { displayName: "{{ user.user_name }}" }
         });
 
-        // When YOU fully joined → check if partner is already there
         api.addListener('videoConferenceJoined', (event) => {
             console.log("Part 1: videoConferenceJoined", event);
             checkAndStartTimers();
         });
 
-        // When SOMEONE joins (usually your partner) → check again
         api.addListener('participantJoined', (event) => {
             console.log("Part 1: participantJoined", event);
             checkAndStartTimers();
@@ -163,8 +168,5 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 });
 </script>
-
-
-
 
 {% endblock %}

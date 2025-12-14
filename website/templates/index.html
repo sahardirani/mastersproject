@@ -1,29 +1,31 @@
 {% extends "base.html" %}
-{% block titel %}Dialogue Platform{% endblock %}
+{% block title %}Dialogue Platform{% endblock %}
 {% block content %}
 
 <section class="py-3 text-center container">
     <div class="row py-lg-4">
         <div class="col-lg-7 col-md-6 mx-auto">
-            <h1 class="fw-light">Dialogue With the Other Side<br></h1>
-        
-            <p class="lead text-body-secondary">
-                <br>In times of increasing polarization and online echo chambers, engaging with those 
+            <h1 class="fw-light" data-i18n="index_title">Dialogue With the Other Side<br></h1>
+      
+            <p class="lead text-body-secondary" data-i18n="index_p1">
+                <br>In times of increasing polarization and online echo chambers, engaging with those
                 who think differently is essential for a healthy democratic society.
             </p>
-            <p class="lead text-body-secondary">
+
+            <p class="lead text-body-secondary" data-i18n="index_p2">
                 This platform helps you connect with someone who sees the world differently,
                 in a structured and respectful setting. Before being matched, participants
-                answer a few questions about political attitudes and personal background. 
-                Based on this information, the system pairs you with someone who holds 
-                different views on an important societal issue, such as climate activism, 
+                answer a few questions about political attitudes and personal background.
+                Based on this information, the system pairs you with someone who holds
+                different views on an important societal issue, such as climate activism,
                 AI and employment, or freedom of speech on social media.
             </p>
-            <p class="lead text-body-secondary">
-                Your conversation is structured around a short video, pre-defined questions, 
-                and space for personal reflection. You will not be forced to change your views, 
-                but you may gain new perspectives, understand the other side better, and contribute 
-                to more constructive public debates.
+
+            <p class="lead text-body-secondary" data-i18n="index_p3">
+                Your conversation is structured around a short video, pre-defined questions,
+                and a time-limited chat. The goal is not to convince the other person, but
+                to understand how they see the world — and to reflect on your own views in
+                the process.
             </p>
         </div>
         <div class="col-lg-5 col-md-6 mx-auto">
@@ -35,7 +37,7 @@
     </div>
 
     <div class="py-3 text-center">
-        <h2 class="fw-light">
+        <h2 class="fw-light" data-i18n="topics_title">
             Available Discussion Topics ⬇
         </h2>
     </div>
@@ -68,22 +70,22 @@
     }
 
     .btn-outline-primary {
-    color: white;
-    background: #007bff;
-    border-color: #007bff;
-}
-.btn-outline-primary:hover{
-    color: white;
-    background: #0053ac;
-}
-
-@media (min-width: 992px) {
-    .col-lg-6 {
-        -ms-flex: 0 0 50%;
-        flex: 0 0 100%;
-        max-width: 75%;
+        color: white;
+        background: #007bff;
+        border-color: #007bff;
     }
-}
+    .btn-outline-primary:hover{
+        color: white;
+        background: #0053ac;
+    }
+
+    @media (min-width: 992px) {
+        .col-lg-6 {
+            -ms-flex: 0 0 50%;
+            flex: 0 0 100%;
+            max-width: 75%;
+        }
+    }
 </style>
 
 <!-- 1) SEARCH BAR BELOW THE HEADING -->
@@ -91,8 +93,10 @@
     <div class="row justify-content-center">
         <div class="col-12 d-flex flex-column align-items-center">
 
-            <h4 class="fw-light mb-3 text-center">Browse &amp; Search Topics</h4>
-            <p class="text-muted text-center">
+            <h4 class="fw-light mb-3 text-center" data-i18n="index_browse_title">
+                Browse &amp; Search Topics
+            </h4>
+            <p class="text-muted text-center" data-i18n="index_browse_text">
                 Use the search bar to quickly find one of the current discussion topics.
             </p>
 
@@ -101,7 +105,8 @@
                    type="text"
                    class="form-control"
                    style="width: 80%; max-width: 650px;"
-                   placeholder="Search topics (e.g. climate, AI, speech)...">
+                   placeholder="Search topics (e.g. climate, AI, speech)..."
+                   data-i18n-placeholder="index_search_placeholder">
         </div>
     </div>
 </div>
@@ -112,41 +117,25 @@
     <div class="container">
         <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-3">
 
-            <!-- TOPIC 1: Climate Activism
-            <div class="col mx-auto topic-card">
-                <div class="card shadow-sm equal-card">
-                    <div class="card-body text-center equal-card-body">
-                        <h2 class="fw-light">Climate <br>Activism</h2>
-                        <img src="{{ url_for('static', filename='klimakleber1.jpg') }}" 
-                             class="topic-image" />
-                        <p class="card-text lead text-body-secondary mt-3">
-                            Discuss the topic of climate activism and climate protests. 
-                            This highly polarizing issue often evokes strong emotional reactions 
-                            and differing moral perspectives.
-                        </p>
-                        <form action="{{ url_for('views.home') }}" method="post">
-                            <input type="hidden" name="topic" value="climate">
-                            <button type="submit" class="btn btn-primary">Join Discussion</button>
-                        </form>
-                    </div>
-                </div>
-            </div> -->
+            <!-- TOPIC 1: Climate Activism (currently commented out)
+            ...
+            -->
 
             <!-- TOPIC 2: Artificial Intelligence & Employment -->
             <div class="col mx-auto topic-card">
                 <div class="card shadow-sm equal-card">
                     <div class="card-body text-center equal-card-body">
-                        <h2 class="fw-light">Artificial Intelligence &amp; Employment</h2>
+                        <h2 class="fw-light" data-i18n="index_ai_card_title">Artificial Intelligence &amp; Employment</h2>
                         <img src="{{ url_for('static', filename='AI.jpg') }}" 
                              class="topic-image"/>
-                        <p class="card-text lead text-body-secondary mt-3">
+                        <p class="card-text lead text-body-secondary mt-3" data-i18n="index_ai_card_desc">
                             Explore how AI is transforming the job market. 
                             Some view AI as a threat to employment, while others argue it creates 
                             new opportunities and enhances human productivity.
                         </p>
                         <form action="{{ url_for('views.home') }}" method="post">
                             <input type="hidden" name="topic" value="ai_employment">
-                            <button type="submit" class="btn btn-primary">Join Discussion</button>
+                            <button type="submit" class="btn btn-primary" data-i18n="index_join_btn">Join Discussion</button>
                         </form>
                     </div>
                 </div>
@@ -156,10 +145,10 @@
             <div class="col mx-auto topic-card">
                 <div class="card shadow-sm equal-card">
                     <div class="card-body text-center equal-card-body">
-                        <h2 class="fw-light">Freedom of Speech on Social Media</h2>
+                        <h2 class="fw-light" data-i18n="index_speech_card_title">Freedom of Speech on Social Media</h2>
                         <img src="{{ url_for('static', filename='SM.jpg') }}" 
                              class="topic-image"/>
-                        <p class="card-text lead text-body-secondary mt-3">
+                        <p class="card-text lead text-body-secondary mt-3" data-i18n="index_speech_card_desc">
                             Debate the role of social media in supporting freedom of speech. 
                             Supporters believe platforms amplify marginalized voices, 
                             while critics worry about misinformation, hate speech, 
@@ -167,7 +156,7 @@
                         </p>
                         <form action="{{ url_for('views.home') }}" method="post">
                             <input type="hidden" name="topic" value="freedom_speech">
-                            <button type="submit" class="btn btn-primary">Join Discussion</button>
+                            <button type="submit" class="btn btn-primary" data-i18n="index_join_btn">Join Discussion</button>
                         </form>
                     </div>
                 </div>
@@ -181,8 +170,8 @@
 <div class="container py-3">
     <div class="row">
         <div class="col-lg-6 mx-auto">
-            <h4 class="fw-light mb-3 text-center">Suggest a New Topic</h4>
-            <p class="text-muted text-center">
+            <h4 class="fw-light mb-3 text-center" data-i18n="index_suggest_title">Suggest a New Topic</h4>
+            <p class="text-muted text-center" data-i18n="index_suggest_text">
                 Is there a topic you care about?
                 Propose it here so it can be considered for future discussions.
                 All suggestions will be <strong>reviewed by the moderator</strong> to ensure they align with the goals of this platform. 
@@ -195,7 +184,7 @@
                 <input type="hidden" name="form_type" value="suggest_topic">
 
                 <div class="mb-3">
-                    <label for="suggestedTitle" class="form-label">Topic title</label>
+                    <label for="suggestedTitle" class="form-label" data-i18n="index_suggest_label_title">Topic title</label>
                     <input type="text"
                            class="form-control"
                            id="suggestedTitle"
@@ -205,7 +194,7 @@
                 </div>
 
                 <div class="mb-3">
-                    <label for="suggestedDescription" class="form-label">Short description</label>
+                    <label for="suggestedDescription" class="form-label" data-i18n="index_suggest_label_desc">Short description</label>
                     <textarea class="form-control"
                               id="suggestedDescription"
                               name="description"
@@ -214,7 +203,7 @@
                 </div>
 
                 <div class="text-center">
-                    <button type="submit" class="btn btn-outline-primary">
+                    <button type="submit" class="btn btn-outline-primary" data-i18n="index_suggest_submit">
                         Submit topic suggestion
                     </button>
                 </div>
