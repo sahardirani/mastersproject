@@ -500,24 +500,55 @@ def post_match_questionnaire():
 
 
 # ---------------- discussion evaluation ----------------
+
 @views.route('/Questionnaire2/discussion_evaluation', methods=['GET', 'POST'])
 @login_required
 def discussion_evaluation():
     if request.method == 'POST':
         try:
+            # Collect all disc_evaluation values
+            evaluation_values = []
+            
             for attr in [
                 'disc_evaluation1', 'disc_evaluation2', 'disc_evaluation3', 'disc_evaluation4',
                 'disc_evaluation5', 'disc_evaluation6', 'disc_evaluation7', 'disc_evaluation8',
-                'disc_evaluation9', 'disc_evaluation10'
+                'disc_evaluation9'
             ]:
                 val = request.form.get(attr)
+                
+                # Save the value to the user
                 setattr(current_user, attr, val if val not in (None, '') else None)
+                
+                # Collect numeric values for average calculation
+                if val not in (None, ''):
+                    try:
+                        evaluation_values.append(int(val))
+                    except (ValueError, TypeError):
+                        pass
+            
+            # Save disc_evaluation10 (text field)
+            val = request.form.get('disc_evaluation10')
+            setattr(current_user, 'disc_evaluation10', val if val not in (None, '') else None)
+            
+            # Calculate and save the average (only numeric values from 1-9)
+            if evaluation_values:
+                average = sum(evaluation_values) / len(evaluation_values)
+                current_user.disc_evaluation_avg = round(average, 2)
+                print(f"[DEBUG] Calculated disc_evaluation_avg: {current_user.disc_evaluation_avg}")
+            else:
+                current_user.disc_evaluation_avg = None
+                print(f"[DEBUG] No values to calculate average")
+            
             db.session.commit()
-            # go directly to opinion shift analysis
+            
+            # Go directly to opinion shift analysis
             return redirect(url_for('views.opinion_shift_analysis'))
+            
         except Exception as exc:
             db.session.rollback()
             print(f"Error saving discussion evaluation: {exc}")
+            import traceback
+            traceback.print_exc()
             flash('There was an error processing the data.', 'error')
 
     return render_template('Questionnaire2/discussion_evaluation.html', user=current_user)

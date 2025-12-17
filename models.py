@@ -80,7 +80,8 @@ class User(db.Model, UserMixin):
     disc_evaluation9 = db.Column(db.Integer)  # - would participate again
     disc_evaluation10 = db.Column(db.Text)     # - additional reflections (text area)
  
-    
+    disc_evaluation_avg = db.Column(db.Float, nullable=True)
+
     # ========================================
     #  MATCHING SYSTEM
     # ========================================
