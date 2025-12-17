@@ -168,6 +168,7 @@ class Match(db.Model):
     # Topic they're matched on
     topic = db.Column(db.String(50), nullable=False)
     
+
     # Opposition score (calculated from 10 matching questions only)
     opposition_score = db.Column(db.Float, nullable=False)
     match_decision = db.Column(db.String(50), nullable=False)  # 'ideal_match', 'too_similar', 'too_extreme'
@@ -212,52 +213,6 @@ class Match(db.Model):
             return False
         return True
 
-
-class MatchHistory(db.Model):
-    """Tracks historical matching data for analytics"""
-    __tablename__ = 'match_history'
-    
-    id = db.Column(db.Integer, primary_key=True)
-    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
-    matched_user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
-    topic = db.Column(db.String(50), nullable=False)
-    opposition_score = db.Column(db.Float, nullable=False)
-    match_decision = db.Column(db.String(50), nullable=False)
-    
-    # Outcome tracking
-    accepted = db.Column(db.Boolean, nullable=True)
-    conversation_count = db.Column(db.Integer, default=0)
-    total_interaction_time = db.Column(db.Integer, default=0)  # in minutes
-    
-    # Feedback
-    user_rating = db.Column(db.Integer, nullable=True)  # 1-5 stars
-    user_feedback = db.Column(db.Text, nullable=True)
-    
-    created_at = db.Column(db.DateTime, default=datetime.utcnow)
-    completed_at = db.Column(db.DateTime, nullable=True)
-
-
-class MatchingSession(db.Model):
-    """Tracks batch matching sessions for analytics"""
-    __tablename__ = 'matching_sessions'
-    
-    id = db.Column(db.Integer, primary_key=True)
-    session_type = db.Column(db.String(50), default='automated')  # automated, manual
-    topic = db.Column(db.String(50))  # Which topic was matched
-    
-    # Statistics
-    total_users_processed = db.Column(db.Integer, default=0)
-    total_matches_created = db.Column(db.Integer, default=0)
-    ideal_matches_count = db.Column(db.Integer, default=0)
-    extremists_excluded = db.Column(db.Integer, default=0)
-    
-    # Performance
-    execution_time = db.Column(db.Float)  # in seconds
-    
-    created_at = db.Column(db.DateTime, default=datetime.utcnow)
-    
-    # Optional: store configuration
-    config_json = db.Column(db.JSON, nullable=True)
 
 class SuggestedTopic(db.Model):
     __tablename__ = 'suggested_topics'
