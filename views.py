@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template, request, flash, redirect, url_for, session
+from flask import Blueprint, app, render_template, request, flash, redirect, url_for, session
 from flask_login import login_required, current_user
 from datetime import datetime, timedelta, time, date
 from threading import Thread
@@ -316,13 +316,30 @@ def find_matches_for_user(user_id):
             print(f"[MATCH] User {user_id} not found")
             return
 
+        # Check if user has enough matching opinions before attempting to match
+        from .models import UserOpinion, OpinionDimension
+        user_matching_opinions = UserOpinion.query.join(OpinionDimension).filter(
+            UserOpinion.user_id == user.id,
+            OpinionDimension.question_type == "matching"
+        ).count()
+        
+        if user_matching_opinions < 10:
+            print(f"[MATCH] User {user_id} has only {user_matching_opinions} matching opinions, needs 10")
+            return
+
         result = MatchingService.find_best_match_for_user(user)
         if not result:
             print(f"[MATCH] No match found for user {user_id}")
             return
 
-        matched_user, score, decision, common_slot = result
-        match = MatchingService.create_match(user, matched_user, score, decision, common_slot)
+        matched_user, opposition_score, decision, common_slot = result
+        
+        # Verify this is an ideal match
+        if decision != "ideal_match":
+            print(f"[MATCH] Match for user {user_id} is not ideal: {decision} (score={opposition_score:.2f})")
+            return
+            
+        match = MatchingService.create_match(user, matched_user, opposition_score, decision, common_slot)
 
         # Mark both users as matched
         user.haspartner = True
@@ -351,14 +368,16 @@ def find_matches_for_user(user_id):
                 user=user,
                 partner=matched_user,
                 topic=user.topic,
-                slot_label=slot_label
+                slot_label=slot_label,
+                opposition_score=round(opposition_score, 2)
             )
             html_b = render_template(
                 'Email/zusage.html',
                 user=matched_user,
                 partner=user,
                 topic=matched_user.topic,
-                slot_label=slot_label
+                slot_label=slot_label,
+                opposition_score=round(opposition_score, 2)
             )
 
             ok_a = send_email_safe(
@@ -373,12 +392,16 @@ def find_matches_for_user(user_id):
             )
 
             print(f"[MATCH] Email status A={ok_a}, B={ok_b} for {user.email} & {matched_user.email}")
+            print(f"[MATCH] Match created with opposition_score={opposition_score:.2f}, decision={decision}")
 
         except Exception as mail_exc:
             print(f"[MATCH] Warning: failed to send match emails: {mail_exc}")
 
     except Exception as exc:
+        db.session.rollback()
         print(f"[MATCH] Error during matching: {exc}")
+        import traceback
+        traceback.print_exc()
 
 
 @views.route('/Questionnaire1/end', methods=['GET'])
