@@ -21,12 +21,14 @@ mail = Mail()
 
 
 def send_email_safe(subject, recipients, body=None, html=None, sender=None):
-    """
-    Central helper to send emails. Uses Flask-Mail and logs any error
-    without crashing the whole request.
-    """
     try:
-        msg = Message(subject=subject, recipients=recipients, sender=sender)
+        # Build message WITHOUT sender first
+        msg = Message(subject=subject, recipients=recipients)
+
+        # If you want a custom sender, set it; otherwise Flask-Mail uses MAIL_DEFAULT_SENDER
+        if sender:
+            msg.sender = sender
+
         if body:
             msg.body = body
         if html:
@@ -36,6 +38,8 @@ def send_email_safe(subject, recipients, body=None, html=None, sender=None):
         print(f"[MAIL] Sent email to {recipients} with subject '{subject}'")
         return True
     except Exception as e:
+        import traceback
+        traceback.print_exc()
         print(f"[MAIL ERROR] Failed to send email to {recipients}: {e}")
         return False
 
