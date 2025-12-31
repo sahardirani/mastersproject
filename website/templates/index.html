@@ -162,6 +162,142 @@
                 </div>
             </div>
 
+                        <!-- TOPIC 3: Facial Recognition and Privacy -->
+            <div class="col mx-auto topic-card">
+            <div class="card shadow-sm equal-card">
+                <div class="card-body text-center equal-card-body">
+                <h2 class="fw-light" data-i18n="index_facial_card_title">Facial Recognition and Privacy</h2>
+                <img src="{{ url_for('static', filename='facial.jpg') }}" class="topic-image"/>
+                <p class="card-text lead text-body-secondary mt-3" data-i18n="index_facial_card_desc">
+                    Debate security benefits vs. privacy risks, consent, and surveillance.
+                </p>
+                <form action="{{ url_for('views.home') }}" method="post">
+                    <input type="hidden" name="topic" value="facial_privacy">
+                    <button type="submit" class="btn btn-primary" data-i18n="index_join_btn">Join Discussion</button>
+                </form>
+                </div>
+            </div>
+            </div>
+
+            <!-- TOPIC 4: Climate Activism and Civil Disobedience -->
+            <div class="col mx-auto topic-card">
+            <div class="card shadow-sm equal-card">
+                <div class="card-body text-center equal-card-body">
+                <h2 class="fw-light" data-i18n="index_climate_card_title">Climate Activism and Civil Disobedience</h2>
+                <img src="{{ url_for('static', filename='climate.jpg') }}" class="topic-image"/>
+                <p class="card-text lead text-body-secondary mt-3" data-i18n="index_climate_card_desc">
+                    Discuss disruptive protests, democratic legitimacy, and urgent climate action.
+                </p>
+                <form action="{{ url_for('views.home') }}" method="post">
+                    <input type="hidden" name="topic" value="climate_disobedience">
+                    <button type="submit" class="btn btn-primary" data-i18n="index_join_btn">Join Discussion</button>
+                </form>
+                </div>
+            </div>
+            </div>
+
+            <!-- TOPIC 5: Universal Basic Income -->
+            <div class="col mx-auto topic-card">
+            <div class="card shadow-sm equal-card">
+                <div class="card-body text-center equal-card-body">
+                <h2 class="fw-light" data-i18n="index_ubi_card_title">Universal Basic Income</h2>
+                <img src="{{ url_for('static', filename='ubi.jpg') }}" class="topic-image"/>
+                <p class="card-text lead text-body-secondary mt-3" data-i18n="index_ubi_card_desc">
+                    Explore UBI as security for all vs. cost, fairness, and work incentives.
+                </p>
+                <form action="{{ url_for('views.home') }}" method="post">
+                    <input type="hidden" name="topic" value="universal_basic_income">
+                    <button type="submit" class="btn btn-primary" data-i18n="index_join_btn">Join Discussion</button>
+                </form>
+                </div>
+            </div>
+            </div>
+
+            <!-- TOPIC 6: Digital Education and Remote Learning -->
+            <div class="col mx-auto topic-card">
+            <div class="card shadow-sm equal-card">
+                <div class="card-body text-center equal-card-body">
+                <h2 class="fw-light" data-i18n="index_education_card_title">Digital Education and Remote Learning</h2>
+                <img src="{{ url_for('static', filename='education.jpg') }}" class="topic-image"/>
+                <p class="card-text lead text-body-secondary mt-3" data-i18n="index_education_card_desc">
+                    Discuss effectiveness, access gaps, and the role of tech in learning.
+                </p>
+                <form action="{{ url_for('views.home') }}" method="post">
+                    <input type="hidden" name="topic" value="digital_education">
+                    <button type="submit" class="btn btn-primary" data-i18n="index_join_btn">Join Discussion</button>
+                </form>
+                </div>
+            </div>
+            </div>
+
+            <!-- TOPIC 7: Data Ownership in the Age of Big Tech -->
+            <div class="col mx-auto topic-card">
+            <div class="card shadow-sm equal-card">
+                <div class="card-body text-center equal-card-body">
+                <h2 class="fw-light" data-i18n="index_data_card_title">Data Ownership in the Age of Big Tech</h2>
+                <img src="{{ url_for('static', filename='data.jpg') }}" class="topic-image"/>
+                <p class="card-text lead text-body-secondary mt-3" data-i18n="index_data_card_desc">
+                    Who should control personal data — users, platforms, or society?
+                </p>
+                <form action="{{ url_for('views.home') }}" method="post">
+                    <input type="hidden" name="topic" value="data_ownership">
+                    <button type="submit" class="btn btn-primary" data-i18n="index_join_btn">Join Discussion</button>
+                </form>
+                </div>
+            </div>
+            </div>
+
+            <!-- TOPIC 8: Automation and Economic Inequality -->
+            <div class="col mx-auto topic-card">
+            <div class="card shadow-sm equal-card">
+                <div class="card-body text-center equal-card-body">
+                <h2 class="fw-light" data-i18n="index_automation_card_title">Automation and Economic Inequality</h2>
+                <img src="{{ url_for('static', filename='automation.jpg') }}" class="topic-image"/>
+                <p class="card-text lead text-body-secondary mt-3" data-i18n="index_automation_card_desc">
+                    Explore whether automation concentrates wealth or raises living standards.
+                </p>
+                <form action="{{ url_for('views.home') }}" method="post">
+                    <input type="hidden" name="topic" value="automation_inequality">
+                    <button type="submit" class="btn btn-primary" data-i18n="index_join_btn">Join Discussion</button>
+                </form>
+                </div>
+            </div>
+            </div>
+
+            <!-- TOPIC 9: Mental Health and Digital Overload -->
+            <div class="col mx-auto topic-card">
+            <div class="card shadow-sm equal-card">
+                <div class="card-body text-center equal-card-body">
+                <h2 class="fw-light" data-i18n="index_mental_card_title">Mental Health and Digital Overload</h2>
+                <img src="{{ url_for('static', filename='mental.jpg') }}" class="topic-image"/>
+                <p class="card-text lead text-body-secondary mt-3" data-i18n="index_mental_card_desc">
+                    Discuss attention, stress, social media effects, and digital well-being.
+                </p>
+                <form action="{{ url_for('views.home') }}" method="post">
+                    <input type="hidden" name="topic" value="mental_health_overload">
+                    <button type="submit" class="btn btn-primary" data-i18n="index_join_btn">Join Discussion</button>
+                </form>
+                </div>
+            </div>
+            </div>
+
+            <!-- TOPIC 10: Ethical Consumption and Fast Fashion -->
+            <div class="col mx-auto topic-card">
+            <div class="card shadow-sm equal-card">
+                <div class="card-body text-center equal-card-body">
+                <h2 class="fw-light" data-i18n="index_fashion_card_title">Ethical Consumption and Fast Fashion</h2>
+                <img src="{{ url_for('static', filename='fashion.jpg') }}" class="topic-image"/>
+                <p class="card-text lead text-body-secondary mt-3" data-i18n="index_fashion_card_desc">
+                    Discuss sustainability, labor conditions, and consumer responsibility.
+                </p>
+                <form action="{{ url_for('views.home') }}" method="post">
+                    <input type="hidden" name="topic" value="ethical_fast_fashion">
+                    <button type="submit" class="btn btn-primary" data-i18n="index_join_btn">Join Discussion</button>
+                </form>
+                </div>
+            </div>
+            </div>
+
         </div>
     </div>
 </div>
