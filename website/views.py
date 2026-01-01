@@ -1,3 +1,18 @@
+"""
+This file contains the main pages and logic of the web application.
+
+It handles:
+- Showing pages to the user
+- Collecting questionnaire answers
+- Matching users with a discussion partner
+- Scheduling and running the discussion flow
+- Saving evaluation results after the discussion
+- Sending basic notification and follow-up emails
+
+In short, this file controls how users move through the study
+from registration until the end of the experiment.
+"""
+
 from flask import Blueprint, render_template, request, flash, redirect, url_for, session
 from flask_login import login_required, current_user
 from datetime import datetime, timedelta, time, date
@@ -144,7 +159,7 @@ def home():
     )
 
 
-@views.route('/new_questionnaire/part1', methods=['GET', 'POST'])
+@views.route('/Questionnaire1/new_questionnaire/part1', methods=['GET', 'POST'])
 @login_required
 def new_questionnaire_part1():
     """Part 1 contains attitude1..attitude5 and stores them in session."""
@@ -153,10 +168,10 @@ def new_questionnaire_part1():
             session[f'attitude{i}'] = request.form.get(f'attitude{i}')
         return redirect(url_for('views.new_questionnaire'))
 
-    return render_template('new_questionnaire_part1.html', user=current_user)
+    return render_template('/Questionnaire1/new_questionnaire_part1.html', user=current_user)
 
 
-@views.route('/new_questionnaire', methods=['GET', 'POST'])
+@views.route('/Questionnaire1/new_questionnaire', methods=['GET', 'POST'])
 @login_required
 def new_questionnaire():
     """Part 2 of the 15-question openness questionnaire (match1..match10)."""
@@ -187,7 +202,7 @@ def new_questionnaire():
             result = save_questionnaire_responses(user_id=current_user.id, form_data=combined)
             if not result:
                 flash('An error occurred while saving your answers. Please try again.', 'error')
-                return render_template('new_questionnaire_part2.html', user=current_user)
+                return render_template('/Questionnaire1/new_questionnaire_part2.html', user=current_user)
 
             if result.get('is_extremist'):
                 flash(
@@ -206,7 +221,7 @@ def new_questionnaire():
             print(f"Error in new_questionnaire: {exc}")
             flash('There was an error processing your questionnaire. Please try again.', 'error')
 
-    return render_template('new_questionnaire_part2.html', user=current_user)
+    return render_template('/Questionnaire1/new_questionnaire_part2.html', user=current_user)
 
 
 def generate_time_slots():
@@ -474,7 +489,7 @@ def discussion_evaluation():
 
 
 # ---------------- Opinion Shift Analysis ----------------
-@views.route('/opinion_shift_analysis')
+@views.route('/Questionnaire2/opinion_shift_analysis', methods=['GET', 'POST'])
 @login_required
 def opinion_shift_analysis():
     """Display before/after opinion shift visualization for the same 10 questions"""
@@ -542,7 +557,7 @@ def opinion_shift_analysis():
         openness_category = get_openness_category(openness_score) if openness_score is not None else None
 
         return render_template(
-            'opinion_shift_analysis.html',
+            'Questionnaire2/opinion_shift_analysis.html',
             user=current_user,
             questions=questions,
             before_values=before_values,
@@ -560,13 +575,13 @@ def opinion_shift_analysis():
         import traceback
         traceback.print_exc()
         flash('An error occurred while loading the opinion shift analysis.', 'error')
-        return redirect(url_for('views.reward'))
+        return redirect(url_for('views.closing'))
 
 
-# ---------------- Reward ----------------
-@views.route('/Reward', methods=['GET', 'POST'])
+# ---------------- closing ----------------
+@views.route('/closing', methods=['GET', 'POST'])
 @login_required
-def reward():
+def closing():
     partner = User.query.get(current_user.partner_id) if current_user.partner_id else None
 
     # 🔔 Schedule follow-up email in 7 days (only once)
@@ -587,7 +602,8 @@ def reward():
         print(f"Error sending payout email: {exc}")
         flash('There was an error sending the payout email. Please contact the study administrator.', 'error')
 
-    return render_template('Questionnaire2/reward.html', user=current_user, partner=partner)
+    return render_template('Questionnaire2/closing.html', user=current_user, partner=partner)
+
 
 
 # ---------------- Debug / Check User ----------------

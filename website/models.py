@@ -1,7 +1,14 @@
+"""
+This file defines all database models used in the application.
+
+It represents the data structure of the study
+and defines how all information is stored in the database.
+"""
+
 from . import db
 from flask_login import UserMixin
 from sqlalchemy.sql import func
-from datetime import datetime  # ADD THIS IMPORT
+from datetime import datetime  
 
 
 class User(db.Model, UserMixin):

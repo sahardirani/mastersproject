@@ -1,3 +1,13 @@
+"""
+This file contains the logic for matching users in the study.
+
+It compares users based on their questionnaire results,
+checks that they share the same topic and availability,
+creates a match between compatible users,
+and sends notification emails once a match is found.
+
+"""
+
 from flask import render_template
 
 from datetime import datetime, timedelta, time, date
