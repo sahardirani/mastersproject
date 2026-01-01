@@ -1,6 +1,18 @@
 """
-Flask routes for matching system
+This file defines API routes related to the matching system.
+
+It allows users to:
+- View and update their questionnaire opinions
+- Retrieve their current matches
+- Accept or reject a match
+
+It also provides endpoints to:
+- Retrieve opinion dimensions
+- Manually trigger the matching process (admin use)
+
+This file connects the matching logic with the frontend through JSON-based API requests.
 """
+
 
 from flask import Blueprint, jsonify, request
 from flask_login import login_required, current_user

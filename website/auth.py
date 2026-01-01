@@ -1,14 +1,25 @@
+"""
+This file handles user authentication.
+
+It includes:
+- User login
+- User logout
+- User registration (sign-up)
+- Password validation and hashing
+- Basic error handling and user feedback
+- Sending a confirmation email after successful registration
+
+so it manages how users create accounts
+and securely access the application.
+"""
+
 from flask import Blueprint, render_template, request, flash, redirect, url_for
 from flask_login import login_user, login_required, logout_user, current_user
 from werkzeug.security import generate_password_hash, check_password_hash
-
 from .models import User
 from . import db, send_email_safe
 
-
 auth = Blueprint('auth', __name__)
-
-# this code is for logging and signing in only, with its error handling
 
 # Login Page logic
 @auth.route('/login', methods=['GET', 'POST'])

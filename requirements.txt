@@ -1,7 +1,10 @@
-flask
+Flask
 Flask-SQLAlchemy
-flask-login
-mysql-connector-python
+SQLAlchemy
+Flask-Login
 Flask-Migrate
+alembic
 Flask-Mail
+python-dotenv
+psycopg2-binary
 gunicorn

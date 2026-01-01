@@ -1,23 +1,19 @@
-# Flask Web App Tutorial
+# Flask Web Application – Master’s Project
 
-## Setup & Installation
+This is a simple Flask web application developed for a Master’s project.
+The application supports user registration, login, questionnaires, user matching, scheduling, and basic email notifications.
 
-Make sure you have the latest version of Python installed.
+Python 3.9 or newer is required to run this project.
 
-```bash
-git clone <repo-url>
-```
+Clone the repository:
+git clone <repository-url>
 
-```bash
+Install the required packages:
 pip install -r requirements.txt
-```
 
-## Running The App
+Run the application:
+python3 main.py or flask --app website run
 
-```bash
-python main.py
-```
+Open a web browser and go to:
+http://127.0.0.1:5000
 
-## Viewing The App
-
-Go to `http://127.0.0.1:5000`

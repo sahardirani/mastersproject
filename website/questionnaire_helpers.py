@@ -1,4 +1,11 @@
-# questionnaire_helpers.py
+"""
+This file contains helper functions for processing questionnaire data.
+
+It saves users’ questionnaire answers to the database,
+calculates the openness score based on attitude questions,
+and classifies users into openness categories for matching eligibility.
+"""
+
 from datetime import datetime
 
 def save_questionnaire_responses(user_id, form_data):
@@ -7,7 +14,7 @@ def save_questionnaire_responses(user_id, form_data):
     Using -2 to +2 scale (no conversion needed)
     """
     from .models import User, UserOpinion, OpinionDimension
-    from . import db  # FIXED: Changed from .static to .
+    from . import db  
     
     user = User.query.get(user_id)
     if not user:

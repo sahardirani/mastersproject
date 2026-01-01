@@ -1,3 +1,17 @@
+"""
+This file initializes the Flask application and core services.
+
+It sets up:
+- The Flask app and configuration
+- Database connection and migrations
+- User login management
+- Email sending and configuration
+- Questionnaire dimensions and scoring logic
+- Automatic user matching
+- Scheduled follow-up email sending
+
+"""
+
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import exc, text
@@ -8,10 +22,7 @@ from flask_mail import Mail, Message
 from dotenv import load_dotenv
 from datetime import datetime
 import time
-from threading import Thread  # for scheduler threads
-
-# 🚫 IMPORTANT: do NOT import models here to avoid circular imports
-# from .models import ScheduledEmail  # ❌ remove this
+from threading import Thread 
 
 # Load environment variables from .env (DATABASE_URL, MAIL_*)
 load_dotenv()
@@ -25,7 +36,6 @@ def send_email_safe(subject, recipients, body=None, html=None, sender=None):
         # Build message WITHOUT sender first
         msg = Message(subject=subject, recipients=recipients)
 
-        # If you want a custom sender, set it; otherwise Flask-Mail uses MAIL_DEFAULT_SENDER
         if sender:
             msg.sender = sender
 
@@ -54,7 +64,7 @@ def create_app():
     except OSError:
         pass
 
-    # 🔴 Database Configuration – use shared PostgreSQL from .env
+    # Database Configuration – use shared PostgreSQL from .env
     db_url = os.getenv("DATABASE_URL")
     if not db_url:
         raise RuntimeError("DATABASE_URL not set in .env")
@@ -67,16 +77,6 @@ def create_app():
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
     print("📌 USING DATABASE:", app.config['SQLALCHEMY_DATABASE_URI'])
-
-       # 📧 Email Configuration (read from environment so it works on hosting)
-    # Examples for Gmail (set these in your .env / hosting env):
-    #   MAIL_SERVER=smtp.gmail.com
-    #   MAIL_PORT=587
-    #   MAIL_USE_TLS=true
-    #   MAIL_USERNAME=togethertolerant@gmail.com
-    #   MAIL_PASSWORD=your_16_char_app_password_without_spaces
-    #   MAIL_DEFAULT_SENDER_EMAIL=togethertolerant@gmail.com
-    #   MAIL_DEFAULT_SENDER_NAME=Tolerance Together
 
     app.config['MAIL_SERVER'] = os.getenv('MAIL_SERVER', 'smtp.gmail.com')
     app.config['MAIL_PORT'] = int(os.getenv('MAIL_PORT', 587))
@@ -144,7 +144,7 @@ def create_app():
     def handle_internal_server_error(e):
         return "Internal Server Error", 500
 
-    # ✅ TEST EMAIL ROUTE — for debugging mail
+    # TEST EMAIL ROUTE — for debugging mail
     @app.route("/test-receive")
     def test_receive():
         try:
@@ -171,9 +171,7 @@ def create_database(app):
         print('Created Database!')
 
 
-# ========================================
 # Opinion dimensions + questionnaire logic
-# ========================================
 
 def initialize_opinion_dimensions():
     """
