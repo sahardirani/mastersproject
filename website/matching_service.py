@@ -6,14 +6,17 @@ checks that they share the same topic and availability,
 creates a match between compatible users,
 and sends notification emails once a match is found.
 
+UPDATED:
+- Adds language-based matching: users are only matched with others
+  who selected the same preferred language (User.language).
 """
 
 from flask import render_template
-
-from datetime import datetime, timedelta, time, date
+from datetime import datetime, timedelta
 
 from .models import UserOpinion, OpinionDimension, User, Match, db
 from . import send_email_safe
+
 
 def time_overlap(u1, u2):
     """
@@ -40,7 +43,6 @@ class MatchingService:
         Calculate an opposition score (0–4) using only the 10 matching dimensions.
         This is kept for future use, but NOT used in the current openness-based matching.
         """
-        # Build dict: dimension_id -> opinion
         a_ops = {
             op.dimension.id: op
             for op in user_a.opinions
@@ -71,10 +73,8 @@ class MatchingService:
         if total_weight == 0:
             return 0.0, "too_similar"
 
-        # Normalize to 0–4
         opposition_score = (total_weighted_diff / total_weight)
 
-        # Interpret (same thresholds as before)
         if opposition_score < 1.0:
             decision = "too_similar"
         elif opposition_score <= 2.5:
@@ -85,13 +85,14 @@ class MatchingService:
         return opposition_score, decision
 
     # ------------------------------------------------------------------
-    # 2) Core: openness-based matching for ONE user
+    # 2) Core: openness-based matching for ONE user + language constraint
     # ------------------------------------------------------------------
     @staticmethod
     def find_best_match_for_user(user):
         """
         Find the best partner for a single user based ONLY on:
           - same topic
+          - same preferred language (NEW)
           - demo == True (completed screening)
           - is_extremist == False
           - haspartner is False/NULL
@@ -122,10 +123,19 @@ class MatchingService:
             print(f"[MATCH] User {user.id} has no openness_score, skipping.")
             return None
 
-        # Base candidate filter: same topic, eligible, no partner yet
+        # NEW: language must be set (otherwise they can't be matched by language)
+        if not getattr(user, "language", None):
+            print(f"[MATCH] User {user.id} has no language, skipping.")
+            return None
+
+        # Base candidate filter: same topic + same language, eligible, no partner yet
         candidates = User.query.filter(
             User.id != user.id,
             User.topic == user.topic,
+
+            # NEW: language match
+            User.language == user.language,
+
             User.demo.is_(True),
             User.is_extremist.is_(False),
             (User.haspartner.is_(False) | User.haspartner.is_(None)),
@@ -133,7 +143,7 @@ class MatchingService:
         ).all()
 
         if not candidates:
-            print(f"[MATCH] No candidates for user {user.id} on topic {user.topic}")
+            print(f"[MATCH] No candidates for user {user.id} on topic {user.topic} + language {user.language}")
             return None
 
         best_candidate = None
@@ -145,17 +155,13 @@ class MatchingService:
         for candidate in candidates:
             common_slot = time_overlap(user, candidate)
             if not common_slot:
-                # No overlapping availability
                 continue
 
             c_open = float(candidate.openness_score)
 
-            # Smaller difference is better, higher avg is better
             diff = abs(u_open - c_open)
             avg = (u_open + c_open) / 2.0
 
-            # Compatibility score: penalize big difference, reward openness
-            # (values are arbitrary but consistent)
             compatibility = (4.0 - diff) + avg  # higher = better
 
             if (best_candidate is None) or (compatibility > best_score):
@@ -167,11 +173,10 @@ class MatchingService:
             print(f"[MATCH] No candidate with overlapping slot for user {user.id}")
             return None
 
-        # We label all openness-based matches as "ideal_match"
         decision = "openness_match"
         print(
             f"[MATCH] Found openness-based match: {user.id} <-> {best_candidate.id}, "
-            f"score={best_score:.2f}, slot={best_slot}"
+            f"score={best_score:.2f}, slot={best_slot}, language={user.language}"
         )
         return best_candidate, best_score, decision, best_slot
 
@@ -187,11 +192,9 @@ class MatchingService:
         if not user_a or not user_b:
             return None
 
-        # Avoid self-match
         if user_a.id == user_b.id:
             return None
 
-        # Basic match object
         match = Match(
             user_a_id=user_a.id,
             user_b_id=user_b.id,
@@ -200,13 +203,14 @@ class MatchingService:
             match_decision=decision,
             scheduled_time_slot=common_slot,
             both_open_minded=(not user_a.is_extremist and not user_b.is_extremist),
-            status="accepted",  # directly accepted in this design
+            status="accepted",
             created_at=datetime.utcnow(),
             expires_at=datetime.utcnow() + timedelta(days=14),
         )
 
         db.session.add(match)
         db.session.commit()
+
         print(
             f"[MATCH] Match row created: {match.id} "
             f"({user_a.id} <-> {user_b.id}) topic={match.topic}"
@@ -214,7 +218,7 @@ class MatchingService:
         return match
 
     # ------------------------------------------------------------------
-    # 4) Batch matching for scheduler (simple wrapper around per-user)
+    # 4) Batch matching for scheduler (wrapper around per-user)
     # ------------------------------------------------------------------
     @staticmethod
     def run_batch_matching(**kwargs):
@@ -236,6 +240,9 @@ class MatchingService:
             (User.haspartner.is_(False) | User.haspartner.is_(None)),
             User.openness_score.isnot(None),
             User.topic.isnot(None),
+
+            # NEW: only users with language set can be matched
+            User.language.isnot(None),
         ).all()
 
         stats["users_processed"] = len(eligible_users)
@@ -244,7 +251,6 @@ class MatchingService:
         for user in eligible_users:
             topics.add(user.topic)
 
-            # Skip if they were matched earlier in this batch
             if user.haspartner:
                 continue
 
@@ -254,14 +260,11 @@ class MatchingService:
 
             partner, score, decision, slot = result
 
-            # Partner might have been matched in a previous iteration
             if partner.haspartner:
                 continue
 
-            # Create the match row
             match = MatchingService.create_match(user, partner, score, decision, slot)
 
-            # Update convenience flags on User
             user.haspartner = True
             partner.haspartner = True
             user.partner_id = partner.id
@@ -280,38 +283,36 @@ class MatchingService:
                     slot_label = slot  # fallback
 
             # ---------- Send zusage email to both users ----------
-                        # ---------- Send zusage email to both users ----------
             try:
                 html_a = render_template(
-                    'Email/zusage.html',
+                    "Email/zusage.html",
                     user=user,
                     partner=partner,
                     topic=user.topic,
-                    slot_label=slot_label
+                    slot_label=slot_label,
                 )
                 html_b = render_template(
-                    'Email/zusage.html',
+                    "Email/zusage.html",
                     user=partner,
                     partner=user,
                     topic=partner.topic,
-                    slot_label=slot_label
+                    slot_label=slot_label,
                 )
 
                 ok_a = send_email_safe(
-                    subject='You have been matched for a dialogue session',
+                    subject="You have been matched for a dialogue session",
                     recipients=[user.email],
-                    html=html_a
+                    html=html_a,
                 )
                 ok_b = send_email_safe(
-                    subject='You have been matched for a dialogue session',
+                    subject="You have been matched for a dialogue session",
                     recipients=[partner.email],
-                    html=html_b
+                    html=html_b,
                 )
 
                 print(f"[BATCH MATCH] Email status A={ok_a}, B={ok_b} for {user.email} & {partner.email}")
 
             except Exception as mail_exc:
-                # This should almost never trigger now, but keep it as extra safety
                 print(f"[BATCH MATCH] Unexpected error while preparing match emails: {mail_exc}")
 
             db.session.commit()
@@ -356,7 +357,6 @@ class MatchingService:
 
         match.status = "accepted"
 
-        # Ensure user flags are set
         user_a = User.query.get(match.user_a_id)
         user_b = User.query.get(match.user_b_id)
 
@@ -374,8 +374,7 @@ class MatchingService:
     @staticmethod
     def reject_match(match_id, user_id):
         """
-        Reject a match. Does NOT automatically free haspartner flags here,
-        but you can extend it if needed.
+        Reject a match.
         """
         match = Match.query.get(match_id)
         if not match or user_id not in [match.user_a_id, match.user_b_id]:
