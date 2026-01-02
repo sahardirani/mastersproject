@@ -23,6 +23,7 @@ class User(db.Model, UserMixin):
     age = db.Column(db.String(100))
     education = db.Column(db.String(100))
     job = db.Column(db.String(100)) 
+    language = db.Column(db.String(10), nullable=True)
 
     topic = db.Column(db.String(100))  # Already exists ✓
 

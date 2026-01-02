@@ -267,18 +267,24 @@ def demographics():
             education = request.form.get('education')
             job = request.form.get('job')
 
+            # ✅ NEW: language from your form (name="language")
+            language = request.form.get('language')
+
             slot1 = request.form.get('availability1')
             slot2 = request.form.get('availability2') or None
             slot3 = request.form.get('availability3') or None
 
-            if not (gender and age and education and job and slot1):
-                flash('Please fill all required demographic fields (and at least one availability).', 'error')
+            if not (gender and age and education and job and language and slot1):
+                flash('Please fill all required demographic fields (including language) and at least one availability.', 'error')
                 return render_template('Questionnaire1/demographics.html', user=current_user, slots=slots)
 
             current_user.gender = gender
             current_user.age = age
             current_user.education = education
             current_user.job = job
+
+            current_user.language = language
+
             current_user.time_slot_1 = slot1
             current_user.time_slot_2 = slot2
             current_user.time_slot_3 = slot3
